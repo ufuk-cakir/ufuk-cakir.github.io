@@ -1,0 +1,179 @@
+
+ @import url(https://fonts.googleapis.com/css?family=Montserrat);
+html {
+    scroll-behavior: smooth;
+  }
+
+ 
+
+  html, body{
+    height: 100%;
+    font-weight: 800;
+    margin: 0;
+    padding: 0;
+  }
+ 
+
+body {
+    background-color:#030321;
+    font-family: Cardo, 'Times New Roman', Times, serif;
+    font-size: 35px;
+    margin: 0; /* prevents a double scroll bar */
+}
+
+
+h1 {
+    color: #A5C9CA;
+    text-align: center;
+    font-family: Cardo; 
+    font-size: 35px; 
+    font-style: italic; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 42px;
+}
+
+
+h2 {
+    color: #E7F6F2;
+}
+
+
+ul.nav {
+    padding-left: 0px;
+    text-align: center;
+    font-family: Cardo;
+    color: #395B64;
+    transition: transform .2s;
+    
+  }
+  ul.nav > li {
+    display: inline-block;
+    padding: 10px 20px;
+    border: 2px solid #A5C9CA;
+    border-radius: 20px;
+    color: #395B64
+  }
+  ul.nav > li:hover {
+    background-color: #A5C9CA33;
+    transform: scale(1.2);
+  }
+  ul.nav > li > a {
+    color: white;
+    text-decoration: none;
+  }
+  
+
+
+
+p {
+    color: #E7F6F2;
+    font-size: 26px;
+    font-family: Cardo;
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 400; 
+    line-height: 23px;
+}
+
+.scrollsnap-container {
+    max-height: 100vh;
+    overflow: scroll;
+    scroll-snap-type: mandatory; /* for older browsers */
+    scroll-snap-points-y: repeat(100vh); /* for older browsers */
+    scroll-snap-type: y mandatory;
+    font-size: 60px;
+    -ms-overflow-style: none; /* for Internet Explorer, Edge */
+    scrollbar-width: none;
+  }
+  .scrollsnap-section {
+    height: 100vh;
+    width: 100wh;
+    scroll-snap-align: center;
+    position: relative;
+    font-size: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  .scrollsnap-container::-webkit-scrollbar {
+    display: none; /* for Chrome, Safari, and Opera */
+  }
+
+
+
+
+
+  
+  .container {
+    display: flex;
+  /*   border:1px solid red; */
+    height: 100%;
+    align-items: center;
+  }
+  
+  svg {
+      display: block;
+      font: 2em 'Montserrat';
+      width: 75vw;
+      height: 75vh;
+      margin: 0 auto;
+  }
+  
+  .text-copy {
+      fill: none;
+      stroke: white;
+      stroke-dasharray: 6% 29%;
+      stroke-width: 2px;
+      stroke-dashoffset: 0%;
+      animation: stroke-offset 5.5s infinite linear;
+  }
+  
+
+  .text-copy:nth-child(1){
+    stroke: #395B64;
+    animation-delay: -1;
+  }
+  
+  .text-copy:nth-child(2){
+    stroke: #2C3333;
+    animation-delay: -2s;
+  }
+  
+  .text-copy:nth-child(3){
+    stroke: #A5C9CA;
+    animation-delay: -3s;
+  }
+  
+  .text-copy:nth-child(4){
+    stroke: #E7F6F2;
+    animation-delay: -4s;
+  }
+  
+  .text-copy:nth-child(5){
+    stroke: #E7F6F2;
+    animation-delay: -5s;
+  }
+  
+  @keyframes stroke-offset{
+    100% {stroke-dashoffset: -35%;}
+  }
+
+
+.github{
+    
+    height: 10vh;
+}
+
+
+ .github:hover {
+    transform: scale(1.2);
+  }
+
+  .github > a {
+    color: white;
+    text-decoration: none;
+  }
+  
