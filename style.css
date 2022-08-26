@@ -15,17 +15,17 @@ html {
  
 
 body {
-    background-color:#030321;
-    font-family: Cardo, 'Times New Roman', Times, serif;
+    background-color:#1b1c1d;
+    font-family: temeraire, 'Times New Roman', Times, serif;
     font-size: 35px;
     margin: 0; /* prevents a double scroll bar */
 }
 
 
 h1 {
-    color: #A5C9CA;
+    color: #fda870;
     text-align: center;
-    font-family: Cardo; 
+    font-family: temeraire; 
     font-size: 35px; 
     font-style: italic; 
     font-variant: normal; 
@@ -35,14 +35,16 @@ h1 {
 
 
 h2 {
-    color: #E7F6F2;
+    color: #fda870;
+    font-family: temeraire, serif; 
+    font-weight: 600; 
+    font-style: italic;
 }
 
 
 ul.nav {
     padding-left: 0px;
     text-align: center;
-    font-family: Cardo;
     color: #395B64;
     transition: transform .2s;
     
@@ -116,7 +118,7 @@ p {
   
   svg {
       display: block;
-      font: 2em 'Cardo';
+      font: 2em 'temeraire';
       width: 75vw;
       height: 75vh;
       margin: 0 auto;
@@ -143,7 +145,7 @@ p {
   }
   
   .text-copy:nth-child(3){
-    stroke: #A5C9CA;
+    stroke: #fda870;
     animation-delay: -3s;
   }
   
