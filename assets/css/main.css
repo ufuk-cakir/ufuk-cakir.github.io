@@ -1,5 +1,17 @@
 @import url(fontawesome-all.min.css);
 
+:root {
+	--primary-bg-color: #181a1b; /* Define your specific background color */
+	--primary-highlicht-color: #c9ffe5; /* Define your specific text color */
+	--primary-text-color: #c9ffe5; /* Define your specific text color */
+
+  }
+
+
+  
+  
+  
+
 /*
 	Hyperspace by HTML5 UP
 	html5up.net | @ajlkn
@@ -22,7 +34,21 @@ section, summary, time, mark, audio, video {
 	border: 0;
 	font-size: 100%;
 	font: inherit;
-	vertical-align: baseline;}
+	vertical-align: baseline;
+	background-color: var(--primary-bg-color) !important;
+	
+}
+
+
+
+
+	h2 {
+		color: #c9ffe5 !important; /* Change this to your desired color */
+	  }
+	  
+	  h3 {
+		color: #c9ffe5 !important; /* Change this to your desired color */
+	  }
 
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
@@ -30,6 +56,7 @@ footer, header, hgroup, menu, nav, section {
 
 body {
 	line-height: 1;
+
 }
 
 ol, ul {
@@ -98,7 +125,7 @@ input, select, textarea {
 	}
 
 	body {
-		background: #312450;
+		background: #181a1b;
 	}
 
 		body.is-preload *, body.is-preload *:before, body.is-preload *:after {
@@ -174,8 +201,10 @@ input, select, textarea {
 		margin: 0 0 2em 0;
 	}
 
+
+
 	h1, h2, h3, h4, h5, h6 {
-		color: #ffffff;
+		color: #c9ffe5;
 		font-weight: bold;
 		line-height: 1.5;
 		margin: 0 0 0.5em 0;
@@ -197,10 +226,10 @@ input, select, textarea {
 		}
 
 			h1.major:after {
-				background-image: -moz-linear-gradient(to right, #5e42a6, #b74e91);
-				background-image: -webkit-linear-gradient(to right, #5e42a6, #b74e91);
-				background-image: -ms-linear-gradient(to right, #5e42a6, #b74e91);
-				background-image: linear-gradient(to right, #5e42a6, #b74e91);
+				background-image: -moz-linear-gradient(to right, #c9ffe5, #b74e91);
+				background-image: -webkit-linear-gradient(to right, #c9ffe5, #b74e91);
+				background-image: -ms-linear-gradient(to right, #c9ffe5, #b74e91);
+				background-image: linear-gradient(to right, #c9ffe5, #b74e91);
 				-moz-transition: max-width 0.2s ease;
 				-webkit-transition: max-width 0.2s ease;
 				-ms-transition: max-width 0.2s ease;
@@ -233,6 +262,7 @@ input, select, textarea {
 	h6 {
 		font-size: 0.6em;
 	}
+
 
 	@media screen and (max-width: 736px) {
 
@@ -3347,6 +3377,9 @@ input, select, textarea {
 			background-color: #953d75;
 		}
 
+		.wrapper.styleDark {
+			background-color: #181a1b;
+		}	
 		.wrapper.fullscreen {
 			display: -moz-flex;
 			display: -webkit-flex;
@@ -3608,7 +3641,7 @@ input, select, textarea {
 
 	#sidebar {
 		padding: 2.5em 2.5em 0.5em 2.5em ;
-		background: #312450;
+		background: #181a1b;
 		cursor: default;
 		height: 100vh;
 		left: 0;
@@ -3847,7 +3880,7 @@ input, select, textarea {
 			#sidebar nav a:before {
 				background: #3c2c62;
 			}
-
+/* here is the sidebar gradient*/
 			#sidebar nav a:after {
 				background-image: -moz-linear-gradient(to right, #5e42a6, #b74e91);
 				background-image: -webkit-linear-gradient(to right, #5e42a6, #b74e91);
