@@ -1,0 +1,118 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Machine Learning Models For Galaxy Morphology</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Introduction</a></li>
+							<li><a href="#one">Principal Component Analysis</a></li>
+							<li><a href="#two">Projection</a></li>
+							<li><a href="#three">PCA in three dimensions</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Intro -->
+				<section id="intro" class="wrapper style1 fullscreen fade-up">
+					<div class="inner">
+						<h1>Machine Learning Models For Galaxy Morphology</h1>
+							<p>State-of-the-art hydrodynamical simulations can reproduce the diversity of different galaxy morphological types, but fail to exactly recreate real, observed galaxies. 
+                                In the last decade, machine learning (ML) had very promising results in image recognition and dimensionality reduction. 
+                                The goal of my thesis is to investigate how ML can be used to create galaxy morphology models and encode the information contained in modern state-of-the-art simulations.
+                                I used IllustrisTNG simulated galaxies to build a galaxy morphology model.</p>
+					</div>
+				</section>
+
+				<!-- One -->
+				<section id="one" class="wrapper style2 spotlights">
+					<section>
+						<div class="content">
+							<div class="inner">
+								<h1>Principal Component Analysis</h1>
+                                <p>The main part is to investigate how principal component analysis (PCA) can serve as a galaxy morphology model. The so called "Eigengalaxies" calculated from PCA are galaxy images which act as the basis vectors of the image space such that each galaxy in the dataset can be described as a linear combination of all eigengalaxies.
+                                    </p>
+                                    <img src="assets/images/eigengalaxies_bachelor.png" alt="Eigengalaxies"/>
+							</div>
+                            <p>These are the calculated eigengalaxies.</p>
+						</div>
+					</section>
+				</section>
+				
+				<!-- Two -->
+					<section id="two" class="wrapper style2 fade-up">
+						
+						<div class="inner">
+							<h2>Projection</h2>
+							<p>Projecting galaxy images onto the space spanned by the eigengalaxies gives us a low dimensional
+                                representation
+							</p>
+                            <img src="assets/images/5237.gif" alt="Projection"/>
+							<p>The reconstruction error made by projecting each galaxy image onto the space spanned by 49 Eigengalaxies
+                                is calculated and shown in the following histogram. We find that 99% of the galaxy images have a reconstruction
+                                error less than 9%.
+                                
+                                </p>
+					
+                            <img src="assets/images/rec_err_ba.png" alt="Reconstruction Error"/>
+
+				
+						</div>
+					</section>
+
+				<!-- Three -->
+					<section id="three" class="wrapper style1 fade-up">
+						<div class="inner">
+							<h2>PCA in three Dimensions</h2>
+							<p>We calculate PCA on three dimensional galaxy images in order to find the 3D Eigengalaxies. Here are some Examples:
+							</p>
+							<div class="video fit">
+													<video autoplay loop muted src="assets/videos/eigen10.mp4" alt=""></video>
+												</div>
+							<section>
+								<h3><a href="https://github.com/ufuk-cakir" class="icon brands fa-github"> GitHub</a></h3>
+							</section>
+							
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Ufuk Cakir. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
