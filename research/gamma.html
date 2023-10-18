@@ -1,0 +1,91 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Gamma</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="../assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="#intro">Abstract</a></li>
+							<li><a href="#baseline">Baseline</a></li>
+							<li><a href="#umap">UMAP</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Intro -->
+				<section id="intro" class="wrapper style1 fullscreen fade-up">
+					<div class="inner">
+						<h1>GAMMA: Galactic Attributes of Mass, Metallicity and Age</h1>
+						<p>We introduce the GAMMA (Galactic Attributes of Mass, Metallicity, and Age) dataset, a comprehensive collection of galaxy data tailored for Machine Learning applications. This dataset offers detailed 2D maps and 3D cubes of 11 727 galaxies, capturing essential attributes: stellar age, metallicity, and mass.
+
+							Together with the dataset we publish our code to extract any other stellar or gaseous property from the raw simulation suite to extend the dataset beyond these initial properties, ensuring versatility for various computational tasks. Ideal for feature extraction, clustering, and regression tasks, GAMMA offers a unique lens for exploring galactic structures through computational methods and is a bridge between astrophysical simulations and the field of scientific machine learning (ML).
+							
+							As a first benchmark, we apply Principal Component Analysis (PCA) on this dataset. We find that PCA effectively captures the key morphological features of galaxies with a small number of components. We achieve a dimensionality reduction by a factor of ∼200 (∼3650) for 2D images (3D cubes) with a reconstruction accuracy below 5%.
+							
+							All the code to generate this dataset and load the data structure will be publically available on GitHub, with an additional documentation page hosted on ReadTheDocs.</p>
+						
+					</div>
+				</section>
+
+				<section id="baseline" class="wrapper style1 fullscreen fade-up">
+					<div class="inner">
+						<h1>Baseline</h1>
+						<p>We calculate Principal Component Analysis as a baseline on the Gamma dataset.</p>
+
+					</div>
+				</section>
+
+				<section id="umap" class="wrapper style1 fullscreen fade-up">
+					<div class="inner">
+						<h1>UMAP</h1>
+						<p>We calculate UMAP on the PCA scores to visualize the lower dimensional Image space in two dimensions.</p>
+						<p>Below there is an interactive plot of the UMAP results. You can zoom in and out, and hover over the points to see the galaxy in the mass map and the corresponding TNG halo id. </p>
+						<div class="video">
+							<iframe src="https://umap-dashboard.onrender.com/"></iframe>
+						</div>
+
+					</div>
+				</section>
+
+				<!-- One -->
+				
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Ufuk Cakir. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="../assets/js/jquery.min.js"></script>
+			<script src="../assets/js/jquery.scrollex.min.js"></script>
+			<script src="../assets/js/jquery.scrolly.min.js"></script>
+			<script src="../assets/js/browser.min.js"></script>
+			<script src="../assets/js/breakpoints.min.js"></script>
+			<script src="../assets/js/util.js"></script>
+			<script src="../assets/js/main.js"></script>
+
+	</body>
+</html>
