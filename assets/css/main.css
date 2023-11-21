@@ -39,7 +39,17 @@ section, summary, time, mark, audio, video {
 	
 }
 
-
+#title {
+    font-size: 24px; /* Adjust size as needed */
+    font-weight: bold; /* Makes the font bold */
+    color: #ffffff; /* Sets the color, change as desired */
+    text-align: center; /* Centers the text */
+    padding: 10px; /* Adds space around the text */
+    background-color: #000000; /* Background color, change as needed */
+    border-radius: 5px; /* Optional: rounds the corners */
+    margin-top: 20px; /* Adjusts space above the title */
+    /* Add any additional styling you desire */
+}
 
 
 	h2 {
@@ -118,6 +128,7 @@ input, select, textarea {
 
 	html {
 		box-sizing: border-box;
+    scroll-behaviour: smooth;
 	}
 
 	*, *:before, *:after {
@@ -2604,9 +2615,26 @@ input, select, textarea {
 }
 
 .video-fit-button {
-	display: flex;
-	align-items: center;
-  }
+    display: flex;
+    flex-direction: column; /* Stack video and button vertically */
+    align-items: center;   /* Center-align items horizontally */
+    justify-content: center; /* Center-align items vertically if there's extra space */
+}
+
+.video.fit {
+    width: 80%; /* Adjust as necessary */
+    margin-bottom: 20px; /* Space between video and button */
+}
+
+ul.actions {
+    list-style: none; /* Removes bullet points */
+    padding: 0; /* Removes default padding */
+}
+
+ul.actions li {
+    display: inline-block; /* Align buttons in a row */
+    margin: 0 10px; /* Spacing between buttons, if you have more than one */
+}
 
 .video iframe {
     position: absolute;
@@ -3654,7 +3682,7 @@ input, select, textarea {
 		height: 100vh;
 		left: 0;
 		overflow-x: hidden;
-		overflow-y: auto;
+		overflow-y: hidden;
 		position: fixed;
 		text-align: right;
 		top: 0;
@@ -3999,10 +4027,10 @@ input, select, textarea {
 
 	#intro {
 		background-attachment: fixed;
-		background-image: url("images/intro.svg");
 		background-position: top right;
 		background-repeat: no-repeat;
 		background-size: 100% 100%;
+		/* background-image: url("images/intro.svg");*/
 	}
 
 		#intro p {
