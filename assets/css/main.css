@@ -235,7 +235,15 @@ input, select, textarea {
 		text-align: justify;
 	}
 
-
+.center-text {
+	text-align: center;
+	vertical-align: middle;
+	
+}
+.center-text p {
+	display: inline-block;
+	vertical-align: middle;
+}
 
 	h1, h2, h3, h4, h5, h6 {
 		color: #c9ffe5;
@@ -3093,6 +3101,7 @@ p {
 		display: -webkit-flex;
 		display: -ms-flex;
 		display: flex;
+		align-items: center;
 	}
 
 		.split > * {
