@@ -55,6 +55,11 @@ section, summary, time, mark, audio, video {
     height: auto; /* Keeps the image aspect ratio */
 	border-radius: 30px;
 }
+.image-content video {
+    width: 100%; /* Makes the image take the full width of its container */
+    height: auto; /* Keeps the image aspect ratio */
+	border-radius: 30px;
+}
 #title {
     font-size: 24px; /* Adjust size as needed */
     font-weight: bold; /* Makes the font bold */
@@ -227,6 +232,7 @@ input, select, textarea {
 	p {
 		margin: 0 0 2em 0;
 		display: block;
+		text-align: justify;
 	}
 
 
