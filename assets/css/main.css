@@ -50,6 +50,14 @@ section, summary, time, mark, audio, video {
     padding: 10px; /* Optional padding for better spacing */
 }
 
+
+.image-credit {
+    font-size: 12px; /* Adjust the font size as needed */
+    color: #666; /* Gray color for the credit text */
+    margin-top: 5px; /* Adds some space above the credit text */
+    font-style: italic; /* Makes the credit text italic */
+}
+
 .image-content img {
     width: 100%; /* Makes the image take the full width of its container */
     height: auto; /* Keeps the image aspect ratio */
