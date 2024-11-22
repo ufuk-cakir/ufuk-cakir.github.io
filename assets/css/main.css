@@ -1,13 +1,40 @@
 @import url(fontawesome-all.min.css);
 
 :root {
-	--primary-bg-color: #181a1b; /* Define your specific background color */
-	--primary-highlicht-color: #c9ffe5; /* Define your specific text color */
-	--primary-text-color: #c9ffe5; /* Define your specific text color */
+	/* --primary-bg-color: #181a1b; /* Define your specific background color */
+	--primary-bg-color: rgb(23,25,26)
+	
+	/*--primary-highlicht-color: #c9ffe5; /* Define your specific text color */
+	--primary-highlicht-color: #feebd3;
+	
+	/* --primary-text-color: #c9ffe5; /* Define your specific text color */
+	--primary-text-color: rgb(205,200,195);
 
-  }
+	--h3-color: rgb(115,50,255); /* Define your specific text color */
+	--h2-color: rgb(115,50,55);
+	--h1-color: rgb(251, 0, 255);
+}
+:root {
+	--primary-bg-color: rgb(23, 25, 26); /* Main background */
+	--secondary-bg-color: rgb(33, 36, 37); /* Lighter contrast */
+	
+	--primary-text-color: rgb(205, 200, 195); /* Main text */
+	--secondary-text-color: rgb(150, 145, 140); /* Subtle hints */
+	--highlight-text-color: rgb(245, 203, 92); /* Warm gold accents */
 
-
+	--primary-highlicht-color: rgb(195, 233, 183); /* Vibrant green for active */
+	--secondary-highlight-color: rgb(195, 233, 183); /* Bright orange */
+	
+	--accent-color-1:rgb(195, 233, 183); /* Vibrant purple */
+	--accent-color-2:rgb(195, 233, 183); /* Bright cyan */
+	--accent-color-3: rgb(255, 77, 109); /* Soft pink-red */
+--h1-color: rgb(195, 233, 183); /* Highlighted titles */
+	--h2-color: rgb(195, 233, 183); /* Vibrant headings */
+	--h3-color: rgb(195, 233, 183); /* Subtle but bright headings */
+	
+	--shadow-color: rgba(0, 0, 0, 0.5); /* Shadow effect */
+	--border-color: rgb(60, 60, 65); /* Neutral borders */
+}
   
   
   
@@ -82,11 +109,11 @@ section, summary, time, mark, audio, video {
 
 
 	h2 {
-		color: #c9ffe5 !important; /* Change this to your desired color */
+		color: var(--primary-highlicht-color)!important; /* Change this to your desired color */
 	  }
 	  
 	  h3 {
-		color: #c9ffe5 !important; /* Change this to your desired color */
+		color: var(--h3-color) !important; /* Change this to your desired color */
 	  }
 
 article, aside, details, figcaption, figure,
@@ -184,7 +211,8 @@ input, select, textarea {
 	body, input, select, textarea {
 		color: rgba(255, 255, 255, 0.55);
 		font-family: Arial, Helvetica, sans-serif;
-		font-size: 16.5pt;
+		font-family: 'Helvetica', sans-serif;
+		font-size: 11.5pt;
 		font-weight: normal;
 		line-height: 1.75;
 	}
@@ -254,7 +282,7 @@ input, select, textarea {
 }
 
 	h1, h2, h3, h4, h5, h6 {
-		color: #c9ffe5;
+		color: var(--h1-color);
 		font-weight: bold;
 		line-height: 1.5;
 		margin: 0 0 0.5em 0;
@@ -3077,7 +3105,7 @@ p {
 	}
 
 	header p {
-		color: rgba(255, 255, 255, 0.35);
+		color: var(--primary-text-color);
 		position: relative;
 		margin: 0 0 1.5em 0;
 	}
@@ -3587,6 +3615,9 @@ p {
 		background-color: #5e42a6;
 		cursor: default;
 		padding: 1.75em 2em;
+		position: fixed; 
+		z-index: 10000;
+		width: 100%;
 	}
 
 		#header > .title {
@@ -3623,7 +3654,7 @@ p {
 
 					#header > nav > ul > li a {
 						border: 0;
-						color: rgba(255, 255, 255, 0.35);
+						color: var(--primary-text-color);
 						display: inline-block;
 						font-size: 0.6em;
 						font-weight: bold;
@@ -3632,7 +3663,7 @@ p {
 					}
 
 						#header > nav > ul > li a:hover {
-							color: rgba(255, 255, 255, 0.55);
+							color: var(--primary-highlicht-color);
 						}
 
 						#header > nav > ul > li a.active {
@@ -3675,6 +3706,8 @@ p {
 						}
 
 		}
+
+
 
 /* Wrapper (main) */
 
