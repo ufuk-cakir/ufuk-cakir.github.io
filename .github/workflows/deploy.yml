@@ -1,16 +1,20 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
     branches:
       - new-design
   workflow_dispatch:
+
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,19 +25,19 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18" # Updated to a newer version for compatibility
+          node-version: "18"
           cache: npm
 
       - name: Install Dependencies
-        run: npm ci # Use `npm ci` for a clean, reproducible install
+        run: npm ci
 
       - name: Build Project
-        run: npm run build && npx next export # Export the project for GitHub Pages
+        run: npm run build # No need for next export
 
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          path: ./out # Update to match the output directory of `next export`
+          path: ./out # Output directory for static export
 
   deploy:
     environment:
