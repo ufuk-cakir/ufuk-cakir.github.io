@@ -10,7 +10,6 @@
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
-    "bibtex-parser-js": "^0.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "framer-motion": "^10.16.4",
