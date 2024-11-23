@@ -41,6 +41,8 @@ export default function Research() {
             in disaster response and humanitarian aid optimization.
           </p>
         </motion.div>
+
+        
       </section>
 
       {/* Research Areas */}

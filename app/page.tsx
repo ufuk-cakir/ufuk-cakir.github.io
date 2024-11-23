@@ -3,6 +3,8 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import { cn } from "@/lib/utils"
+
 
 export default function Home() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -101,6 +103,43 @@ export default function Home() {
             delivery in disaster zones.
           </p>
         </motion.div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="h-screen flex items-center justify-center p-8">
+        <div className="max-w-[90vw] text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            viewport={{ once: true }}
+          >
+            <p className="text-neutral-400 text-sm mb-4">GET IN TOUCH</p>
+            <h2 className="text-[clamp(1rem,4vw,6rem)] leading-none tracking-tighter text-neutral-100 font-light mb-8">
+              ufuk.cakir@keble.ox.ac.uk
+            </h2>
+            <div className="flex justify-center gap-4 text-neutral-400 text-sm">
+              <a href="https://x.com/ufuk_cakir_" className={cn(
+                "hover:text-neutral-100 transition-colors",
+                "uppercase tracking-wider"
+              )}>
+                Twitter
+              </a>
+              <a href="https://www.linkedin.com/in/cakir-ufuk/" className={cn(
+                "hover:text-neutral-100 transition-colors",
+                "uppercase tracking-wider"
+              )}>
+                LinkedIn
+              </a>
+              <a href="https://github.com/ufuk-cakir" className={cn(
+                "hover:text-neutral-100 transition-colors",
+                "uppercase tracking-wider"
+              )}>
+                Github
+              </a>
+            </div>
+          </motion.div>
+        </div>
       </section>
     </div>
   );
