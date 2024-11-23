@@ -3,8 +3,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: process.env.NODE_ENV === 'development' ? '' : '/ufuk-cakir.github.io',
-  assetPrefix: process.env.NODE_ENV === 'development' ? '' : '/ufuk-cakir.github.io/',
+  assetPrefix: '/',
 }
 
 module.exports = nextConfig
