@@ -81,52 +81,54 @@ export default function Home() {
       </section>
 
       {/* About Me Section */}
-      <section className="min-h-screen flex flex-col justify-between p-4 sm:p-8 md:p-16 relative overflow-hidden snap-start">
-        <video
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded-xl"
-          style={{ opacity: 0.4, pointerEvents: "none", userSelect: "none" }}
-          src="/ufuk-cakir.github.io/ai-vis-1-small.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          disablePictureInPicture
-          onContextMenu={(e) => e.preventDefault()}
-        />
-        <div className="relative z-10 text-white grid gap-4 sm:gap-8 md:grid-cols-2">
-          <motion.div
-            className="px-2 sm:px-4"
-            initial={{ opacity: 0, y: -20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[clamp(2.5rem,6vw,6rem)] leading-tight tracking-tight font-light">
-              About Me
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl font-light mt-2 sm:mt-4">From Machine Learning to Physics</p>
-          </motion.div>
-          <motion.div
-            className="px-2 sm:px-4"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            viewport={{ once: true }}
-          >
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl mt-2 sm:mt-4 max-w-full md:max-w-4xl font-light">
-              As a DPhil student at the University of Oxford, I focus on combining Machine Learning and Physics to develop
-              physics-based models for earthquake forecasting. By leveraging tools like JAX and writing differentiable
-              forward models, I aim to uncover new physical principles to improve earthquake prediction and understanding.
-            </p>
-            <a
-              href="/research"
-              className="inline-block mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-light text-white bg-green-600 rounded-full hover:bg-green-700 transition-colors"
-            >
-              Read More
-            </a>
-          </motion.div>
-        </div>
-      </section>
+      <section className="min-h-screen flex flex-col justify-between p-4 sm:p-8 md:p-16 relative overflow-hidden snap-start pt-20 sm:pt-24">
+  <video
+    className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded-xl"
+    style={{ opacity: 0.4, pointerEvents: "none", userSelect: "none" }}
+    src="/ufuk-cakir.github.io/ai-vis-1-small.mp4"
+    autoPlay
+    muted
+    loop
+    playsInline
+    disablePictureInPicture
+    onContextMenu={(e) => e.preventDefault()}
+  />
+  <div className="relative z-10 text-white grid gap-4 sm:gap-8 md:grid-cols-2">
+    <motion.div
+      className="px-2 sm:px-4"
+      initial={{ opacity: 0, y: -20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+      viewport={{ once: true }}
+    >
+      <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-[clamp(2.5rem,6vw,6rem)] leading-tight tracking-tight font-light">
+        About Me
+      </h2>
+      <p className="text-base sm:text-lg md:text-xl font-light mt-2 sm:mt-4">
+        From Machine Learning to Physics
+      </p>
+    </motion.div>
+    <motion.div
+      className="px-2 sm:px-4"
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+      viewport={{ once: true }}
+    >
+      <p className="text-sm sm:text-base md:text-lg lg:text-xl mt-2 sm:mt-4 max-w-full md:max-w-4xl font-light">
+        As a DPhil student at the University of Oxford, I focus on combining Machine Learning and Physics to develop
+        physics-based models for earthquake forecasting. By leveraging tools like JAX and writing differentiable
+        forward models, I aim to uncover new physical principles to improve earthquake prediction and understanding.
+      </p>
+      <a
+        href="/research"
+        className="inline-block mt-4 sm:mt-6 px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-light text-white bg-green-600 rounded-full hover:bg-green-700 transition-colors"
+      >
+        Read More
+      </a>
+    </motion.div>
+  </div>
+</section>
 
       {/* Contact Section */}
       <section className="h-screen flex items-center justify-center p-4 sm:p-8 relative overflow-hidden snap-start">
