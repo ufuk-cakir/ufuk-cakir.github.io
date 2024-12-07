@@ -84,14 +84,17 @@ export default function Home() {
 
       {/* About Me Section */}
       <section className="min-h-screen flex flex-col justify-between p-4 sm:p-8 md:p-16 relative overflow-hidden snap-start">
-        <motion.video
-          className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded-xl"
-          style={{ opacity: 0.4, pointerEvents: "none" , userSelect: "none"}}
-          src="/ufuk-cakir.github.io/ai-vis-1-small.mp4"
-          autoPlay
-          muted
-          loop
-        />
+      <video
+  className="absolute top-0 left-0 w-full h-full object-cover z-0 rounded-xl"
+  style={{ opacity: 0.4, pointerEvents: "none", userSelect: "none" }}
+  src="/ufuk-cakir.github.io/ai-vis-1-small.mp4"
+  autoPlay
+  muted
+  loop
+  playsInline
+  disablePictureInPicture
+  onContextMenu={(e) => e.preventDefault()}
+/>
         <div className="relative z-10 text-white grid gap-4 sm:gap-8 md:grid-cols-2">
           <motion.div
             className="px-4"
@@ -129,14 +132,17 @@ export default function Home() {
 
       {/* Contact Section */}
       <section className="h-screen flex items-center justify-center p-4 sm:p-8 relative overflow-hidden snap-start">
-        <motion.video
-          className="absolute top-0 left-0 w-full h-full object-cover z-0"
-          style={{ opacity: videoOpacity, pointerEvents: "none", userSelect: "none" }}
-          src="/ufuk-cakir.github.io/ai-vis-2-small.mp4"
-          autoPlay
-          muted
-          loop
-        />
+      <video
+  className="absolute top-0 left-0 w-full h-full object-cover z-0"
+  style={{ opacity: 0.2, pointerEvents: "none", userSelect: "none" }}
+  src="/ufuk-cakir.github.io/ai-vis-2-small.mp4"
+  autoPlay
+  muted
+  loop
+  playsInline
+  disablePictureInPicture
+  onContextMenu={(e) => e.preventDefault()}
+/>
         <div className="max-w-[90vw] text-center z-10">
           <motion.div
             initial={{ opacity: 0 }}
