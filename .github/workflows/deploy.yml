@@ -2,8 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - apr-25
+    branches: [apr-25]   # keep your branch name
   workflow_dispatch:
 
 permissions:
@@ -19,33 +18,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
-          cache: npm
+          node-version: 20   # Node 18 is still OK, but 20 is LTS
 
-      - name: Install Dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: npm ci          # or yarn install / pnpm install
 
-      - name: Build Project
-        run: npm run build # No need for next export
+      - name: Build project
+        run: npm run build   # runs next build && next export in your package.json
 
-      - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v2
+      - name: Package static site
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./out # Output directory for static export
+          path: ./out        # folder produced by `next export`
 
   deploy:
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v3
+        uses: actions/deploy-pages@v4
