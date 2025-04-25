@@ -11,7 +11,7 @@ import Button from "../components/Button";
 import Link from "next/link";
 import Cursor from "../components/Cursor";
 
-import NextImage from "next/image";   // ✅ this line *must* be present
+import NextImage from "next/image";  
 // Local Data
 import data from "../data/portfolio.json";
 
@@ -90,13 +90,17 @@ export default function Home() {
 
 
             <NextImage
-              src="https://avatars.githubusercontent.com/ufuk-cakir"   // put the file in /public/images
-              alt="Profile picture"
-              width={500}
-              height={500}
-              className="rounded mb-4 laptop:mb-0 laptop:mr-6 shrink-0"
-              priority
-            />
+          src="https://avatars.githubusercontent.com/ufuk-cakir"
+          alt="Profile picture"
+          width={500} // Keep these for aspect ratio & optimization hint
+          height={500}// Keep these for aspect ratio & optimization hint
+          // --- ADD RESPONSIVE WIDTH CLASSES ---
+          className="rounded mb-4 laptop:mb-0 laptop:mr-6 shrink-0 \
+                     w-3/4 max-w-[300px] mob:max-w-[350px] \
+                     sm:w-1/2 sm:max-w-[400px] \
+                     laptop:w-auto laptop:max-w-[500px]" // Adjust sizes as needed
+          priority
+        />
 
             {/* existing animated headlines */}
           </div>

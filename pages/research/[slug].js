@@ -9,7 +9,7 @@ import data from "../../data/portfolio.json"; // For cursor setting
 import { ISOToDate } from "../../utils"; // Optional: If displaying date
 import markdownToHtml from '../../utils/markdownToHtml'; // <-- ADD THIS LINE
 // Removed: useIsomorphicLayoutEffect, stagger, Button, BlogEditor, useRouter, useState
-
+import { Github, FileText } from "lucide-react";
 const ResearchProject = ({ project }) => {
   // Removed state and refs related to editor and animations
 
@@ -51,28 +51,31 @@ const ResearchProject = ({ project }) => {
            {/* <p className="text-center text-md opacity-60 mt-2">{ISOToDate(project.date)}</p> */}
 
           {/* Buttons for Code/Paper */}
-          <div className="flex flex-wrap justify-center gap-4 my-6">
-            {project.github && (
-              <a
-                className="btn-primary" // Use your existing button style class
-                href={project.github}
-                target="_blank" // Open in new tab
-                rel="noopener noreferrer" // Security best practice
-              >
-                Code / Repository
-              </a>
-            )}
-            {project.paper && (
-              <a
-                className="btn-primary" // Use your existing button style class
-                href={project.paper}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Read Paper
-              </a>
-            )}
-          </div>
+<div className="flex flex-wrap justify-center gap-4 my-6">
+  {project.github && (
+    <a
+      href={project.github}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-primary inline-flex items-center gap-2"
+    >
+      <Github className="h-5 w-5" aria-hidden="true" />
+      <span>Code</span>
+    </a>
+  )}
+
+  {project.paper && (
+    <a
+      href={project.paper}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="btn-primary inline-flex items-center gap-2"
+    >
+      <FileText className="h-5 w-5" aria-hidden="true" />
+      <span>Read&nbsp;Paper</span>
+    </a>
+  )}
+</div>
         </div>
 
         {/* Use ContentSection to render the Markdown content */}

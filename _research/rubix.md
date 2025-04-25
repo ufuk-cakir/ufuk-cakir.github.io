@@ -1,8 +1,9 @@
 ---
 title: RUBIX 
+slug: rubix
 tagline: RUBIX
-image: /images/safe-rl.png
-preview: Fast GPU-
+image: /images/research/rubix-speed.png
+preview: Fast GPU-Powered and Auto-Differentiable Forward Modeling of IFU Data Cubes
 date: 2024-05-20
 authors: Ufuk Çakır
 github: https://github.com/AstroAI-Lab/rubix
