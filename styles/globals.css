@@ -1,0 +1,134 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;1,300&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "./markdown.css";
+
+* {
+font-family: "IBM Plex Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
+
+body {
+  @apply dark:bg-black dark:text-white;
+}
+/* after Tailwind’s @tailwind directives */
+.text-justify {
+  text-align: justify;
+}
+.gradient-circle {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  top: -30px;
+  height: 40px;
+  width: 100vw;
+  opacity: 0.5;
+  filter: blur(40px);
+  background: radial-gradient(
+    circle,
+    rgba(248, 107, 223, 1) 0%,
+    rgba(107, 107, 248, 0.8) 100%
+  );
+}
+.gradient-circle-bottom {
+  position: absolute;
+  pointer-events: none;
+  z-index: 100;
+  bottom: -20px;
+  height: 30px;
+  width: 100vw;
+  opacity: 0.5;
+  filter: blur(40px);
+  background: radial-gradient(
+    circle,
+    rgba(248, 107, 223, 1) 0%,
+    rgba(107, 107, 248, 0.8) 100%
+  );
+}
+
+.gradient-shadow:hover::before {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(-45deg, #45caff 0%, #ff1b6b 100%);
+  transform: translate3d(0px, 20px, 0) scale(0.95);
+  filter: blur(20px);
+  opacity: var(0.7);
+  transition: opacity 0.3s;
+  border-radius: inherit;
+}
+
+/* 
+* Prevents issues when the parent creates a 
+* stacking context. (For example, using the transform
+* property )
+*/
+.gradient-shadow:hover::after {
+  content: "";
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: inherit;
+  border-radius: inherit;
+}
+
+
+
+
+
+table {
+  /* Keep structural styles */
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+th,
+td {
+  /* Common styles for both th and td */
+  @apply text-left p-[0.6em_0.8em]; /* Use Tailwind padding syntax for custom values */
+
+  /* --- Border Styling --- */
+  /* Light mode border */
+  @apply border border-gray-300; /* Use Tailwind color */
+  /* Dark mode border */
+  @apply dark:border-gray-600;   /* Use darker border for dark mode */
+}
+
+th {
+  /* --- Table Header Specific Styling --- */
+  /* Common */
+  @apply font-bold; /* Keep font-bold */
+
+  /* Light mode */
+  @apply bg-gray-100 text-gray-800; /* Use Tailwind bg/text for light mode */
+
+  /* Dark mode overrides */
+  @apply dark:bg-gray-700 dark:text-gray-100; /* Dark bg, light text */
+  /* Adjust dark:bg-gray-700 and dark:text-gray-100 as needed for contrast */
+}
+
+td {
+  /* --- Table Cell Specific Styling --- */
+  /* Light mode text (can often inherit from body, but explicit is safer) */
+   @apply text-white; /* Adjust as needed */
+
+  /* Dark mode text */
+   @apply dark:text-white; /* Adjust as needed */
+}

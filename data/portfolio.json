@@ -1,0 +1,126 @@
+{
+  "name": "Ufuk Çakır",
+  "headerTaglineOne": "Ufuk Çakır",
+  "headerTaglineTwo": "PhD Student",
+  "headerTaglineThree": "University of Oxford",
+  "headerTaglineFour": "",
+  "showCursor": false,
+  "showBlog": false,
+  "darkMode": false,
+  "showResume": false,
+  "showResearch": true,
+  "socials": [
+    { "id": "1", "title": "Github",   "link": "https://github.com/ufuk-cakir" },
+    { "id": "2", "title": "LinkedIn", "link": "https://www.linkedin.com/in/cakir-ufuk/" },
+    { "id": "3", "title": "Twitter",  "link": "https://x.com/ufuk_cakir_" },
+    { "id": "4", "title": "Website",  "link": "https://cakir-ufuk.de" },
+    { "id": "5", "title": "Email",    "link": "mailto:ufukcakir@robots.ox.ac.uk" }
+  ],
+  "projects": [
+    {
+      "id": "1",
+      "title": "4EU+ Science Young To Young Project",
+      "description": "Co-produced an animated video on quantum simulation for science communication; managed coordination, animation, and editing.",
+      "imageSrc": "/syty_intro.mp4",
+      "isVideo": true,
+      "year": 2023,
+      "url": "https://sorbonne-universite.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=b92c0e54-205f-4e1b-a59d-aeca00a3f13e"
+    },
+    {
+      "id": "2",
+      "title": "Research Assistant · Quantum Dynamics Lab",
+      "description": "Built Python animations visualising relaxation dynamics in disordered quantum spin systems.",
+      "imageSrc": "/spin_animation.mp4",
+      "isVideo": true,
+      "year": 2022
+    },
+    {
+      "id": "3",
+      "title": "Carl-Zeiss-Stiftung Summer School",
+      "description": "Organised the Scientific Machine Learning Summer School at IWR Heidelberg and built the event website.",
+      "imageSrc": "/czs.mp4",
+      "isVideo": true,
+      "year": 2023,
+      "url": "https://astroai-lab.de/conferences/czs-school-2023/"
+    },
+    {
+      "id": "4",
+      "title": "4th Lindau Online Sciathon · Cleaning Up Our Planet",
+      "description": "Developed a molecular-simulation workflow to boost plastic-degrading enzyme efficiency; finalist at the 73rd Lindau Nobel Laureate Meeting.",
+      "imageSrc": "/lindau-sciathon-2024.mp4",
+      "isVideo": true,
+      "year": 2024,
+      "url": "https://www.youtube.com/watch?v=_3ahZlp7I7k"
+    },
+    {
+      "id": "5",
+      "title": "Young Scientist · 73rd Lindau Nobel Laureate Meeting",
+      "description": "Selected to engage with Nobel Laureates and global researchers.",
+      "imageSrc": "/sciathon-discussion.JPEG",
+      "isVideo": false,
+      "year": 2024
+    },
+    {
+      "id": "6",
+      "title": "Science Communication Animations",
+      "description": "Created Adobe After Effects animations explaining quantum mechanics and material phases.",
+      "imageSrc": "/Glass Phase Animation.mp4",
+      "isVideo": true,
+      "year": 2022
+    }
+  ],
+  "services": [
+  ],
+  "aboutHeadline": "About Me",
+  "aboutSubhead": "Safe Reinforcement Learning for Disaster Response",
+  "aboutpara": "I am a DPhil student at the University of Oxford researching safe-exploration reinforcement-learning algorithms for real-time disaster-response planning.\n My background spans computational physics and astrophysics.",
+  "resume": {
+    "tagline": "👋 I'm a PhD student building safe-RL algorithms for disaster response.",
+    "description": "I craft theory-guided, GPU-accelerated models that turn noisy observations into robust, real-time decisions.",
+    "experiences": [
+      {
+        "id": "1",
+        "dates": "Apr 2024",
+        "type": "Hackathon",
+        "position": "Participant · Oxford Behavioural Insights Group",
+        "bullets": "Ranked 4 / 20 teams; built an LLM-powered dashboard analysing social-media usage."
+      },
+      {
+        "id": "2",
+        "dates": "Apr 2024",
+        "type": "Sciathon",
+        "position": "Winner · 4th Lindau Online Sciathon",
+        "bullets": "Co-developed a concept for enzymatic plastic degradation and pitched to investors at the Lindau Nobel Laureate Meeting."
+      },
+      {
+        "id": "3",
+        "dates": "Sep 2023 – Nov 2023",
+        "type": "Visiting Researcher",
+        "position": "Machine Learning for Ecology Group · AIMS South Africa",
+        "bullets": "Reduced CNN inference time by 70 % with a genetic-algorithm spectrogram optimiser; integrated TensorBoard into a custom GUI."
+      },
+      {
+        "id": "4",
+        "dates": "Dec 2022 – May 2023",
+        "type": "Research Assistant",
+        "position": "AstroAI Lab · Heidelberg University",
+        "bullets": "Released MEGS, an open-source galaxy-morphology tool; built Plotly-Dash dashboards and published the GAMMA dataset."
+      },
+      {
+        "id": "5",
+        "dates": "Apr 2022 – Sep 2022",
+        "type": "Research Assistant",
+        "position": "Quantum Dynamics Lab · Heidelberg University",
+        "bullets": "Produced Python visualisations supporting publications on relaxation dynamics in disordered spin systems."
+      }
+    ],
+    "education": {
+      "universityName": "University of Oxford · DPhil Engineering (AI for the Environment)",
+      "universityDate": "2024 – 2029 (expected)",
+      "universityPara": "Developing safe-RL algorithms for real-time wildfire response."
+    },
+    "languages": [ "Python", "JAX", "C++", "Unix" ],
+    "frameworks": [ "PyTorch", "Scikit-learn", "Plotly-Dash" ],
+    "others": [ "Git", "Docker", "LaTeX", "TensorBoard" ]
+  }
+}
