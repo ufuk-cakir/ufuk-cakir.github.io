@@ -1,7 +1,8 @@
-
 import { remark } from 'remark';
-import html from 'remark-html';
-import remarkGfm from 'remark-gfm'; // <--- IMPORT GFM PLUGIN
+import remarkGfm from 'remark-gfm';
+import remarkRehype from 'remark-rehype';
+import rehypeStringify from 'rehype-stringify';
+import rehypeHighlight from 'rehype-highlight';
 
 export default async function markdownToHtml(markdown) {
   if (!markdown) {
@@ -9,12 +10,16 @@ export default async function markdownToHtml(markdown) {
   }
   try {
     const result = await remark()
-      .use(remarkGfm) // <--- ADD THE PLUGIN HERE
-      .use(html, { sanitize: false }) // Ensure sanitize:false or a schema allowing tables
+      .use(remarkGfm)
+      // Ensure allowDangerousHtml is true if you use raw HTML in markdown
+      .use(remarkRehype, { allowDangerousHtml: true })
+      .use(rehypeHighlight)
+      .use(rehypeStringify) // This should be the LAST step in the core chain
       .process(markdown);
+
     return result.toString();
   } catch (error) {
     console.error("Error converting markdown to HTML:", error);
-    return `<p>Error rendering content.</p>`;
+    return `<p>Error rendering content: ${error.message}</p>`;
   }
 }

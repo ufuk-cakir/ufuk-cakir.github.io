@@ -1,12 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'export',
-  basePath: '/ufuk-cakir.github.io', // Replace with your GitHub repository name
-  assetPrefix: '/ufuk-cakir.github.io',
-  trailingSlash: true,
   images: {
-    unoptimized: true,
     domains: ["avatars.githubusercontent.com"],
     // Next 13+
     remotePatterns: [
@@ -14,6 +9,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
         pathname: "/u/**",          // or "/**" to cover all paths
+      },
+      { // Add this if you use unsplash in blog/research posts
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
       },
     ],
     // Next 12 and earlier:

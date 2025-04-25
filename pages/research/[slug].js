@@ -7,7 +7,7 @@ import Cursor from "../../components/Cursor"; // Optional: Add Cursor
 import { getAllProjects, getProjectBySlug } from "../../utils/api"; // Ensure correct API calls
 import data from "../../data/portfolio.json"; // For cursor setting
 import { ISOToDate } from "../../utils"; // Optional: If displaying date
-
+import markdownToHtml from '../../utils/markdownToHtml'; // <-- ADD THIS LINE
 // Removed: useIsomorphicLayoutEffect, stagger, Button, BlogEditor, useRouter, useState
 
 const ResearchProject = ({ project }) => {
@@ -88,31 +88,34 @@ const ResearchProject = ({ project }) => {
   );
 };
 
+
+
+
+
 export async function getStaticProps({ params }) {
   const project = getProjectBySlug(params.slug, [
-    "slug", // Needed potentially?
+    "slug",
     "title",
     "image",
-    "github", // Link for code
-    "paper", // Link for paper PDF/page
-    "date", // Optional: for display
-    "content", // **CRUCIAL: Fetch RAW Markdown content**
-    // Add any other fields displayed on the page (e.g., preview, tagline if used)
+    "github",
+    "paper",
+    "date",
+    "content", // Fetch RAW Markdown content
   ]);
 
-  // **DO NOT convert markdown here - ContentSection handles it**
-  // // project.content = await markdownToHtml(project.content); // <-- REMOVED THIS LINE
-
   if (!project) {
-    return { notFound: true }; // Return 404 if project not found
+    return { notFound: true };
   }
+
+  // Convert markdown to HTML at build time
+  // This line caused the error because markdownToHtml wasn't imported
+  const htmlContent = await markdownToHtml(project.content || "");
 
   return {
     props: {
       project: {
         ...project,
-        // Ensure content is passed if fetched correctly
-        content: project.content || "", // Pass empty string if content is missing
+        content: htmlContent, // Pass the generated HTML
       },
     },
     revalidate: 60, // Optional: ISR
