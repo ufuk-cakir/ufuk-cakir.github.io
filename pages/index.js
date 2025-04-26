@@ -50,7 +50,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className={`relative ${data.showCursor && "cursor-none"}`}>
+    <div className={`relative min-h-screen overflow-hidden ${data.showCursor && "cursor-none"}`}>
       {data.showCursor && <Cursor />}
       <Head>
         <title>{data.name}</title>
@@ -90,7 +90,7 @@ export default function Home() {
 
 
             <NextImage
-          src="https://avatars.githubusercontent.com/ufuk-cakir"
+          src="/images/ufuk-profile-pic.png"
           alt="Profile picture"
           width={500} // Keep these for aspect ratio & optimization hint
           height={500}// Keep these for aspect ratio & optimization hint
