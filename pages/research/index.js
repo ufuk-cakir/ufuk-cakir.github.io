@@ -88,6 +88,7 @@ className="cursor-pointer overflow-hidden rounded-lg
                       objectFit="cover" // Equivalent to object-cover CSS
                       // Add hover effect directly to image if desired
                       className="transition-transform duration-300 hover:scale-105"
+                      unoptimized={true} // Disable optimization for local images
                      />
                   </div>
 
