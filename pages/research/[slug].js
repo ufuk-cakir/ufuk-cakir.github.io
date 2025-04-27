@@ -121,7 +121,6 @@ export async function getStaticProps({ params }) {
         content: htmlContent, // Pass the generated HTML
       },
     },
-    revalidate: 60, // Optional: ISR
   };
 }
 
