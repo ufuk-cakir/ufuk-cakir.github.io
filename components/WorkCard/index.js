@@ -72,7 +72,7 @@ export default function WorkCard({
         )}
       </div>
 
-      <h1 className="mt-4 text-2xl laptop:text-3xl font-medium">{name}</h1>
+      <h1 className="mt-4 text-2xl laptop:text-3xl">{name}</h1>
       <h2 className="text-lg laptop:text-xl opacity-60">{description}</h2> {/* Slightly increased opacity */}
     </div>
   );

@@ -13,7 +13,9 @@ module.exports = {
       laptopl: "1440px",
     },
     extend: { fontFamily: {
-        sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui'],
+      
+         sans: ['"Inter Tight"', 'sans-serif'],
+        // sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui'],
       },},
   },
   plugins: [],

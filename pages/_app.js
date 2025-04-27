@@ -14,7 +14,7 @@ const App = ({ Component, pageProps }) => {
       <link rel="icon" href="/images/letter-u.png"/>
     </Head>
 
-    <ThemeProvider>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <Component {...pageProps} />
     </ThemeProvider>
 

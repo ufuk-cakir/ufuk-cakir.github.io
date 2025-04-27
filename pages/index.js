@@ -59,8 +59,8 @@ export default function Home() {
         <title>{data.name}</title>
       </Head>
 
-      <div className="gradient-circle"></div>
-      <div className="gradient-circle-bottom"></div>
+      {/* <div className="gradient-circle"></div> */}
+      {/* <div className="gradient-circle-bottom"></div> */}
 
       <div className="container mx-auto mb-10">
         <Header
@@ -141,13 +141,13 @@ export default function Home() {
       <h1 className="text-5xl sm:text-7xl  text-white leading-none">
         {data.aboutHeadline /* e.g. “UNOSAT” */}
       </h1>
-      <h2 className="text-3xl sm:text-6xl font-light text-white mt-2">
+      <h2 className="text-3xl sm:text-6xl  text-white mt-2">
         {data.aboutSubhead /* e.g. “From Imagery to Impact” */}
       </h2>
     </div>
 
     {/* Paragraph (row 3 / col 2) */}
-    <p className="row-start-7 col-start-2 max-w-md text-white text-lg sm:text-xl font-light mb-6">
+    <p className="row-start-7 col-start-2 max-w-md text-white text-lg sm:text-xl  mb-6">
       {data.aboutpara}
     </p>
   </div>
@@ -165,10 +165,13 @@ export default function Home() {
     <Button type="primary">Explore my research →</Button>
   </Link>
 </section>
+{/* ----------  PROJECTS SECTION  ---------- */}
+  <section className="mt-28 laptop:mt-40 ">
         <div
+
           id ="projects"
           className="mt-40 laptop:mt-30 p-2 laptop:p-0" ref={workRef}>
-          <h1 className="text-2xl text-bold">Some of my recent Projects</h1>
+          <h1 className="text-3xl laptop:text-5xl">Some of my recent Projects</h1>
 
           <div className="mt-5 laptop:mt-10 grid grid-cols-1 tablet:grid-cols-2 gap-4">
             {data.projects.map((project) => (
@@ -182,7 +185,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-
+  </section>
         {/* <div className="mt-10 laptop:mt-30 p-2 laptop:p-0"> */}
         {/*   <h1 className="tablet:m-10 text-2xl text-bold">Services.</h1> */}
         {/*   <div className="mt-5 tablet:m-10 grid grid-cols-1 laptop:grid-cols-2 gap-6"> */}

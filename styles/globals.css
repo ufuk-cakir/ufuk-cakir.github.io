@@ -1,21 +1,24 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;1,300&display=swap');
+/* fonts.css (or wherever you keep the imports) */
+@import url("https://fonts.googleapis.com/css2?family=Inter+Tight:wght@100;200;300;400;500;600;700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @import "./markdown.css";
 
 * {
-font-family: "IBM Plex Sans", sans-serif;
+  font-family: "Inter Tight", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 300;
+  font-weight: 200;
   font-style: normal;
-  font-variation-settings:
-    "wdth" 100;
+  font-variation-settings: "wdth" 100;
 }
 
 body {
-  @apply dark:bg-black dark:text-white;
+  /* @apply dark:bg-black dark:text-white; */
+ /* @apply dark:bg-slate-900 dark:text-white; */
+  @apply dark:bg-[#14161a] dark:text-white;
 }
 /* after Tailwind’s @tailwind directives */
 .text-justify {
@@ -24,32 +27,49 @@ body {
 .gradient-circle {
   position: absolute;
   pointer-events: none;
-  z-index: 100;
-  top: -30px;
-  height: 40px;
+  /* --- CHANGE: Increase negative offset significantly --- */
+  /* Adjust this value as needed, -150px to -300px or -15vh to -30vh often works */
+  top: -200px;
+  /* Optional: You might increase height slightly if desired with larger offset */
+  height: 60px;
   width: 100vw;
   opacity: 0.5;
-  filter: blur(40px);
+  filter: blur(40px); /* Keep blur */
   background: radial-gradient(
     circle,
     rgba(248, 107, 223, 1) 0%,
     rgba(107, 107, 248, 0.8) 100%
   );
+  /* Ensure it doesn't cause horizontal scroll */
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
+
 .gradient-circle-bottom {
   position: absolute;
   pointer-events: none;
-  z-index: 100;
-  bottom: -20px;
-  height: 30px;
+  /* --- CHANGE: Place behind content --- */
+  z-index: -1;
+  /* --- CHANGE: Increase negative offset significantly --- */
+  /* Adjust this value as needed, -150px to -300px or -15vh to -30vh often works */
+  bottom: -200px;
+   /* Optional: You might increase height slightly if desired with larger offset */
+  height: 50px;
   width: 100vw;
   opacity: 0.5;
-  filter: blur(40px);
+  filter: blur(40px); /* Keep blur */
   background: radial-gradient(
     circle,
     rgba(248, 107, 223, 1) 0%,
     rgba(107, 107, 248, 0.8) 100%
   );
+   /* Ensure it doesn't cause horizontal scroll */
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .gradient-shadow:hover::before {
