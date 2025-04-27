@@ -92,6 +92,7 @@ export default function Home() {
             <NextImage
           src="/images/ufuk-profile-pic.png"
           alt="Profile picture"
+          unoptimized={true} // Disable optimization for local images
           width={500} // Keep these for aspect ratio & optimization hint
           height={500}// Keep these for aspect ratio & optimization hint
           // --- ADD RESPONSIVE WIDTH CLASSES ---
