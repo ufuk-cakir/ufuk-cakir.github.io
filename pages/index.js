@@ -24,6 +24,9 @@ export default function Home() {
   const textThree = useRef();
   const textFour = useRef();
 
+
+  // inside Header component
+  //
   // Handling Scroll
   const handleWorkScroll = () => {
     window.scrollTo({
@@ -111,6 +114,7 @@ export default function Home() {
 
 {/* ----------  ABOUT SECTION  ---------- */}
 <section
+  id="about"
   ref={aboutRef}
   className="relative min-h-screen w-full overflow-hidden scroll-mt-20 pt-12 sm:pt-16 lg:pt-24"
 >
@@ -161,7 +165,9 @@ export default function Home() {
     <Button type="primary">Explore my research →</Button>
   </Link>
 </section>
-        <div className="mt-40 laptop:mt-30 p-2 laptop:p-0" ref={workRef}>
+        <div
+          id ="projects"
+          className="mt-40 laptop:mt-30 p-2 laptop:p-0" ref={workRef}>
           <h1 className="text-2xl text-bold">Some of my recent Projects</h1>
 
           <div className="mt-5 laptop:mt-10 grid grid-cols-1 tablet:grid-cols-2 gap-4">

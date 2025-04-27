@@ -13,6 +13,20 @@ const Header = ({ handleWorkScroll, handleAboutScroll, isBlog }) => {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
+
+  // generic helper → works on every page
+  const jump = (hash) => {
+    if (router.pathname === "/") {
+      // already on Home → smooth-scroll if the section exists
+      const el = document.getElementById(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+        return;
+      }
+    }
+    // different page OR section missing → navigate
+    router.push(`/#${hash}`);
+  };
   // Make sure showResearch is destructured
   const { name, showBlog, showResume, showResearch } = data;
 
@@ -32,8 +46,8 @@ const Header = ({ handleWorkScroll, handleAboutScroll, isBlog }) => {
         >
           {!isBlog ? (
             <div className="grid grid-cols-1">
-              <Button onClick={handleWorkScroll}>Projects</Button>
-              <Button onClick={handleAboutScroll}>About</Button>
+      <Button onClick={() => jump("projects")}>Projects</Button>
+      <Button onClick={() => jump("about")}>About</Button>
               {/* Research button - already here */}
               {showResearch && (
                 <Button onClick={() => router.push("/research")}>
@@ -105,8 +119,8 @@ const Header = ({ handleWorkScroll, handleAboutScroll, isBlog }) => {
         </h1>
         {!isBlog ? (
           <div className="flex items-center space-x-4"> {/* Use space-x for spacing */}
-            <Button onClick={handleWorkScroll}>Projects</Button>
-            <Button onClick={handleAboutScroll}>About</Button>
+      <Button onClick={() => jump("projects")}>Projects</Button>
+      <Button onClick={() => jump("about")}>About</Button>
 
             {/* === ADD RESEARCH BUTTON HERE for Desktop (!isBlog) === */}
             {showResearch && (
