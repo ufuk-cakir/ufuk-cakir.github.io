@@ -147,8 +147,7 @@ export async function getStaticProps() {
     props: {
       // Sort projects by date, newest first (optional)
       projects: projects.sort((a, b) => new Date(b.date) - new Date(a.date)),
-    },
-     revalidate: 60, // Optional: ISR - revalidate every 60 seconds
+    }
   };
 }
 
