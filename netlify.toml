@@ -1,2 +1,2 @@
-[[plugins]]
-  package = "@netlify/next"
+# [[plugins]]
+#   package = "@netlify/next"
