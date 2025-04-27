@@ -10,7 +10,7 @@ import Head from "next/head";
 import Button from "../components/Button";
 import Link from "next/link";
 import Cursor from "../components/Cursor";
-import profile from "@/public/images/ufuk-profile-pic.png";
+
 import NextImage from "next/image";  
 // Local Data
 import data from "../data/portfolio.json";
@@ -90,7 +90,7 @@ export default function Home() {
 
 
             <NextImage
-          src= {profile}
+          src="/images/ufuk-profile-pic.png"
           alt="Profile picture"
           width={500} // Keep these for aspect ratio & optimization hint
           height={500}// Keep these for aspect ratio & optimization hint
