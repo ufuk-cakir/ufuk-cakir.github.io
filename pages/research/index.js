@@ -1,10 +1,11 @@
 import Head from "next/head";
-import Router from "next/router"; // Use Router for navigation
+import Image from 'next/image'; // Import next/image
+import Router from "next/router";
 import { useRef } from "react";
 import { stagger } from "../../animations"; // Assuming animations apply here too
 import Header from "../../components/Header";
 import Cursor from "../../components/Cursor"; // Include if using cursor globally
-import Footer from "../../components/Footer"; // Optional: Add Footer for consistency
+// import Footer from "../../components/Footer"; // Optional: Add Footer for consistency
 import data from "../../data/portfolio.json";
 import { ISOToDate, useIsomorphicLayoutEffect } from "../../utils";
 import { getAllProjects } from "../../utils/api"; // Ensure this fetches research projects
@@ -59,33 +60,64 @@ const ResearchIndex = ({ projects }) => {
               Research.
             </h1>
 
-            {/* Grid for Research Project Cards */}
-            <div ref={gridRef} className="mt-10 grid grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 gap-10">
+            {/* Grid for Research Project Cards - Adjusted gap */}
+            <div
+              ref={gridRef}
+              className="mt-10 grid grid-cols-1 tablet:grid-cols-2 laptop:grid-cols-3 gap-6 md:gap-8 lg:gap-10"
+            >
               {projects && projects.map((project) => (
-                // Research Card
+                // --- Research Card Start ---
                 <div
                   key={project.slug}
-                  onClick={() => Router.push(`/research/${project.slug}`)} // Navigate to research slug
-                  className="cursor-pointer group overflow-hidden rounded-lg shadow-hover transition-shadow duration-300 bg-white dark:bg-slate-800 p-4" // Added basic card styling
+                  onClick={() => Router.push(`/research/${project.slug}`)}
+                  // Use flex-col for vertical stacking, basic card styles
+className="cursor-pointer overflow-hidden rounded-lg
+           border border-cyan-400/50 dark:border-cyan-600/60  // Border: Cyan, slightly transparent
+           shadow-lg shadow-cyan-400/20 dark:shadow-cyan-600/20 // Glow: Subtle cyan shadow
+           hover:shadow-xl hover:shadow-cyan-400/40 dark:hover:shadow-cyan-500/40 // Enhanced glow on hover
+           transition-all duration-300 // Transition border, shadow, etc.
+           flex flex-col" // Keep flex layout
                 >
-                  <div className="relative w-full h-60 rounded-md overflow-hidden mb-4">
-                     <img
+                  {/* Image Container: Use aspect ratio for responsive height */}
+                  <div className="relative w-full  aspect-video overflow-hidden scale-90 rounded-lg">
+                     {/* Use next/image for optimization */}
+                     <Image
                       src={project.image}
                       alt={project.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" // Added hover effect
+                      layout= "fill" // Fill parent container
+                      objectFit="cover" // Equivalent to object-cover CSS
+                      // Add hover effect directly to image if desired
+                      className="transition-transform duration-300 hover:scale-105"
                      />
                   </div>
-                  <h2 className="mt-3 text-2xl font-semibold">{project.title}</h2>
-                  <p className="mt-2 text-base opacity-70 dark:opacity-60">{project.preview}</p>
-                  <span className="block text-sm mt-3 opacity-50 dark:opacity-40">
-                    {ISOToDate(project.date)}
-                  </span>
+
+                  {/* Text Content Area with Padding */}
+                  <div className="p-4 flex flex-col flex-grow"> {/* flex-grow helps align content if cards vary in height */}
+                    {/* Title: Responsive font size, explicit colors */}
+                    <h2 className="text-lg sm:text-xl font-semibold">
+                      {project.title}
+                    </h2>
+
+                    {/* Preview: Responsive font size, explicit colors, takes available space */}
+                    <p className="mt-2 text-sm sm:text-base flex-grow">
+                      {project.preview}
+                    </p>
+
+                    {/* Date: Responsive font size, explicit colors, spacing */}
+                    <span className="block text-xs sm:text-sm mt-3 pt-2 text-gray-500 dark:text-gray-400">
+                      {ISOToDate(project.date)}
+                    </span>
+                  </div>
                 </div>
+                // --- Research Card End ---
               ))}
             </div>
+
             {/* Display message if no projects found */}
              {(!projects || projects.length === 0) && (
-               <p className="mt-10 text-xl opacity-70">No research projects published yet.</p>
+               <p className="mt-10 text-lg sm:text-xl opacity-80 dark:opacity-70">
+                 No research projects published yet.
+               </p>
              )}
           </div>
           {/* <Footer /> */} {/* Uncomment if you want a footer */}
@@ -102,11 +134,14 @@ export async function getStaticProps() {
   const projects = getAllProjects([
     "slug",
     "title",
-    "image",
+    "image", // Ensure image path is correct for next/image (usually root-relative like /images/research/my-image.jpg)
     "preview",
     "date",
     // Add any other fields needed for the card
   ]);
+
+  // Make sure the 'image' path in your markdown/data files is suitable for next/image
+  // e.g., it should start with '/' if the image is in the public directory.
 
   return {
     props: {

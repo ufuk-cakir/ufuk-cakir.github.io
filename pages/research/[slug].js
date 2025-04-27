@@ -36,7 +36,7 @@ const ResearchProject = ({ project }) => {
           {/* Project Header Section - Title, Image, Buttons */}
           {project.image && (
              <img
-              className="w-full max-w-5xl mx-auto h-auto md:h-96 rounded-lg shadow-lg object-cover mb-8" // Adjusted styling
+              className="scale-70 w-full max-w-5xl mx-auto h-auto md:h-96 rounded-xl shadow-lg object-cover mb-8" // Adjusted styling
               src={project.image}
               alt={project.title}
             />
