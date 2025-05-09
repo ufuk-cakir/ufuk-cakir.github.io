@@ -1,0 +1,2 @@
+/questions/*  https://ufuk-cakir.github.io/questions/:splat  200
+/notes/* https://ufuk-cakir.github.io/questions/:splat  200
