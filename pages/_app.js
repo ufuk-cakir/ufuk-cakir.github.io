@@ -12,7 +12,19 @@ const App = ({ Component, pageProps }) => {
     <Head>
       <title>Ufuk Çakır</title>
       <link rel="icon" href="/images/letter-u.png"/>
+
+      <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-MDDGW0LMCD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-MDDGW0LMCD');
+</script>
     </Head>
+
+
 
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <Component {...pageProps} />
