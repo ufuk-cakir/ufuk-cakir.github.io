@@ -13,7 +13,8 @@ const App = ({ Component, pageProps }) => {
     <Head>
       <title>Ufuk Çakır</title>
       <link rel="icon" href="/images/letter-u.png"/>
-
+    </Head> 
+    
      {/* 2. Add the Google Analytics scripts using the next/script component */}
       <Script
         strategy="afterInteractive"
@@ -30,8 +31,6 @@ const App = ({ Component, pageProps }) => {
           gtag('config', 'G-MDDGW0LMCD');
         `}
       </Script>
-    </Head> 
-
 
 
     <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
