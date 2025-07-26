@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import { ThemeProvider } from "next-themes";
 import 'highlight.js/styles/github-dark.css'; // Example: Dark theme
 import Head from "next/head";
+import Script from "next/script";
 // or
 const App = ({ Component, pageProps }) => {
   return (
@@ -13,16 +14,23 @@ const App = ({ Component, pageProps }) => {
       <title>Ufuk Çakır</title>
       <link rel="icon" href="/images/letter-u.png"/>
 
-      <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-MDDGW0LMCD"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-MDDGW0LMCD');
-</script>
-    </Head>
+     {/* 2. Add the Google Analytics scripts using the next/script component */}
+      <Script
+        strategy="afterInteractive"
+        src="https://www.googletagmanager.com/gtag/js?id=G-MDDGW0LMCD"
+      />
+      <Script
+        id="google-analytics"
+        strategy="afterInteractive"
+      >
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-MDDGW0LMCD');
+        `}
+      </Script>
+    </Head> 
 
 
 
