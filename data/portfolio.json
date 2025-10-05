@@ -5,7 +5,7 @@
   "headerTaglineThree": "University of Oxford",
   "headerTaglineFour": "",
   "showCursor": false,
-  "showBlog": false,
+  "showBlog": true,
   "darkMode": false,
   "showResume": false,
   "showResearch": true,
