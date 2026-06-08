@@ -363,6 +363,22 @@ const FILES = {
       ...p
     }))
   },
+  writing: {
+    kind: "finder",
+    title: "Writing",
+    icon: "folder",
+    view: "list",
+    items: (SITE_.writing || []).map(p => ({
+      type: "txt",
+      title: p.title,
+      venue: p.kind,
+      year: p.date,
+      blurb: p.blurb,
+      keywords: p.keywords,
+      slug: p.slug,
+      url: p.url
+    }))
+  },
   outreach: {
     kind: "finder",
     title: "Outreach",
@@ -402,8 +418,56 @@ const FILES = {
     kind: "detail",
     title: SITE_.groups.ie.title,
     detail: groupDetail(SITE_.groups.ie)
+  },
+  doom: {
+    kind: "embed",
+    title: "DOOM",
+    url: "https://archive.org/embed/msdos_DOOM_1993"
   }
 };
+function DoomIcon() {
+  return /*#__PURE__*/React.createElement("svg", {
+    className: "art",
+    viewBox: "0 0 64 64",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("linearGradient", {
+    id: "doomg",
+    x1: "0",
+    y1: "0",
+    x2: "0",
+    y2: "1"
+  }, /*#__PURE__*/React.createElement("stop", {
+    offset: "0",
+    stopColor: "#7c1414"
+  }), /*#__PURE__*/React.createElement("stop", {
+    offset: "1",
+    stopColor: "#240505"
+  }))), /*#__PURE__*/React.createElement("rect", {
+    x: "6",
+    y: "6",
+    width: "52",
+    height: "52",
+    rx: "14",
+    fill: "url(#doomg)"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "6",
+    y: "6",
+    width: "52",
+    height: "26",
+    rx: "14",
+    fill: "#fff",
+    opacity: "0.08"
+  }), /*#__PURE__*/React.createElement("text", {
+    x: "32",
+    y: "40",
+    textAnchor: "middle",
+    fill: "#ff5a3c",
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontSize: "15",
+    fontWeight: "800",
+    letterSpacing: "1"
+  }, "DOOM"));
+}
 Object.assign(window, {
   FolderIcon,
   DocIcon,
@@ -413,5 +477,6 @@ Object.assign(window, {
   GlobeIcon,
   GitHubIcon,
   TrashIcon,
+  DoomIcon,
   FILES
 });

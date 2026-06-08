@@ -288,8 +288,23 @@ window.SITE = {
     },
   ],
 
-  /* "Outreach" replaces the old (now empty) Writing folder: my
-     science-communication animations. Rename or refill freely. */
+  /* Writing — blog posts. Each post opens in the Reader (full-screen +
+     #read/<slug> deep-link) and is served from the existing /blog build.
+     Add an entry here whenever you publish a new post. */
+  writing: [
+    {
+      slug: "plasticity-as-the-mirror-of-empowerment",
+      title: "Plasticity as the Mirror of Empowerment",
+      kind: "Essay",
+      date: "June 2026",
+      blurb:
+        "A walk from Shannon to a clean impossibility result about agency — and why an agent cannot maximally shape the world and be maximally shaped by it at once.",
+      keywords: ["empowerment", "agency", "information theory", "plasticity"],
+      url: "blog/plasticity-as-the-mirror-of-empowerment.html",
+    },
+  ],
+
+  /* "Outreach": my science-communication animations. */
   outreach: [
     {
       name: "About these animations.txt",

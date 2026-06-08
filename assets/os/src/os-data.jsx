@@ -85,6 +85,8 @@ const FILES = {
     items: SITE_.projects.map((p) => ({ type: "folder", ...p })) },
   talks: { kind: "finder", title: "Talks", icon: "folder", view: "list",
     items: SITE_.talks.map((p) => ({ type: "pdf", ...p })) },
+  writing: { kind: "finder", title: "Writing", icon: "folder", view: "list",
+    items: (SITE_.writing || []).map((p) => ({ type: "txt", title: p.title, venue: p.kind, year: p.date, blurb: p.blurb, keywords: p.keywords, slug: p.slug, url: p.url })) },
   outreach: { kind: "finder", title: "Outreach", icon: "folder", view: "grid",
     items: SITE_.outreach.map((p) => ({ type: "image", ...p })) },
 
@@ -96,9 +98,23 @@ const FILES = {
   about: { kind: "about", title: "About Me" },
   ori: { kind: "detail", title: SITE_.groups.ori.title, detail: groupDetail(SITE_.groups.ori) },
   ie: { kind: "detail", title: SITE_.groups.ie.title, detail: groupDetail(SITE_.groups.ie) },
+  doom: { kind: "embed", title: "DOOM", url: "https://archive.org/embed/msdos_DOOM_1993" },
 };
 
+function DoomIcon() {
+  return (
+    <svg className="art" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="doomg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#7c1414" /><stop offset="1" stopColor="#240505" /></linearGradient>
+      </defs>
+      <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#doomg)" />
+      <rect x="6" y="6" width="52" height="26" rx="14" fill="#fff" opacity="0.08" />
+      <text x="32" y="40" textAnchor="middle" fill="#ff5a3c" fontFamily="Georgia, 'Times New Roman', serif" fontSize="15" fontWeight="800" letterSpacing="1">DOOM</text>
+    </svg>
+  );
+}
+
 Object.assign(window, {
-  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon,
+  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon, DoomIcon,
   FILES,
 });

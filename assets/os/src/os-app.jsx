@@ -2,7 +2,7 @@
    os-app.jsx — Ufuk Çakır's desktop environment
    (production build of the Claude Design prototype)
    ============================================================ */
-const { useState, useEffect, useRef, useCallback } = React;
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
 const S = window.SITE;
 const L = S.links;
 
@@ -39,6 +39,33 @@ function openHref(href) {
   if (href) window.open(href, "_blank", "noopener");
 }
 
+/* ---------- fuzzy search (Quick Search palette) ---------- */
+function fuzzyScore(q, text) {
+  if (!q) return 1;
+  q = q.toLowerCase();
+  const t = (text || "").toLowerCase();
+  const sub = t.indexOf(q);
+  if (sub !== -1) return 120 + (sub === 0 ? 30 : 0) + (t[sub - 1] === " " ? 15 : 0) - sub * 0.05;
+  let ti = 0, score = 0, prev = -2;
+  for (let qi = 0; qi < q.length; qi++) {
+    const c = q[qi];
+    let f = -1;
+    for (let k = ti; k < t.length; k++) { if (t[k] === c) { f = k; break; } }
+    if (f === -1) return -1;
+    score += 1;
+    if (f === prev + 1) score += 5;
+    if (f === 0 || t[f - 1] === " " || t[f - 1] === "-") score += 8;
+    prev = f; ti = f + 1;
+  }
+  return score;
+}
+function matchEntry(q, e) {
+  const ts = fuzzyScore(q, e.title);
+  const xs = fuzzyScore(q, e.text || e.title);
+  if (ts < 0 && xs < 0) return -1;
+  return Math.max(ts * 2, xs);
+}
+
 /* ---------- media preview (looping muted video / image) ---------- */
 function Preview({ media, className }) {
   if (!media) return null;
@@ -55,6 +82,8 @@ function Preview({ media, className }) {
 function IconArt({ type, src }) {
   if (type === "photo") return <img className="art art-photo" src={src} alt="" />;
   if (type === "logo") return <img className="art art-logo" src={src} alt="" />;
+  if (type === "about") return <AppIcon from="#0a72e8" to="#5b3a8c" glyph={S.identity.initial} />;
+  if (type === "embed") return <DoomIcon />;
   if (type === "folder") return <FolderIcon />;
   if (type === "txt") return <DocIcon tag="TXT" tagColor="var(--accent)" />;
   if (type === "pdf") return <DocIcon tag="PDF" tagColor="#e5341c" />;
@@ -73,11 +102,13 @@ const ICONS = [
   { id: "publications", type: "folder", label: "Publications", open: "publications" },
   { id: "projects", type: "folder", label: "Projects", open: "projects" },
   { id: "talks", type: "folder", label: "Talks", open: "talks" },
+  { id: "writing", type: "folder", label: "Writing", open: "writing" },
   { id: "outreach", type: "folder", label: "Outreach", open: "outreach" },
   { id: "whyresearch", type: "txt", label: "Why Research?.txt", open: "whyresearch" },
   { id: "background", type: "txt", label: "Background.txt", open: "background" },
   { id: "ori", type: "logo", src: S.groups.ori.logo, label: "Oxford Robotics Institute", open: "ori" },
   { id: "ie", type: "logo", src: S.groups.ie.logo, label: "Intelligent Earth CDT", open: "ie" },
+  { id: "doom", type: "embed", label: "DOOM", open: "doom" },
 ];
 function defaultIconPos() {
   const W = window.innerWidth;
@@ -93,8 +124,8 @@ function defaultWidgetPos() {
   return { clock: { x: 40, y: 56 }, weather: { x: 40, y: 250 }, note: { x: 40, y: 452 } };
 }
 
-const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], about: [360, 470] };
-const STORE_KEY = "cakir-os-v4";
+const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], post: [820, 640], embed: [760, 580], about: [360, 470] };
+const STORE_KEY = "cakir-os-v5";
 
 /* ============================================================
    Window content
@@ -102,8 +133,8 @@ const STORE_KEY = "cakir-os-v4";
 function FinderContent({ f, onOpen, onItem }) {
   const [active, setActive] = useState(f.title);
   const fav = [
-    ["Publications", "publications"], ["Projects", "projects"],
-    ["Talks", "talks"], ["Outreach", "outreach"],
+    ["Publications", "publications"], ["Projects", "projects"], ["Talks", "talks"],
+    ["Writing", "writing"], ["Outreach", "outreach"],
   ];
   return (
     <div className="win-body">
@@ -206,6 +237,35 @@ function DetailContent({ f }) {
   );
 }
 
+/* reading view — frames the real /blog post; full-screen + deep-link */
+function PostContent({ f, win, onToggleFull }) {
+  const post = f.post;
+  return (
+    <div className="win-body postwin">
+      <div className="readerbar">
+        <span className="rb-title">{post.title}</span>
+        <span className="rb-actions">
+          <a className="rb-link" href={post.url} target="_blank" rel="noopener">Open page ↗</a>
+          <button className="rb-full" onClick={() => onToggleFull(win.wid)}>
+            {win.full ? "Exit full screen" : "⤢ Full screen"}
+          </button>
+        </span>
+      </div>
+      <iframe className="reader-frame" src={post.url} title={post.title} loading="lazy" />
+    </div>
+  );
+}
+
+/* generic embedded app (e.g. DOOM) */
+function EmbedContent({ f }) {
+  return (
+    <div className="win-body embedwin">
+      <iframe className="embed-frame" src={f.url} title={f.title}
+        allow="autoplay; fullscreen; gamepad; cross-origin-isolated" allowFullScreen />
+    </div>
+  );
+}
+
 function AboutContent() {
   const id = S.identity;
   const items = [
@@ -231,11 +291,62 @@ function AboutContent() {
   );
 }
 
+/* ---------- Quick Search command palette ---------- */
+function Palette({ index, onClose }) {
+  const [q, setQ] = useState("");
+  const [sel, setSel] = useState(0);
+  const inputRef = useRef(null);
+  useEffect(() => { inputRef.current && inputRef.current.focus(); }, []);
+  const results = useMemo(() => {
+    if (!q.trim()) return index.filter((e) => e.primary).slice(0, 8);
+    return index
+      .map((e) => ({ e, s: matchEntry(q.trim(), e) }))
+      .filter((x) => x.s >= 0)
+      .sort((a, b) => b.s - a.s)
+      .slice(0, 8)
+      .map((x) => x.e);
+  }, [q, index]);
+  useEffect(() => { setSel(0); }, [q]);
+  const choose = (r) => { if (r) { r.run(); onClose(); } };
+  const onKey = (e) => {
+    if (e.key === "ArrowDown") { e.preventDefault(); setSel((s) => Math.min(results.length - 1, s + 1)); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setSel((s) => Math.max(0, s - 1)); }
+    else if (e.key === "Enter") { e.preventDefault(); choose(results[sel]); }
+    else if (e.key === "Escape") { e.preventDefault(); e.stopPropagation(); onClose(); }
+  };
+  return (
+    <div className="pal-scrim" onPointerDown={onClose}>
+      <div className="palette" onPointerDown={(e) => e.stopPropagation()}>
+        <div className="pal-input">
+          <svg width="17" height="17" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.7" cy="6.7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.5" /><line x1="10.2" y1="10.2" x2="14.5" y2="14.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+          <input ref={inputRef} value={q} onChange={(e) => setQ(e.target.value)} onKeyDown={onKey}
+            placeholder="Search publications, talks, writing, projects…" />
+          <span className="pal-esc">esc</span>
+        </div>
+        <div className="pal-results">
+          {results.length === 0 && <div className="pal-empty">No matches for “{q}”</div>}
+          {results.map((r, i) => (
+            <div className={"pal-row" + (i === sel ? " sel" : "")} key={r.key}
+              onPointerEnter={() => setSel(i)} onClick={() => choose(r)}>
+              <span className="pal-ic"><IconArt type={r.type} src={r.src} /></span>
+              <span className="pal-main">
+                <span className="pal-title">{r.title}</span>
+                {r.sub && <span className="pal-sub">{r.sub}</span>}
+              </span>
+              <span className="pal-cat">{r.cat}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- window shell ---------- */
-function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen, onItem }) {
+function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen, onItem, onToggleFull }) {
   const ttlDown = (e) => { onFocus(); beginDrag(e, win.x, win.y, (x, y) => onDrag(win.wid, Math.max(28, x), Math.max(28, y))); };
   return (
-    <div className={"window" + (focused ? " focused" : "") + (win.closing ? " closing" : " opening")}
+    <div className={"window" + (focused ? " focused" : "") + (win.full ? " full" : "") + (win.closing ? " closing" : " opening")}
       style={{ left: win.x, top: win.y, width: win.w, height: win.h, zIndex: win.z, display: win.min ? "none" : "flex" }}
       onPointerDown={onFocus}>
       <div className="titlebar" onPointerDown={ttlDown} onDoubleClick={() => onZoom(win.wid)}>
@@ -249,6 +360,8 @@ function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen,
       {f.kind === "finder" && <FinderContent f={f} onOpen={onOpen} onItem={onItem} />}
       {f.kind === "text" && <TextContent f={f} />}
       {f.kind === "detail" && <DetailContent f={f} />}
+      {f.kind === "post" && <PostContent f={f} win={win} onToggleFull={onToggleFull} />}
+      {f.kind === "embed" && <EmbedContent f={f} />}
       {f.kind === "about" && <AboutContent />}
     </div>
   );
@@ -313,6 +426,9 @@ function App() {
   const [openMenu, setOpenMenu] = useState(null);
   const [bounce, setBounce] = useState(null);
   const [hint, setHint] = useState(!s0.seen);
+  const [palOpen, setPalOpen] = useState(false);
+  const palOpenRef = useRef(false);
+  useEffect(() => { palOpenRef.current = palOpen; }, [palOpen]);
   const topZ = useRef(Math.max(100, s0.topZ || 100));
 
   /* clock */
@@ -340,6 +456,14 @@ function App() {
     setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, z: nextZ() } : w)));
   }, []);
 
+  const placeWin = (n, w, h, center) => {
+    if (center) return { x: Math.max(24, Math.round((window.innerWidth - w) / 2)), y: Math.max(44, Math.round((window.innerHeight - h) / 2)) };
+    return {
+      x: Math.max(24, Math.round((window.innerWidth - w) / 2) + (n % 5) * 30 - 60),
+      y: Math.max(44, Math.round((window.innerHeight - h) / 2) + (n % 5) * 26 - 50),
+    };
+  };
+
   const openFile = useCallback((key, titleOverride) => {
     const f = FILES[key];
     if (!f) return;
@@ -347,15 +471,7 @@ function App() {
       const ex = ws.find((w) => w.openId === key && !w.closing);
       if (ex) return ws.map((w) => (w.wid === ex.wid ? { ...w, min: false, z: nextZ() } : w));
       const [w, h] = SIZE[f.kind] || [640, 460];
-      const n = ws.length;
-      let x, y;
-      if (key === "about") {
-        x = Math.max(24, Math.round((window.innerWidth - w) / 2));
-        y = Math.max(44, Math.round((window.innerHeight - h) / 2));
-      } else {
-        x = Math.max(24, Math.round((window.innerWidth - w) / 2) + (n % 5) * 30 - 60);
-        y = Math.max(44, Math.round((window.innerHeight - h) / 2) + (n % 5) * 26 - 50);
-      }
+      const { x, y } = placeWin(ws.length, w, h, key === "about");
       return [...ws, { wid: uid(), openId: key, title: titleOverride, x, y, w, h, z: nextZ(), min: false }];
     });
   }, []);
@@ -366,9 +482,7 @@ function App() {
       const ex = ws.find((w) => w.openId === key && !w.closing);
       if (ex) return ws.map((w) => (w.wid === ex.wid ? { ...w, min: false, z: nextZ() } : w));
       const [w, h] = SIZE.detail;
-      const n = ws.length;
-      const x = Math.max(24, Math.round((window.innerWidth - w) / 2) + (n % 5) * 30 - 60);
-      const y = Math.max(44, Math.round((window.innerHeight - h) / 2) + (n % 5) * 26 - 50);
+      const { x, y } = placeWin(ws.length, w, h);
       return [...ws, { wid: uid(), openId: key, detail: item, title: (item.title || item.name), x, y, w, h, z: nextZ(), min: false }];
     });
   }, []);
@@ -379,28 +493,38 @@ function App() {
       const ex = ws.find((w) => w.openId === key && !w.closing);
       if (ex) return ws.map((w) => (w.wid === ex.wid ? { ...w, min: false, z: nextZ() } : w));
       const [w, h] = SIZE.text;
-      const n = ws.length;
-      const x = Math.max(24, Math.round((window.innerWidth - w) / 2) + (n % 5) * 30 - 60);
-      const y = Math.max(44, Math.round((window.innerHeight - h) / 2) + (n % 5) * 26 - 50);
+      const { x, y } = placeWin(ws.length, w, h);
       return [...ws, { wid: uid(), openId: key, doc: item.doc, title: (item.name || item.title), x, y, w, h, z: nextZ(), min: false }];
     });
   }, []);
 
-  /* item double-click: text doc → text window; rich item → detail; bare link → open it */
+  const openPost = useCallback((post, full) => {
+    const key = "post:" + post.slug;
+    setWindows((ws) => {
+      const ex = ws.find((w) => w.openId === key && !w.closing);
+      if (ex) return ws.map((w) => (w.wid === ex.wid ? { ...w, min: false, full: full || w.full, z: nextZ() } : w));
+      const [w, h] = SIZE.post;
+      const { x, y } = placeWin(ws.length, w, h, !!full);
+      return [...ws, { wid: uid(), openId: key, post, title: post.title, x, y, w, h, full: !!full, z: nextZ(), min: false }];
+    });
+  }, []);
+
+  /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback((it) => {
+    if (it.slug && it.url) return openPost(it);
     if (it.doc) return openTextDoc(it);
     const rich = it.blurb || it.abstract || it.media || (it.keywords && it.keywords.length);
     if (rich) return openDetail(it);
     const href = it.links && it.links[0] && it.links[0].href;
     if (href) return openHref(href);
     openDetail(it);
-  }, [openDetail, openTextDoc]);
+  }, [openDetail, openTextDoc, openPost]);
 
   const closeWin = useCallback((wid) => {
-    setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, closing: true } : w)));
+    setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, closing: true, full: false } : w)));
     setTimeout(() => setWindows((ws) => ws.filter((w) => w.wid !== wid)), 180);
   }, []);
-  const minWin = useCallback((wid) => setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, min: true } : w))), []);
+  const minWin = useCallback((wid) => setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, min: true, full: false } : w))), []);
   const zoomWin = useCallback((wid) => {
     setWindows((ws) => ws.map((w) => {
       if (w.wid !== wid) return w;
@@ -409,11 +533,53 @@ function App() {
     }));
   }, []);
   const dragWin = useCallback((wid, x, y) => setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, x, y } : w))), []);
+  const toggleFull = useCallback((wid) => {
+    setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, full: !w.full, min: false, z: nextZ() } : w)));
+  }, []);
 
-  /* greet first-time visitors with the About card, centered */
+  /* deep-link: #read/<slug> opens that post full-screen */
+  const handleHash = useCallback(() => {
+    const m = (location.hash || "").match(/^#read\/(.+)$/);
+    if (!m) return;
+    const slug = decodeURIComponent(m[1]);
+    const post = (S.writing || []).find((p) => p.slug === slug);
+    if (post) openPost(post, true);
+  }, [openPost]);
   useEffect(() => {
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, [handleHash]);
+
+  /* keep the URL hash in sync with a full-screen post (shareable link) */
+  useEffect(() => {
+    const fp = windows.find((w) => w.full && w.post && !w.closing && !w.min);
+    if (fp) {
+      const want = "#read/" + fp.post.slug;
+      if (location.hash !== want) history.replaceState(null, "", want);
+    } else if ((location.hash || "").startsWith("#read/")) {
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+  }, [windows]);
+
+  /* greet first-time visitors with the About card (unless deep-linking) */
+  useEffect(() => {
+    if ((location.hash || "").startsWith("#read/")) return;
     if (!s0.seen && (!s0.windows || s0.windows.length === 0)) openFile("about");
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* global keys: ⌘K / Ctrl-K palette, Esc closes palette / exits full screen */
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); setPalOpen((p) => !p); return; }
+      if (e.key === "Escape") {
+        if (palOpenRef.current) { setPalOpen(false); return; }
+        setWindows((ws) => (ws.some((w) => w.full) ? ws.map((w) => (w.full ? { ...w, full: false } : w)) : ws));
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   const dockOpen = (key) => {
@@ -424,7 +590,6 @@ function App() {
   const cleanUp = () => { setIconPos(defaultIconPos()); setWidgetPos(defaultWidgetPos()); };
   const resetAll = () => { try { localStorage.removeItem(STORE_KEY); } catch (e) {} setWindows([]); setIconPos(defaultIconPos()); setWidgetPos(defaultWidgetPos()); };
 
-  /* desktop click clears selection + menus */
   const deskClick = (e) => {
     if (e.target.classList.contains("desktop") || e.target.classList.contains("wallpaper") || e.target.classList.contains("layer-deck")) {
       setSel(null); setOpenMenu(null);
@@ -439,25 +604,63 @@ function App() {
     { id: "publications", node: <FolderIcon />, label: "Publications", key: "publications" },
     { id: "projects", node: <FolderIcon />, label: "Projects", key: "projects" },
     { id: "talks", node: <FolderIcon />, label: "Talks", key: "talks" },
+    { id: "writing", node: <FolderIcon />, label: "Writing", key: "writing" },
     { id: "outreach", node: <FolderIcon />, label: "Outreach", key: "outreach" },
-    { id: "whyresearch", node: <DocIcon tag="TXT" tagColor="#0a72e8" />, label: "Why Research?", key: "whyresearch" },
     { sep: true },
     ...(L.email ? [{ id: "mail", node: <MailIcon />, label: "Email", href: "mailto:" + L.email }] : []),
     { id: "scholar", node: <GlobeIcon />, label: "Scholar", href: L.scholar },
     { id: "github", node: <GitHubIcon />, label: "GitHub", href: L.github },
+    { sep: true },
+    { id: "doom", node: <DoomIcon />, label: "DOOM", key: "doom" },
   ];
   const isRunning = (key) => key && windows.some((w) => w.openId === key && !w.closing);
+
+  /* search index for the Quick Search palette */
+  const searchIndex = useMemo(() => {
+    const out = [];
+    const apps = [
+      { key: "about", title: "About Me", cat: "App", type: "about", run: () => openFile("about") },
+      { key: "publications", title: "Publications", cat: "Folder", type: "folder", run: () => openFile("publications") },
+      { key: "projects", title: "Projects", cat: "Folder", type: "folder", run: () => openFile("projects") },
+      { key: "talks", title: "Talks", cat: "Folder", type: "folder", run: () => openFile("talks") },
+      { key: "writing", title: "Writing", cat: "Folder", type: "folder", run: () => openFile("writing") },
+      { key: "outreach", title: "Outreach", cat: "Folder", type: "folder", run: () => openFile("outreach") },
+      { key: "whyresearch", title: "Why Research?", cat: "Note", type: "txt", run: () => openFile("whyresearch") },
+      { key: "background", title: "Background", cat: "Note", type: "txt", run: () => openFile("background") },
+      { key: "ori", title: S.groups.ori.title, cat: "Affiliation", type: "logo", src: S.groups.ori.logo, run: () => openFile("ori") },
+      { key: "ie", title: S.groups.ie.title, cat: "Affiliation", type: "logo", src: S.groups.ie.logo, run: () => openFile("ie") },
+      { key: "doom", title: "DOOM", cat: "App", type: "embed", run: () => openFile("doom") },
+    ];
+    apps.forEach((e) => out.push({ ...e, primary: true }));
+    const add = (arr, cat, type, runner) => (arr || []).forEach((it, i) => {
+      const title = it.title || it.name;
+      out.push({
+        key: cat + ":" + i + ":" + title, title,
+        sub: [it.venue || it.meta, it.year || it.date].filter(Boolean).join(" · "),
+        cat, type: it.type || type,
+        text: [title, it.venue || it.meta, (it.keywords || []).join(" "), it.blurb, it.abstract].filter(Boolean).join(" "),
+        run: () => runner(it),
+      });
+    });
+    add(S.publications, "Publication", "pdf", openItem);
+    add(S.projects, "Project", "folder", openItem);
+    add(S.talks, "Talk", "pdf", openItem);
+    add(S.writing, "Writing", "txt", (it) => openPost(it));
+    add(S.outreach, "Outreach", "image", openItem);
+    return out;
+  }, [openFile, openItem, openPost]);
 
   /* menubar menus */
   const MENUS = {
     brand: { label: S.identity.name, bold: true, items: [
       { t: "About Me", fn: () => openFile("about") },
+      { t: "Quick Search…", k: "⌘K", fn: () => setPalOpen(true) },
       { sep: true },
       { t: "Tidy Up Desktop", fn: cleanUp },
       { t: "Reset Desktop…", fn: resetAll },
     ] },
     file: { label: "File", items: [
-      { t: "New Window", k: "⌘N", dis: true },
+      { t: "Quick Search…", k: "⌘K", fn: () => setPalOpen(true) },
       { t: "Open Why Research?", fn: () => openFile("whyresearch") },
       { sep: true },
       { t: "Close Window", k: "⌘W", fn: () => { const top = [...windows].filter(w => !w.min && !w.closing).sort((a, b) => b.z - a.z)[0]; top && closeWin(top.wid); } },
@@ -466,6 +669,7 @@ function App() {
       { t: "Publications", fn: () => openFile("publications") },
       { t: "Projects", fn: () => openFile("projects") },
       { t: "Talks", fn: () => openFile("talks") },
+      { t: "Writing", fn: () => openFile("writing") },
       { t: "Outreach", fn: () => openFile("outreach") },
       { sep: true },
       { t: "Google Scholar ↗", fn: () => openHref(L.scholar) },
@@ -508,7 +712,7 @@ function App() {
 
       {/* desktop icons */}
       {ICONS.map((ic) => (
-        <div key={ic.id} className={"icon" + (ic.id === "portrait" ? " portrait" : "") + (sel === ic.id ? " sel" : "")}
+        <div key={ic.id} className={"icon" + (sel === ic.id ? " sel" : "")}
           style={{ left: iconPos[ic.id].x, top: iconPos[ic.id].y }}
           onPointerDown={(e) => { setSel(ic.id); setOpenMenu(null); e.currentTarget.classList.add("dragging");
             beginDrag(e, iconPos[ic.id].x, iconPos[ic.id].y,
@@ -522,13 +726,15 @@ function App() {
 
       {/* windows */}
       {windows.map((w) => {
-        const f = FILES[w.openId] || (w.doc
-          ? { kind: "text", title: w.title, heading: w.doc.heading, by: w.doc.by, body: w.doc.body }
-          : { kind: "detail", title: w.title, detail: w.detail });
+        const f = FILES[w.openId] || (w.post
+          ? { kind: "post", title: w.title, post: w.post }
+          : w.doc
+            ? { kind: "text", title: w.title, heading: w.doc.heading, by: w.doc.by, body: w.doc.body }
+            : { kind: "detail", title: w.title, detail: w.detail });
         return (
           <Win key={w.wid} win={w} f={f} focused={w.z === Math.max(...windows.map((q) => q.z))}
             onFocus={() => focusWin(w.wid)} onClose={closeWin} onMin={minWin} onZoom={zoomWin}
-            onDrag={dragWin} onOpen={openFile} onItem={openItem} />
+            onDrag={dragWin} onOpen={openFile} onItem={openItem} onToggleFull={toggleFull} />
         );
       })}
 
@@ -544,6 +750,10 @@ function App() {
         ))}
         <span className="spacer"></span>
         <span className="status">
+          <button className="mb-btn" title="Quick Search (⌘K)" aria-label="Quick Search"
+            onPointerDown={(e) => { e.stopPropagation(); setPalOpen(true); }} onClick={(e) => e.stopPropagation()}>
+            <svg width="14" height="14" viewBox="0 0 16 16"><circle cx="6.7" cy="6.7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.6"/><line x1="10.2" y1="10.2" x2="14.5" y2="14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+          </button>
           <svg width="22" height="13" viewBox="0 0 26 14"><rect x="0.5" y="2" width="20" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1"/><rect x="2" y="3.5" width="15" height="7" rx="1" fill="currentColor"/><rect x="21.5" y="5" width="2" height="4" rx="1" fill="currentColor"/></svg>
           <svg width="17" height="13" viewBox="0 0 18 14"><path d="M9 3C5.5 3 2.7 4.4 1 6.4l1.4 1.5C3.9 6.2 6.3 5 9 5s5.1 1.2 6.6 2.9L17 6.4C15.3 4.4 12.5 3 9 3z" fill="currentColor"/><path d="M9 7.5c-1.9 0-3.6.8-4.7 2l1.5 1.6C6.5 10.3 7.7 9.7 9 9.7s2.5.6 3.2 1.4l1.5-1.6C12.6 8.3 10.9 7.5 9 7.5z" fill="currentColor"/><circle cx="9" cy="12" r="1.4" fill="currentColor"/></svg>
           <span className="clock">{now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}  {String(now.getHours()).padStart(2, "0")}:{String(now.getMinutes()).padStart(2, "0")}</span>
@@ -576,7 +786,9 @@ function App() {
         </div>
       </div>
 
-      {hint && <div className="hint">Double-click an icon to open · drag anything · ✕ closes windows</div>}
+      {palOpen && <Palette index={searchIndex} onClose={() => setPalOpen(false)} />}
+
+      {hint && <div className="hint">Double-click an icon to open · drag anything · ⌘K to search</div>}
     </div>
   );
 }
