@@ -411,6 +411,55 @@ body {
 .pal-sub { font-size: 11.5px; color: var(--ink3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pal-cat { font-size: 10.5px; font-weight: 600; color: var(--ink3); text-transform: uppercase; letter-spacing: 0.03em; flex: none; }
 
+/* ============================================================
+   MOBILE / SMALL SCREENS — make the desktop usable on phones
+   ============================================================ */
+@media (max-width: 768px) {
+  /* decorative widgets get out of the way */
+  .widget { display: none; }
+
+  /* trim the menu bar to brand + status (use the dock / 🔍 to navigate) */
+  .menubar .mi:not(.brand) { display: none; }
+  .menubar .mi.brand { font-size: 14px; }
+
+  /* desktop icons: a tidy top-left grid (positions also set in JS) */
+  .icon { width: 84px; }
+  .icon .lbl { font-size: 11px; }
+
+  /* windows open as full-screen sheets between the menu bar and dock */
+  .window {
+    left: 0 !important; top: 28px !important;
+    width: 100vw !important;
+    height: calc(100vh - 28px - 88px) !important;
+    height: calc(100dvh - 28px - 88px) !important;
+    border-radius: 0 !important; border: 0 !important;
+  }
+  .window.full { top: 0 !important; height: 100vh !important; height: 100dvh !important; }
+  .titlebar { height: 46px; cursor: default; }
+  .light { width: 15px; height: 15px; }
+
+  /* finder: drop the sidebar, give content the whole width */
+  .fsidebar { display: none; }
+  .fgrid { grid-template-columns: repeat(auto-fill, 88px); }
+  .flist .hdr, .flist .lrow { grid-template-columns: 1fr 84px 52px; }
+  .textwrap { padding: 26px 22px 40px; }
+  .dmedia, .dmedia-el { max-height: 220px; }
+
+  /* dock: shrink + horizontal scroll so every app is reachable */
+  .dock-wrap { left: 0; right: 0; padding: 0 6px; justify-content: flex-start; }
+  .dock { max-width: 100%; overflow-x: auto; overflow-y: hidden; gap: 4px; padding: 7px 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .dock::-webkit-scrollbar { display: none; }
+  .dock .di { width: 50px; }
+  .dock .di .ico { width: 44px; height: 44px; }
+  .dock .di:hover .ico, .dock .di:hover + .di .ico, .dock .di:has(+ .di:hover) .ico { transform: none; }
+  .dock .di .cap { font-size: 9.5px; max-width: 52px; }
+
+  /* command palette: higher + wider */
+  .pal-scrim { padding-top: 8vh; }
+  .palette { width: 94vw; }
+  .pal-input input { font-size: 16px; }
+}
+
 /* entrance/motion only when the environment allows it (resting state stays visible) */
 @media (prefers-reduced-motion: no-preference) {
   .window.opening { animation: winOpen 0.22s cubic-bezier(0.2,0.8,0.3,1); }

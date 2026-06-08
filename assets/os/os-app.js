@@ -11,6 +11,11 @@ const {
 } = React;
 const S = window.SITE;
 const L = S.links;
+
+/* touch devices open on a single tap (no double-click); small screens
+   get a stacked grid + full-screen window sheets (see os.css @media). */
+const TOUCH = typeof window !== "undefined" && ("ontouchstart" in window || window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
+const isSmall = () => window.innerWidth <= 768;
 const uid = () => "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4);
 
 /* local stand-in for the design tool's useTweaks (no host bridge) */
@@ -214,8 +219,19 @@ const ICONS = [{
 }];
 function defaultIconPos() {
   const W = window.innerWidth;
-  const colX = [W - 100, W - 196, W - 292];
   const pos = {};
+  if (W <= 768) {
+    /* phones: a reachable top-left grid (widgets are hidden on mobile) */
+    const cols = Math.max(3, Math.floor((W - 16) / 88));
+    ICONS.forEach((ic, i) => {
+      pos[ic.id] = {
+        x: 12 + i % cols * 88,
+        y: 40 + Math.floor(i / cols) * 92
+      };
+    });
+    return pos;
+  }
+  const colX = [W - 100, W - 196, W - 292];
   ICONS.forEach((ic, i) => {
     const col = Math.floor(i / 4);
     pos[ic.id] = {
@@ -271,7 +287,10 @@ function FinderContent({
     key: key,
     className: "si" + (nm === active ? " active" : ""),
     onDoubleClick: () => onOpen(key),
-    onClick: () => setActive(nm)
+    onClick: () => {
+      setActive(nm);
+      if (TOUCH) onOpen(key);
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "d",
     style: {
@@ -296,8 +315,11 @@ function FinderContent({
   }, f.items.map((it, i) => /*#__PURE__*/React.createElement("div", {
     className: "fitem",
     key: i,
+    onClick: () => {
+      if (TOUCH) onItem(it);
+    },
     onDoubleClick: () => onItem(it),
-    title: "Double-click to open"
+    title: "Open"
   }, /*#__PURE__*/React.createElement(ItemThumb, {
     item: it
   }), /*#__PURE__*/React.createElement("div", {
@@ -311,6 +333,9 @@ function FinderContent({
   }, /*#__PURE__*/React.createElement("span", null, "Name"), /*#__PURE__*/React.createElement("span", null, "Venue"), /*#__PURE__*/React.createElement("span", null, "Year")), f.items.map((it, i) => /*#__PURE__*/React.createElement("div", {
     className: "lrow",
     key: i,
+    onClick: () => {
+      if (TOUCH) onItem(it);
+    },
     onDoubleClick: () => onItem(it)
   }, /*#__PURE__*/React.createElement("span", {
     className: "nm"
@@ -719,10 +744,10 @@ function App() {
     }
   }
   const s0 = saved.current;
-  const [iconPos, setIconPos] = useState(() => ({
+  const [iconPos, setIconPos] = useState(() => isSmall() ? defaultIconPos() : {
     ...defaultIconPos(),
     ...(s0.iconPos || {})
-  }));
+  });
   const [widgetPos, setWidgetPos] = useState(() => ({
     ...defaultWidgetPos(),
     ...(s0.widgetPos || {})
@@ -1000,6 +1025,7 @@ function App() {
   /* greet first-time visitors with the About card (unless deep-linking) */
   useEffect(() => {
     if ((location.hash || "").startsWith("#read/")) return;
+    if (isSmall()) return; /* don't cover a small screen on first load */
     if (!s0.seen && (!s0.windows || s0.windows.length === 0)) openFile("about");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -1375,6 +1401,9 @@ function App() {
         }
       })), () => document.querySelectorAll(".icon").forEach(w => w.classList.remove("dragging")));
     },
+    onClick: () => {
+      if (TOUCH) openFile(ic.open);
+    },
     onDoubleClick: () => openFile(ic.open)
   }, /*#__PURE__*/React.createElement(IconArt, {
     type: ic.type,
@@ -1553,7 +1582,7 @@ function App() {
     onClose: () => setPalOpen(false)
   }), hint && /*#__PURE__*/React.createElement("div", {
     className: "hint"
-  }, "Double-click an icon to open \xB7 drag anything \xB7 \u2318K to search"));
+  }, TOUCH ? "Tap an icon to open · tap 🔍 to search" : "Double-click an icon to open · drag anything · ⌘K to search"));
 }
 const TWEAK_DEFAULTS = {
   wallpaper: "paper",

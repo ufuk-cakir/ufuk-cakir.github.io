@@ -6,6 +6,12 @@ const { useState, useEffect, useRef, useCallback, useMemo } = React;
 const S = window.SITE;
 const L = S.links;
 
+/* touch devices open on a single tap (no double-click); small screens
+   get a stacked grid + full-screen window sheets (see os.css @media). */
+const TOUCH = typeof window !== "undefined" &&
+  (("ontouchstart" in window) || (window.matchMedia && window.matchMedia("(pointer: coarse)").matches));
+const isSmall = () => window.innerWidth <= 768;
+
 const uid = () => "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4);
 
 /* local stand-in for the design tool's useTweaks (no host bridge) */
@@ -112,8 +118,14 @@ const ICONS = [
 ];
 function defaultIconPos() {
   const W = window.innerWidth;
-  const colX = [W - 100, W - 196, W - 292];
   const pos = {};
+  if (W <= 768) {
+    /* phones: a reachable top-left grid (widgets are hidden on mobile) */
+    const cols = Math.max(3, Math.floor((W - 16) / 88));
+    ICONS.forEach((ic, i) => { pos[ic.id] = { x: 12 + (i % cols) * 88, y: 40 + Math.floor(i / cols) * 92 }; });
+    return pos;
+  }
+  const colX = [W - 100, W - 196, W - 292];
   ICONS.forEach((ic, i) => {
     const col = Math.floor(i / 4);
     pos[ic.id] = { x: colX[col] != null ? colX[col] : 8, y: 48 + (i % 4) * 104 };
@@ -142,7 +154,7 @@ function FinderContent({ f, onOpen, onItem }) {
         <div className="sh">Favourites</div>
         {fav.map(([nm, key]) => (
           <div key={key} className={"si" + (nm === active ? " active" : "")}
-            onDoubleClick={() => onOpen(key)} onClick={() => setActive(nm)}>
+            onDoubleClick={() => onOpen(key)} onClick={() => { setActive(nm); if (TOUCH) onOpen(key); }}>
             <span className="d" style={{ background: "#3aa0ff" }}></span>{nm}
           </div>
         ))}
@@ -155,7 +167,7 @@ function FinderContent({ f, onOpen, onItem }) {
         {f.view === "grid" ? (
           <div className="fgrid">
             {f.items.map((it, i) => (
-              <div className="fitem" key={i} onDoubleClick={() => onItem(it)} title="Double-click to open">
+              <div className="fitem" key={i} onClick={() => { if (TOUCH) onItem(it); }} onDoubleClick={() => onItem(it)} title="Open">
                 <ItemThumb item={it} />
                 <div className="nm">{it.name || it.title}</div>
                 {(it.meta || it.venue) && <div className="mt">{it.meta || it.venue}</div>}
@@ -166,7 +178,7 @@ function FinderContent({ f, onOpen, onItem }) {
           <div className="flist">
             <div className="hdr"><span>Name</span><span>Venue</span><span>Year</span></div>
             {f.items.map((it, i) => (
-              <div className="lrow" key={i} onDoubleClick={() => onItem(it)}>
+              <div className="lrow" key={i} onClick={() => { if (TOUCH) onItem(it); }} onDoubleClick={() => onItem(it)}>
                 <span className="nm">
                   <ItemThumb item={it} />
                   <span className="nm-main">
@@ -418,7 +430,7 @@ function App() {
   }
   const s0 = saved.current;
 
-  const [iconPos, setIconPos] = useState(() => ({ ...defaultIconPos(), ...(s0.iconPos || {}) }));
+  const [iconPos, setIconPos] = useState(() => (isSmall() ? defaultIconPos() : { ...defaultIconPos(), ...(s0.iconPos || {}) }));
   const [widgetPos, setWidgetPos] = useState(() => ({ ...defaultWidgetPos(), ...(s0.widgetPos || {}) }));
   const [windows, setWindows] = useState(() => s0.windows || []);
   const [sel, setSel] = useState(null);
@@ -565,6 +577,7 @@ function App() {
   /* greet first-time visitors with the About card (unless deep-linking) */
   useEffect(() => {
     if ((location.hash || "").startsWith("#read/")) return;
+    if (isSmall()) return; /* don't cover a small screen on first load */
     if (!s0.seen && (!s0.windows || s0.windows.length === 0)) openFile("about");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -718,6 +731,7 @@ function App() {
             beginDrag(e, iconPos[ic.id].x, iconPos[ic.id].y,
               (x, y) => setIconPos((p) => ({ ...p, [ic.id]: { x: Math.max(0, x), y: Math.max(36, y) } })),
               () => document.querySelectorAll(".icon").forEach(w => w.classList.remove("dragging"))); }}
+          onClick={() => { if (TOUCH) openFile(ic.open); }}
           onDoubleClick={() => openFile(ic.open)}>
           <IconArt type={ic.type} src={ic.src} />
           <div className="lbl">{ic.label}</div>
@@ -788,7 +802,7 @@ function App() {
 
       {palOpen && <Palette index={searchIndex} onClose={() => setPalOpen(false)} />}
 
-      {hint && <div className="hint">Double-click an icon to open · drag anything · ⌘K to search</div>}
+      {hint && <div className="hint">{TOUCH ? "Tap an icon to open · tap 🔍 to search" : "Double-click an icon to open · drag anything · ⌘K to search"}</div>}
     </div>
   );
 }
