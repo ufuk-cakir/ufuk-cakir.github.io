@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Oxford Robotics Institute">
+  <defs>
+    <linearGradient id="ori-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0a3a73"/>
+      <stop offset="1" stop-color="#002147"/>
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#ori-bg)"/>
+  <rect x="6" y="6" width="52" height="26" rx="14" fill="#fff" opacity="0.10"/>
+  <text x="32" y="40" text-anchor="middle" fill="#fff"
+        font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="700" letter-spacing="1">ORI</text>
+</svg>
