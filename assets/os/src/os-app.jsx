@@ -192,6 +192,7 @@ function FinderContent({ fkey, onItem }) {
                   <ItemThumb item={it} />
                   <span className="nm-main">
                     <span className="nm-title">{it.title || it.name}</span>
+                    {(it.blurb || it.abstract) && <span className="nm-sub">{it.blurb || it.abstract}</span>}
                     {it.keywords && it.keywords.length > 0 && (
                       <span className="kwchips">
                         {it.keywords.slice(0, 4).map((k) => <span className="kw" key={k}>{k}</span>)}
@@ -449,7 +450,6 @@ function PostContent({ f, win, onToggleFull, focused }) {
           <div ref={ref} className="reader-content"></div>
         </article>
       </div>
-      <Highlighter contentRef={ref} docId={post.slug} docTitle={post.title} ready={state === "ready"} focused={focused} />
     </div>
   );
 }
@@ -507,7 +507,6 @@ function ArticleContent({ f, win, onToggleFull, focused }) {
           <div ref={ref} className="reader-content"></div>
         </article>
       </div>
-      <Highlighter contentRef={ref} docId={"project-" + a.slug} docTitle={a.title} ready={ready} focused={focused} />
     </div>
   );
 }
@@ -516,8 +515,10 @@ function ArticleContent({ f, win, onToggleFull, focused }) {
    volume turned down so an autoplaying rickroll isn't deafening. */
 function EmbedContent({ f }) {
   const ref = useRef(null);
+  const [hint, setHint] = useState(!!f.hint);
   const isYT = /youtube(-nocookie)?\.com\/embed/.test(f.url);
   const src = isYT ? f.url + (f.url.includes("?") ? "&" : "?") + "enablejsapi=1" : f.url;
+  useEffect(() => { if (!f.hint) return; const id = setTimeout(() => setHint(false), 6000); return () => clearTimeout(id); }, [f.hint]);
   const onLoad = () => {
     if (!isYT || !ref.current) return;
     const post = (func, args) => { try { ref.current.contentWindow.postMessage(JSON.stringify({ event: "command", func, args: args || [] }), "*"); } catch (e) {} };
@@ -527,6 +528,7 @@ function EmbedContent({ f }) {
     <div className="win-body embedwin">
       <iframe ref={ref} className="embed-frame" src={src} title={f.title} onLoad={onLoad}
         allow="autoplay; fullscreen; encrypted-media; gamepad" allowFullScreen />
+      {hint && f.hint && <div className="embed-hint" onClick={() => setHint(false)}>⌨&nbsp; {f.hint}</div>}
     </div>
   );
 }
@@ -811,14 +813,14 @@ function App() {
   }, []);
 
   /* open an embedded page (e.g. a video) in its own in-OS window */
-  const openEmbed = useCallback((url, title) => {
+  const openEmbed = useCallback((url, title, hint) => {
     const key = "embed:" + url;
     setWindows((ws) => {
       const ex = ws.find((w) => w.openId === key && !w.closing);
       if (ex) return ws.map((w) => (w.wid === ex.wid ? { ...w, min: false, z: nextZ() } : w));
       const [w, h] = SIZE.embed;
       const { x, y } = placeWin(ws.length, w, h);
-      return [...ws, { wid: uid(), openId: key, embed: { url }, title: title || "Window", x, y, w, h, z: nextZ(), min: false }];
+      return [...ws, { wid: uid(), openId: key, embed: { url, hint }, title: title || "Window", x, y, w, h, z: nextZ(), min: false }];
     });
   }, []);
 
@@ -826,7 +828,7 @@ function App() {
   useEffect(() => {
     const onOpen = (e) => {
       const d = (e && e.detail) || {};
-      if (d.url) openEmbed(d.url, d.title);
+      if (d.url) openEmbed(d.url, d.title, d.hint);
       else if (d.key) openFile(d.key);
     };
     window.addEventListener("os-open", onOpen);
@@ -836,7 +838,7 @@ function App() {
   /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback((it) => {
     if (it.slug && it.url) return openPost(it);
-    if (it.deck) return openEmbed(it.deck, it.title || it.name);
+    if (it.deck) return openEmbed(it.deck, it.title || it.name, "Use the arrow keys to navigate the slides");
     if (it.body) return openArticle(it);
     if (it.doc) return openTextDoc(it);
     const rich = it.blurb || it.abstract || it.media || (it.keywords && it.keywords.length);
@@ -1063,7 +1065,7 @@ function App() {
           : w.article
             ? { kind: "article", title: w.title, article: w.article }
             : w.embed
-              ? { kind: "embed", title: w.title, url: w.embed.url }
+              ? { kind: "embed", title: w.title, url: w.embed.url, hint: w.embed.hint }
               : w.doc
                 ? { kind: "text", title: w.title, heading: w.doc.heading, by: w.doc.by, body: w.doc.body }
                 : { kind: "detail", title: w.title, detail: w.detail });

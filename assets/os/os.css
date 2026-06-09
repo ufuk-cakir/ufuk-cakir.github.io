@@ -332,6 +332,7 @@ body {
 .flist .lrow .nm { align-items: center; }
 .flist .lrow .nm .nm-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .flist .lrow .nm .nm-title { color: var(--ink); line-height: 1.2; }
+.flist .lrow .nm .nm-sub { font-size: 12px; color: var(--ink3); line-height: 1.4; max-width: 60ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .kwchips { display: flex; flex-wrap: wrap; gap: 4px; }
 .kwchips .kw {
   font-size: 10px; line-height: 1; padding: 3px 7px; border-radius: 999px;
@@ -451,9 +452,17 @@ mark.usr-hl.has-note { background: rgba(255,213,74,0.72); box-shadow: inset 0 -2
 .hl-row textarea { min-height: 38px; }
 .hl-row .hl-del { margin-top: 6px; }
 
-/* ---------- embedded app (DOOM) ---------- */
-.embedwin { background: #000; }
+/* ---------- embedded app (decks, video) ---------- */
+.embedwin { background: #000; position: relative; }
 .embed-frame { flex: 1; width: 100%; border: 0; background: #000; }
+.embed-hint {
+  position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 5;
+  background: rgba(28,28,30,0.92); color: #fff; font-size: 13px; font-weight: 500;
+  padding: 8px 16px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  animation: embedHintIn 0.3s ease;
+}
+@keyframes embedHintIn { from { opacity: 0; transform: translate(-50%, -8px); } to { opacity: 1; transform: translateX(-50%); } }
 
 /* full-screen window (reader / app) covers the whole desktop */
 .window.full {

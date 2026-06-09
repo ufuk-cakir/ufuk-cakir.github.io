@@ -154,7 +154,7 @@
     }
     return lines;
   }
-  const HELP = [["help", "show this list"], ["ls [-a] [path]", "list a directory"], ["cd <dir>", "change directory (cd .. , cd ~)"], ["pwd", "print working directory"], ["cat <file>", "print a file"], ["open <name>", "open an item's link in a new tab"], ["whoami", "who am i"], ["date", "current time in Oxford"], ["echo <text>", "say something back"], ["history", "show command history"], ["neofetch", "system info, fancy"], ["coffee", "brew a cup"], ["clear", "clear the screen"]];
+  const HELP = [["help", "show this list"], ["ls [-a] [path]", "list a directory"], ["cd <dir>", "change directory (cd .. , cd ~)"], ["pwd", "print working directory"], ["cat <file>", "print a file"], ["open <name>", "open an item's link in a new tab"], ["whoami", "who am i"], ["date", "current time in Oxford"], ["echo <text>", "say something back"], ["history", "show command history"], ["neofetch", "system info, fancy"], ["coffee", "brew a cup"], ["doom", "play Freedoom (rip and tear)"], ["clear", "clear the screen"]];
   const COFFEE = ["      ( (", "       ) )", "    .........", "    |       |]", "    \\       /", "     `-----'", "  ~ enjoy your coffee ~"];
   const LOGO = ["   ____  ", "  / ___| ", " | |     ", " | |___  ", "  \\____| "];
   function neofetchLines() {
@@ -498,7 +498,7 @@
     }, [cwd, history, push]);
 
     /* ---------- tab completion ---------- */
-    const CMDS = ["cat", "cd", "clear", "coffee", "date", "echo", "help", "history", "ls", "neofetch", "open", "pwd", "rickroll", "sudo", "whoami"];
+    const CMDS = ["cat", "cd", "clear", "coffee", "date", "doom", "echo", "freedoom", "help", "history", "ls", "neofetch", "open", "pwd", "rickroll", "sudo", "whoami"];
     const lcp = a => {
       if (!a.length) return "";
       let p = a[0];

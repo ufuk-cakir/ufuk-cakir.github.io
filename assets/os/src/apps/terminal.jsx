@@ -122,6 +122,7 @@
     ["history", "show command history"],
     ["neofetch", "system info, fancy"],
     ["coffee", "brew a cup"],
+    ["doom", "play Freedoom (rip and tear)"],
     ["clear", "clear the screen"],
   ];
 
@@ -362,7 +363,7 @@
     }, [cwd, history, push]);
 
     /* ---------- tab completion ---------- */
-    const CMDS = ["cat", "cd", "clear", "coffee", "date", "echo", "help", "history", "ls", "neofetch", "open", "pwd", "rickroll", "sudo", "whoami"];
+    const CMDS = ["cat", "cd", "clear", "coffee", "date", "doom", "echo", "freedoom", "help", "history", "ls", "neofetch", "open", "pwd", "rickroll", "sudo", "whoami"];
     const lcp = (a) => { if (!a.length) return ""; let p = a[0]; for (const s of a) { while (s.indexOf(p) !== 0) p = p.slice(0, -1); if (!p) break; } return p; };
     const complete = useCallback((val) => {
       const root = fsRef.current;

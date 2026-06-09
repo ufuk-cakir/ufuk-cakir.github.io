@@ -355,7 +355,9 @@ function FinderContent({
     className: "nm-main"
   }, /*#__PURE__*/React.createElement("span", {
     className: "nm-title"
-  }, it.title || it.name), it.keywords && it.keywords.length > 0 && /*#__PURE__*/React.createElement("span", {
+  }, it.title || it.name), (it.blurb || it.abstract) && /*#__PURE__*/React.createElement("span", {
+    className: "nm-sub"
+  }, it.blurb || it.abstract), it.keywords && it.keywords.length > 0 && /*#__PURE__*/React.createElement("span", {
     className: "kwchips"
   }, it.keywords.slice(0, 4).map(k => /*#__PURE__*/React.createElement("span", {
     className: "kw",
@@ -813,13 +815,7 @@ function PostContent({
   }, "Open it directly \u2197")), /*#__PURE__*/React.createElement("div", {
     ref: ref,
     className: "reader-content"
-  }))), /*#__PURE__*/React.createElement(Highlighter, {
-    contentRef: ref,
-    docId: post.slug,
-    docTitle: post.title,
-    ready: state === "ready",
-    focused: focused
-  }));
+  }))));
 }
 
 /* a block from a native write-up (projects) */
@@ -902,13 +898,7 @@ function ArticleContent({
   }, a.kicker), /*#__PURE__*/React.createElement("h1", null, a.title)), /*#__PURE__*/React.createElement("div", {
     ref: ref,
     className: "reader-content"
-  }))), /*#__PURE__*/React.createElement(Highlighter, {
-    contentRef: ref,
-    docId: "project-" + a.slug,
-    docTitle: a.title,
-    ready: ready,
-    focused: focused
-  }));
+  }))));
 }
 
 /* generic embedded app (e.g. DOOM, a video). YouTube embeds get their
@@ -917,8 +907,14 @@ function EmbedContent({
   f
 }) {
   const ref = useRef(null);
+  const [hint, setHint] = useState(!!f.hint);
   const isYT = /youtube(-nocookie)?\.com\/embed/.test(f.url);
   const src = isYT ? f.url + (f.url.includes("?") ? "&" : "?") + "enablejsapi=1" : f.url;
+  useEffect(() => {
+    if (!f.hint) return;
+    const id = setTimeout(() => setHint(false), 6000);
+    return () => clearTimeout(id);
+  }, [f.hint]);
   const onLoad = () => {
     if (!isYT || !ref.current) return;
     const post = (func, args) => {
@@ -945,7 +941,10 @@ function EmbedContent({
     onLoad: onLoad,
     allow: "autoplay; fullscreen; encrypted-media; gamepad",
     allowFullScreen: true
-  }));
+  }), hint && f.hint && /*#__PURE__*/React.createElement("div", {
+    className: "embed-hint",
+    onClick: () => setHint(false)
+  }, "\u2328\xA0 ", f.hint));
 }
 function AboutContent() {
   const id = S.identity;
@@ -1487,7 +1486,7 @@ function App() {
   }, []);
 
   /* open an embedded page (e.g. a video) in its own in-OS window */
-  const openEmbed = useCallback((url, title) => {
+  const openEmbed = useCallback((url, title, hint) => {
     const key = "embed:" + url;
     setWindows(ws => {
       const ex = ws.find(w => w.openId === key && !w.closing);
@@ -1505,7 +1504,8 @@ function App() {
         wid: uid(),
         openId: key,
         embed: {
-          url
+          url,
+          hint
         },
         title: title || "Window",
         x,
@@ -1522,7 +1522,7 @@ function App() {
   useEffect(() => {
     const onOpen = e => {
       const d = e && e.detail || {};
-      if (d.url) openEmbed(d.url, d.title);else if (d.key) openFile(d.key);
+      if (d.url) openEmbed(d.url, d.title, d.hint);else if (d.key) openFile(d.key);
     };
     window.addEventListener("os-open", onOpen);
     return () => window.removeEventListener("os-open", onOpen);
@@ -1531,7 +1531,7 @@ function App() {
   /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback(it => {
     if (it.slug && it.url) return openPost(it);
-    if (it.deck) return openEmbed(it.deck, it.title || it.name);
+    if (it.deck) return openEmbed(it.deck, it.title || it.name, "Use the arrow keys to navigate the slides");
     if (it.body) return openArticle(it);
     if (it.doc) return openTextDoc(it);
     const rich = it.blurb || it.abstract || it.media || it.keywords && it.keywords.length;
@@ -2043,7 +2043,8 @@ function App() {
     } : w.embed ? {
       kind: "embed",
       title: w.title,
-      url: w.embed.url
+      url: w.embed.url,
+      hint: w.embed.hint
     } : w.doc ? {
       kind: "text",
       title: w.title,

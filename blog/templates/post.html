@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{TITLE}}</title>
+  <meta name="description" content="{{DESCRIPTION}}">
+  <meta name="author" content="Ufuk Çakır">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESCRIPTION}}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="assets/blog.css">
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <article class="post">
+    <header class="post-header">
+      <p class="post-kicker">{{KICKER}}</p>
+      <h1 class="post-title">{{TITLE}}</h1>
+      <p class="post-subtitle">{{SUBTITLE}}</p>
+      <p class="post-meta">{{META_LINE}}</p>
+    </header>
+
+    <div class="post-body" id="content">
+      {{BODY}}
+    </div>
+
+    <footer class="post-footer">
+      <p>{{FOOTER}}</p>
+    </footer>
+  </article>
+
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+  <script defer src="assets/blog.js"></script>
+</body>
+</html>
