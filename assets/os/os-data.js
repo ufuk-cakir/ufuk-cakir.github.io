@@ -376,7 +376,8 @@ const FILES = {
       blurb: p.blurb,
       keywords: p.keywords,
       slug: p.slug,
-      url: p.url
+      url: p.url,
+      wip: p.wip
     }))
   },
   outreach: {

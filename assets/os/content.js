@@ -46,11 +46,11 @@ window.SITE = {
   contact: {
     subject: "Hello Ufuk",
     blurb:
-      "Always happy to talk research, collaborations, or science communication — drop me a line and I'll get back to you.",
+      "If you have any questions about my work, feel free to message me and I'll get back to you. :))",
   },
 
   about: {
-    p: "DPhil student at the Intelligent Earth UKRI CDT in AI for the Environment, University of Oxford, working with the GOALS group at the Oxford Robotics Institute. Trained as a physicist, with roots in scientific machine learning and galaxy morphology.",
+    p: "DPhil student at the Intelligent Earth UKRI CDT in AI for the Environment, University of Oxford, working with the GOALS group at the Oxford Robotics Institute. I have a background in physics, with projects in scientific machine learning to study galaxy morphology, passive accoustic monitoring for endangered species, and wildfire suppression.",
   },
 
   /* Affiliation badges on the desktop (open a detail card). */
@@ -115,7 +115,7 @@ window.SITE = {
         text: "After finishing my Master of Science in Physics, it was clear that I wanted to do a PhD. I had done reserach and published papers in the field of computational astrophysics already, and I loved everything about the process or writing code to answer questions. Then the big Turkey-Syria Earthquake in 2023 hit. I know the exact moment, sitting in front of the TV, watching the News and asking myself: What can I do to prevent such suffering in the future?",
       },
       {
-        ph: true,
+        ph: false,
         text: "When I saw that a new CDT at Oxford called Intelligent Earth had a specific stream dedicated to tackling Natural Hazard using AI approaches, it was a natural fit. So here we are.",
       },
     ],
@@ -371,9 +371,11 @@ window.SITE = {
     },
     {
       title: "Plasticity as the Mirror of Empowerment",
-      venue: "Work in progress",
+      venue: "Manim talk",
       year: "2026",
-      wip: true,
+      blurb:
+        "The talk for our reading group walks from Shannon to results discussing the foundations of agency.",
+      keywords: ["empowerment", "agency", "Manim", "talk"],
       deck: "slides/plasticity-empowerment.html",
     },
   ],
@@ -403,11 +405,9 @@ window.SITE = {
     {
       slug: "plasticity-as-the-mirror-of-empowerment",
       title: "Plasticity as the Mirror of Empowerment",
-      kind: "Essay",
-      date: "June 2026",
-      blurb:
-        "A walk from Shannon to a clean impossibility result about agency — and why an agent cannot maximally shape the world and be maximally shaped by it at once.",
-      keywords: ["empowerment", "agency", "information theory", "plasticity"],
+      kind: "Work in progress",
+      date: "2026",
+      wip: true,
       url: "blog/plasticity-as-the-mirror-of-empowerment.html",
     },
   ],

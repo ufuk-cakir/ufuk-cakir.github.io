@@ -86,7 +86,7 @@ const FILES = {
   talks: { kind: "finder", title: "Talks", icon: "folder", view: "list",
     items: SITE_.talks.map((p) => ({ type: "pdf", ...p })) },
   writing: { kind: "finder", title: "Writing", icon: "folder", view: "list",
-    items: (SITE_.writing || []).map((p) => ({ type: "txt", title: p.title, venue: p.kind, year: p.date, blurb: p.blurb, keywords: p.keywords, slug: p.slug, url: p.url })) },
+    items: (SITE_.writing || []).map((p) => ({ type: "txt", title: p.title, venue: p.kind, year: p.date, blurb: p.blurb, keywords: p.keywords, slug: p.slug, url: p.url, wip: p.wip })) },
   outreach: { kind: "finder", title: "Outreach", icon: "folder", view: "grid",
     items: SITE_.outreach.map((p) => ({ type: "image", ...p })) },
 
