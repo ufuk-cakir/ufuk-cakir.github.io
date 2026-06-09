@@ -426,6 +426,31 @@ body {
 .reader-content .sidenote { display: block; margin: 12px 0 16px; padding: 10px 14px; border-left: 3px solid var(--accent-soft); background: rgba(0,0,0,0.025); border-radius: 0 7px 7px 0; font-size: 13.5px; line-height: 1.55; color: var(--ink2); }
 .reader-content figure > video, .reader-content figure > img { border-radius: 10px; box-shadow: 0 8px 26px rgba(0,0,0,0.14); }
 
+/* ---------- reader highlights + notes (saved per-reader in the browser) ---------- */
+.postwin { position: relative; }
+mark.usr-hl { background: rgba(255,213,74,0.45); border-radius: 2px; padding: 0 1px; cursor: pointer; }
+mark.usr-hl.has-note { background: rgba(255,213,74,0.72); box-shadow: inset 0 -2px 0 #e0a92e; }
+.hl-btn { position: fixed; transform: translate(-50%, -100%); z-index: 9800; background: #1c1c1e; color: #fff; border: 0; border-radius: 8px; padding: 7px 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: 0 6px 20px rgba(0,0,0,0.3); white-space: nowrap; font-family: var(--sys); }
+.hl-note { position: fixed; z-index: 9810; width: 250px; background: #fff; border: 0.5px solid rgba(0,0,0,0.15); border-radius: 11px; box-shadow: 0 18px 50px rgba(0,0,0,0.32); padding: 10px; font-family: var(--sys); }
+.hl-note textarea, .hl-row textarea { width: 100%; border: 0.5px solid rgba(0,0,0,0.12); border-radius: 7px; padding: 8px; font: inherit; font-size: 13px; resize: vertical; outline: none; box-sizing: border-box; }
+.hl-note textarea { min-height: 64px; }
+.hl-note-row { display: flex; justify-content: space-between; margin-top: 8px; }
+.hl-note button, .hl-panel-hd button { font-size: 12px; border: 0; border-radius: 7px; padding: 6px 12px; cursor: pointer; font-family: var(--sys); }
+.hl-del { background: #ffe5e1; color: #c0392b; }
+.hl-done { background: var(--accent); color: #fff; }
+.hl-pill { position: fixed; right: 18px; bottom: 84px; z-index: 9760; background: rgba(28,28,30,0.9); color: #fff; border: 0; border-radius: 999px; padding: 9px 15px; font-size: 12.5px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.3); font-family: var(--sys); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.hl-panel-scrim { position: fixed; inset: 0; z-index: 9790; background: rgba(0,0,0,0.28); display: flex; align-items: center; justify-content: center; padding: 5vh 16px; font-family: var(--sys); }
+.hl-panel { width: min(560px, 94vw); max-height: 80vh; display: flex; flex-direction: column; background: #fff; border-radius: 14px; box-shadow: 0 30px 80px rgba(0,0,0,0.4); overflow: hidden; }
+.hl-panel-hd { display: flex; align-items: center; justify-content: space-between; padding: 13px 16px; border-bottom: 0.5px solid rgba(0,0,0,0.08); font-size: 14px; }
+.hl-panel-hd span { display: flex; gap: 8px; }
+.hl-panel-hd button { background: rgba(0,0,0,0.06); color: var(--ink); }
+.hl-panel-hd button:disabled { opacity: 0.4; cursor: default; }
+.hl-panel-body { overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 16px; }
+.hl-empty { color: var(--ink3); font-size: 13.5px; line-height: 1.55; }
+.hl-row blockquote { margin: 0 0 6px; padding-left: 10px; border-left: 3px solid #ffd54a; color: var(--ink2); font-size: 13.5px; line-height: 1.5; }
+.hl-row textarea { min-height: 38px; }
+.hl-row .hl-del { margin-top: 6px; }
+
 /* ---------- embedded app (DOOM) ---------- */
 .embedwin { background: #000; }
 .embed-frame { flex: 1; width: 100%; border: 0; background: #000; }

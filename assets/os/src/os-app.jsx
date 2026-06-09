@@ -258,10 +258,127 @@ function DetailContent({ f }) {
   );
 }
 
+/* ---------- highlight engine (reader annotations) ---------- */
+function hlSkippable(el) { return el && el.classList && (el.classList.contains("katex") || el.classList.contains("katex-display") || el.classList.contains("anim-stage")); }
+function hlTextNodes(root) {
+  const out = [];
+  (function walk(n) {
+    if (n.nodeType === 3) { if (n.nodeValue) out.push(n); return; }
+    if (n.nodeType === 1) { if (hlSkippable(n)) return; for (let c = n.firstChild; c; c = c.nextSibling) walk(c); }
+  })(root);
+  return out;
+}
+function hlOffsetOf(nodes, node, off) { let t = 0; for (const n of nodes) { if (n === node) return t + off; t += n.nodeValue.length; } return -1; }
+function hlSelectionInfo(root) {
+  const s = window.getSelection && window.getSelection();
+  if (!s || !s.rangeCount || s.isCollapsed) return null;
+  const r = s.getRangeAt(0);
+  if (!root.contains(r.startContainer) || !root.contains(r.endContainer)) return null;
+  const text = r.toString();
+  if ((text || "").trim().length < 2) return null;
+  const nodes = hlTextNodes(root);
+  let a = hlOffsetOf(nodes, r.startContainer, r.startOffset), b = hlOffsetOf(nodes, r.endContainer, r.endOffset);
+  if (a < 0 || b < 0) return null;
+  if (a > b) { const t = a; a = b; b = t; }
+  const rect = r.getBoundingClientRect();
+  return { start: a, end: b, text: text, rect: { left: rect.left, top: rect.top, width: rect.width, bottom: rect.bottom } };
+}
+function hlClear(root) { root.querySelectorAll("mark.usr-hl").forEach((m) => m.replaceWith(document.createTextNode(m.textContent))); root.normalize(); }
+function hlApply(root, start, end, id, hasNote) {
+  const nodes = hlTextNodes(root);
+  const targets = []; let pos = 0;
+  for (const n of nodes) { const len = n.nodeValue.length, ns = pos, ne = pos + len; pos = ne; if (ne <= start || ns >= end) continue; targets.push({ node: n, from: Math.max(start, ns) - ns, to: Math.min(end, ne) - ns }); }
+  targets.forEach((t) => { try { const rg = document.createRange(); rg.setStart(t.node, t.from); rg.setEnd(t.node, t.to); const m = document.createElement("mark"); m.className = "usr-hl" + (hasNote ? " has-note" : ""); m.dataset.hlId = id; rg.surroundContents(m); } catch (e) {} });
+}
+
+function esc(s) { return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+function blocksToHtml(blocks) {
+  return (blocks || []).map((bl) => {
+    if (!bl) return "";
+    if (bl.type === "h") return "<h2>" + esc(bl.text) + "</h2>";
+    if (bl.type === "h3") return "<h3>" + esc(bl.text) + "</h3>";
+    if (bl.type === "quote") return "<blockquote>" + esc(bl.text) + "</blockquote>";
+    if (bl.type === "media" && bl.media) {
+      const m = bl.media;
+      const el = m.type === "video"
+        ? '<video autoplay loop muted playsinline preload="auto" src="' + esc(m.src) + '"></video>'
+        : '<img loading="lazy" src="' + esc(m.src) + '" alt="' + esc(bl.caption || "") + '">';
+      return "<figure>" + el + (bl.caption ? "<figcaption>" + esc(bl.caption) + "</figcaption>" : "") + "</figure>";
+    }
+    if (bl.type === "links") return '<div class="dlinks">' + (bl.links || []).map((l) => '<a class="dbtn" target="_blank" rel="noopener" href="' + esc(l.href) + '">' + esc(l.label || "Open ↗") + "</a>").join("") + "</div>";
+    return "<p>" + esc(bl.text) + "</p>";
+  }).join("");
+}
+
+function Highlighter({ contentRef, docId, docTitle, ready, focused }) {
+  const KEY = "cakir-hl:" + docId;
+  const [items, setItems] = useState(() => { try { return JSON.parse(localStorage.getItem("cakir-hl:" + docId)) || []; } catch (e) { return []; } });
+  const [sel, setSel] = useState(null);
+  const [active, setActive] = useState(null);
+  const [panel, setPanel] = useState(false);
+
+  useEffect(() => { const root = contentRef.current; if (!ready || !root) return; hlClear(root); items.forEach((h) => hlApply(root, h.start, h.end, h.id, !!h.note)); }, [ready, items]);
+  useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {} }, [items]);
+  useEffect(() => {
+    const root = contentRef.current; if (!ready || !root) return;
+    const onUp = () => setTimeout(() => { const info = hlSelectionInfo(root); if (info) setSel(info); }, 0);
+    const onDown = (e) => { if (!(e.target.closest && e.target.closest(".hl-ui"))) setSel(null); };
+    const onClick = (e) => { const m = e.target.closest && e.target.closest("mark.usr-hl"); if (m) { const r = m.getBoundingClientRect(); setActive({ id: m.dataset.hlId, x: r.left, y: r.bottom }); setSel(null); } };
+    root.addEventListener("mouseup", onUp); root.addEventListener("click", onClick); document.addEventListener("mousedown", onDown);
+    return () => { root.removeEventListener("mouseup", onUp); root.removeEventListener("click", onClick); document.removeEventListener("mousedown", onDown); };
+  }, [ready]);
+
+  if (!focused) return null;
+  const addHl = () => { if (!sel) return; const id = "h" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4); const x = sel.rect.left, y = sel.rect.bottom; setItems((p) => [...p, { id, start: sel.start, end: sel.end, text: sel.text, note: "" }]); if (window.getSelection) window.getSelection().removeAllRanges(); setSel(null); setTimeout(() => setActive({ id, x, y }), 60); };
+  const setNote = (id, note) => setItems((p) => p.map((h) => (h.id === id ? { ...h, note } : h)));
+  const delHl = (id) => { setItems((p) => p.filter((h) => h.id !== id)); setActive(null); };
+  const activeItem = active && items.find((h) => h.id === active.id);
+  const exportMd = () => {
+    const L = ["# Highlights — " + (docTitle || docId), ""];
+    items.forEach((h) => { L.push("> " + h.text.replace(/\s+/g, " ").trim()); if (h.note) { L.push(""); L.push(h.note); } L.push(""); });
+    const blob = new Blob([L.join("\n")], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = (docId || "highlights") + "-highlights.md"; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);
+  };
+  return (
+    <>
+      {sel && (
+        <button className="hl-ui hl-btn" style={{ left: Math.round(sel.rect.left + sel.rect.width / 2), top: Math.round(sel.rect.top - 8) }}
+          onMouseDown={(e) => e.preventDefault()} onClick={addHl}>✏︎ Highlight</button>
+      )}
+      {activeItem && (
+        <div className="hl-ui hl-note" style={{ left: Math.round(Math.min(active.x, window.innerWidth - 270)), top: Math.round(active.y + 6) }} onMouseDown={(e) => e.stopPropagation()}>
+          <textarea autoFocus value={activeItem.note} placeholder="Add a note…" onChange={(e) => setNote(active.id, e.target.value)} />
+          <div className="hl-note-row"><button className="hl-del" onClick={() => delHl(active.id)}>Delete</button><button className="hl-done" onClick={() => setActive(null)}>Done</button></div>
+        </div>
+      )}
+      <button className="hl-ui hl-pill" onClick={() => setPanel(true)}>✦ Highlights{items.length ? " · " + items.length : ""}</button>
+      {panel && (
+        <div className="hl-ui hl-panel-scrim" onMouseDown={() => setPanel(false)}>
+          <div className="hl-panel" onMouseDown={(e) => e.stopPropagation()}>
+            <div className="hl-panel-hd"><b>Your highlights</b><span><button onClick={exportMd} disabled={!items.length}>Export .md</button><button onClick={() => setPanel(false)}>Close</button></span></div>
+            <div className="hl-panel-body">
+              {!items.length && <div className="hl-empty">Select any text in the post to highlight it, then click a highlight to attach a note. Everything is saved in your browser, and you can export it.</div>}
+              {items.map((h) => (
+                <div className="hl-row" key={h.id}>
+                  <blockquote>{h.text}</blockquote>
+                  <textarea value={h.note} placeholder="Note…" onChange={(e) => setNote(h.id, e.target.value)} />
+                  <button className="hl-del" onClick={() => delHl(h.id)}>Remove</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 /* reading view — pulls the real /blog post body into the OS DOM and
    renders it natively in an editor-style document (no iframe), so it
    matches the rest of the OS. Full-screen + deep-link handled by Win. */
-function PostContent({ f, win, onToggleFull }) {
+function PostContent({ f, win, onToggleFull, focused }) {
   const post = f.post;
   const ref = useRef(null);
   const [state, setState] = useState("loading");
@@ -332,6 +449,7 @@ function PostContent({ f, win, onToggleFull }) {
           <div ref={ref} className="reader-content"></div>
         </article>
       </div>
+      <Highlighter contentRef={ref} docId={post.slug} docTitle={post.title} ready={state === "ready"} focused={focused} />
     </div>
   );
 }
@@ -358,9 +476,19 @@ function Block({ bl }) {
   return <p>{bl.text}</p>;
 }
 
-/* native write-up reader (projects) — same editor styling as Writing */
-function ArticleContent({ f, win, onToggleFull }) {
+/* native write-up reader (projects) — same editor styling as Writing.
+   Content is injected as HTML (like the post reader) so highlight marks
+   aren't wiped by React re-renders. */
+function ArticleContent({ f, win, onToggleFull, focused }) {
   const a = f.article;
+  const ref = useRef(null);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = blocksToHtml(a.blocks);
+    ref.current.querySelectorAll("video").forEach((v) => { v.muted = true; const p = v.play(); if (p && p.catch) p.catch(() => {}); });
+    setReady(true);
+  }, [a]);
   return (
     <div className="win-body postwin">
       <div className="readerbar">
@@ -376,21 +504,29 @@ function ArticleContent({ f, win, onToggleFull }) {
             {a.kicker && <div className="reader-kicker">{a.kicker}</div>}
             <h1>{a.title}</h1>
           </header>
-          <div className="reader-content">
-            {a.blocks.map((bl, i) => <Block key={i} bl={bl} />)}
-          </div>
+          <div ref={ref} className="reader-content"></div>
         </article>
       </div>
+      <Highlighter contentRef={ref} docId={"project-" + a.slug} docTitle={a.title} ready={ready} focused={focused} />
     </div>
   );
 }
 
-/* generic embedded app (e.g. DOOM) */
+/* generic embedded app (e.g. DOOM, a video). YouTube embeds get their
+   volume turned down so an autoplaying rickroll isn't deafening. */
 function EmbedContent({ f }) {
+  const ref = useRef(null);
+  const isYT = /youtube(-nocookie)?\.com\/embed/.test(f.url);
+  const src = isYT ? f.url + (f.url.includes("?") ? "&" : "?") + "enablejsapi=1" : f.url;
+  const onLoad = () => {
+    if (!isYT || !ref.current) return;
+    const post = (func, args) => { try { ref.current.contentWindow.postMessage(JSON.stringify({ event: "command", func, args: args || [] }), "*"); } catch (e) {} };
+    [250, 800, 1600].forEach((t) => setTimeout(() => { post("setVolume", [15]); post("playVideo"); }, t));
+  };
   return (
     <div className="win-body embedwin">
-      <iframe className="embed-frame" src={f.url} title={f.title}
-        allow="autoplay; fullscreen; gamepad; cross-origin-isolated" allowFullScreen />
+      <iframe ref={ref} className="embed-frame" src={src} title={f.title} onLoad={onLoad}
+        allow="autoplay; fullscreen; encrypted-media; gamepad" allowFullScreen />
     </div>
   );
 }
@@ -506,8 +642,8 @@ function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen,
       {f.kind === "finder" && <FinderContent fkey={win.openId} onItem={onItem} />}
       {f.kind === "text" && <TextContent f={f} />}
       {f.kind === "detail" && <DetailContent f={f} />}
-      {f.kind === "post" && <PostContent f={f} win={win} onToggleFull={onToggleFull} />}
-      {f.kind === "article" && <ArticleContent f={f} win={win} onToggleFull={onToggleFull} />}
+      {f.kind === "post" && <PostContent f={f} win={win} onToggleFull={onToggleFull} focused={focused} />}
+      {f.kind === "article" && <ArticleContent f={f} win={win} onToggleFull={onToggleFull} focused={focused} />}
       {f.kind === "embed" && <EmbedContent f={f} />}
       {f.kind === "mail" && <MailContent />}
       {f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp)}
@@ -581,6 +717,7 @@ function App() {
   const palOpenRef = useRef(false);
   useEffect(() => { palOpenRef.current = palOpen; }, [palOpen]);
   const topZ = useRef(Math.max(100, s0.topZ || 100));
+  const bootHash = useRef(typeof location !== "undefined" ? location.hash || "" : "");
 
   /* clock */
   useEffect(() => { const id = setInterval(() => setNow(new Date()), 1000); return () => clearInterval(id); }, []);
@@ -752,7 +889,7 @@ function App() {
 
   /* greet first-time visitors with the About card (unless deep-linking) */
   useEffect(() => {
-    if ((location.hash || "").startsWith("#read/")) return;
+    if (bootHash.current.startsWith("#read/")) return; /* deep-linked to a post */
     if (isSmall()) return; /* don't cover a small screen on first load */
     if (!s0.seen && (!s0.windows || s0.windows.length === 0)) openFile("about");
     // eslint-disable-next-line react-hooks/exhaustive-deps
