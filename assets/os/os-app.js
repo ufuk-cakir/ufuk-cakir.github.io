@@ -17,6 +17,7 @@ const L = S.links;
 const TOUCH = typeof window !== "undefined" && ("ontouchstart" in window || window.matchMedia && window.matchMedia("(pointer: coarse)").matches);
 const isSmall = () => window.innerWidth <= 768;
 const uid = () => "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4);
+const slugify = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
 /* local stand-in for the design tool's useTweaks (no host bridge) */
 function useTweaks(defaults) {
@@ -536,6 +537,76 @@ function PostContent({
   }))));
 }
 
+/* a block from a native write-up (projects) */
+function Block({
+  bl
+}) {
+  if (!bl) return null;
+  if (bl.type === "h") return /*#__PURE__*/React.createElement("h2", null, bl.text);
+  if (bl.type === "h3") return /*#__PURE__*/React.createElement("h3", null, bl.text);
+  if (bl.type === "quote") return /*#__PURE__*/React.createElement("blockquote", null, bl.text);
+  if (bl.type === "media") return /*#__PURE__*/React.createElement("figure", null, bl.media && (bl.media.type === "video" ? /*#__PURE__*/React.createElement(Preview, {
+    media: bl.media,
+    className: ""
+  }) : /*#__PURE__*/React.createElement("img", {
+    src: bl.media.src,
+    alt: bl.caption || "",
+    loading: "lazy"
+  })), bl.caption && /*#__PURE__*/React.createElement("figcaption", null, bl.caption));
+  if (bl.type === "links") return /*#__PURE__*/React.createElement("div", {
+    className: "dlinks",
+    style: {
+      marginTop: 6
+    }
+  }, bl.links.map((l, i) => /*#__PURE__*/React.createElement("a", {
+    className: "dbtn",
+    key: i,
+    href: l.href,
+    target: "_blank",
+    rel: "noopener"
+  }, l.label || "Open ↗")));
+  return /*#__PURE__*/React.createElement("p", null, bl.text);
+}
+
+/* native write-up reader (projects) — same editor styling as Writing */
+function ArticleContent({
+  f,
+  win,
+  onToggleFull
+}) {
+  const a = f.article;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "win-body postwin"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "readerbar"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "rb-title"
+  }, (a.slug || "project") + ".md"), /*#__PURE__*/React.createElement("span", {
+    className: "rb-actions"
+  }, a.href && /*#__PURE__*/React.createElement("a", {
+    className: "rb-link",
+    href: a.href,
+    target: "_blank",
+    rel: "noopener"
+  }, "Open page \u2197"), /*#__PURE__*/React.createElement("button", {
+    className: "rb-full",
+    onClick: () => onToggleFull(win.wid)
+  }, win.full ? "Exit full screen" : "⤢ Full screen"))), /*#__PURE__*/React.createElement("div", {
+    className: "reader-scroll"
+  }, /*#__PURE__*/React.createElement("article", {
+    className: "reader-doc"
+  }, /*#__PURE__*/React.createElement("header", {
+    className: "reader-head"
+  }, a.kicker && /*#__PURE__*/React.createElement("div", {
+    className: "reader-kicker"
+  }, a.kicker), /*#__PURE__*/React.createElement("h1", null, a.title)), /*#__PURE__*/React.createElement("div", {
+    className: "reader-content"
+  }, a.blocks.map((bl, i) => /*#__PURE__*/React.createElement(Block, {
+    key: i,
+    bl: bl
+  }))))));
+}
+
 /* generic embedded app (e.g. DOOM) */
 function EmbedContent({
   f
@@ -752,6 +823,10 @@ function Win({
   }), f.kind === "detail" && /*#__PURE__*/React.createElement(DetailContent, {
     f: f
   }), f.kind === "post" && /*#__PURE__*/React.createElement(PostContent, {
+    f: f,
+    win: win,
+    onToggleFull: onToggleFull
+  }), f.kind === "article" && /*#__PURE__*/React.createElement(ArticleContent, {
     f: f,
     win: win,
     onToggleFull: onToggleFull
@@ -1045,6 +1120,42 @@ function App() {
       }];
     });
   }, []);
+  const openArticle = useCallback(item => {
+    const key = "article:" + (item.name || item.title);
+    setWindows(ws => {
+      const ex = ws.find(w => w.openId === key && !w.closing);
+      if (ex) return ws.map(w => w.wid === ex.wid ? {
+        ...w,
+        min: false,
+        z: nextZ()
+      } : w);
+      const [w, h] = SIZE.post;
+      const {
+        x,
+        y
+      } = placeWin(ws.length, w, h);
+      const href = item.links && item.links[0] && item.links[0].href || item.href;
+      const article = {
+        title: item.name || item.title,
+        kicker: item.meta || item.venue,
+        blocks: item.body,
+        slug: slugify(item.name || item.title),
+        href
+      };
+      return [...ws, {
+        wid: uid(),
+        openId: key,
+        article,
+        title: item.name || item.title,
+        x,
+        y,
+        w,
+        h,
+        z: nextZ(),
+        min: false
+      }];
+    });
+  }, []);
 
   /* open an embedded page (e.g. a video) in its own in-OS window */
   const openEmbed = useCallback((url, title) => {
@@ -1091,13 +1202,14 @@ function App() {
   /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback(it => {
     if (it.slug && it.url) return openPost(it);
+    if (it.body) return openArticle(it);
     if (it.doc) return openTextDoc(it);
     const rich = it.blurb || it.abstract || it.media || it.keywords && it.keywords.length;
     if (rich) return openDetail(it);
     const href = it.links && it.links[0] && it.links[0].href;
     if (href) return openHref(href);
     openDetail(it);
-  }, [openDetail, openTextDoc, openPost]);
+  }, [openDetail, openTextDoc, openPost, openArticle]);
   const closeWin = useCallback(wid => {
     setWindows(ws => ws.map(w => w.wid === wid ? {
       ...w,
@@ -1600,6 +1712,10 @@ function App() {
       kind: "post",
       title: w.title,
       post: w.post
+    } : w.article ? {
+      kind: "article",
+      title: w.title,
+      article: w.article
     } : w.embed ? {
       kind: "embed",
       title: w.title,

@@ -13,6 +13,7 @@ const TOUCH = typeof window !== "undefined" &&
 const isSmall = () => window.innerWidth <= 768;
 
 const uid = () => "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4);
+const slugify = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
 /* local stand-in for the design tool's useTweaks (no host bridge) */
 function useTweaks(defaults) {
@@ -335,6 +336,55 @@ function PostContent({ f, win, onToggleFull }) {
   );
 }
 
+/* a block from a native write-up (projects) */
+function Block({ bl }) {
+  if (!bl) return null;
+  if (bl.type === "h") return <h2>{bl.text}</h2>;
+  if (bl.type === "h3") return <h3>{bl.text}</h3>;
+  if (bl.type === "quote") return <blockquote>{bl.text}</blockquote>;
+  if (bl.type === "media") return (
+    <figure>
+      {bl.media && (bl.media.type === "video"
+        ? <Preview media={bl.media} className="" />
+        : <img src={bl.media.src} alt={bl.caption || ""} loading="lazy" />)}
+      {bl.caption && <figcaption>{bl.caption}</figcaption>}
+    </figure>
+  );
+  if (bl.type === "links") return (
+    <div className="dlinks" style={{ marginTop: 6 }}>
+      {bl.links.map((l, i) => <a className="dbtn" key={i} href={l.href} target="_blank" rel="noopener">{l.label || "Open ↗"}</a>)}
+    </div>
+  );
+  return <p>{bl.text}</p>;
+}
+
+/* native write-up reader (projects) — same editor styling as Writing */
+function ArticleContent({ f, win, onToggleFull }) {
+  const a = f.article;
+  return (
+    <div className="win-body postwin">
+      <div className="readerbar">
+        <span className="rb-title">{(a.slug || "project") + ".md"}</span>
+        <span className="rb-actions">
+          {a.href && <a className="rb-link" href={a.href} target="_blank" rel="noopener">Open page ↗</a>}
+          <button className="rb-full" onClick={() => onToggleFull(win.wid)}>{win.full ? "Exit full screen" : "⤢ Full screen"}</button>
+        </span>
+      </div>
+      <div className="reader-scroll">
+        <article className="reader-doc">
+          <header className="reader-head">
+            {a.kicker && <div className="reader-kicker">{a.kicker}</div>}
+            <h1>{a.title}</h1>
+          </header>
+          <div className="reader-content">
+            {a.blocks.map((bl, i) => <Block key={i} bl={bl} />)}
+          </div>
+        </article>
+      </div>
+    </div>
+  );
+}
+
 /* generic embedded app (e.g. DOOM) */
 function EmbedContent({ f }) {
   return (
@@ -457,6 +507,7 @@ function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen,
       {f.kind === "text" && <TextContent f={f} />}
       {f.kind === "detail" && <DetailContent f={f} />}
       {f.kind === "post" && <PostContent f={f} win={win} onToggleFull={onToggleFull} />}
+      {f.kind === "article" && <ArticleContent f={f} win={win} onToggleFull={onToggleFull} />}
       {f.kind === "embed" && <EmbedContent f={f} />}
       {f.kind === "mail" && <MailContent />}
       {f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp)}
@@ -609,6 +660,19 @@ function App() {
     });
   }, []);
 
+  const openArticle = useCallback((item) => {
+    const key = "article:" + (item.name || item.title);
+    setWindows((ws) => {
+      const ex = ws.find((w) => w.openId === key && !w.closing);
+      if (ex) return ws.map((w) => (w.wid === ex.wid ? { ...w, min: false, z: nextZ() } : w));
+      const [w, h] = SIZE.post;
+      const { x, y } = placeWin(ws.length, w, h);
+      const href = (item.links && item.links[0] && item.links[0].href) || item.href;
+      const article = { title: item.name || item.title, kicker: item.meta || item.venue, blocks: item.body, slug: slugify(item.name || item.title), href };
+      return [...ws, { wid: uid(), openId: key, article, title: item.name || item.title, x, y, w, h, z: nextZ(), min: false }];
+    });
+  }, []);
+
   /* open an embedded page (e.g. a video) in its own in-OS window */
   const openEmbed = useCallback((url, title) => {
     const key = "embed:" + url;
@@ -635,13 +699,14 @@ function App() {
   /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback((it) => {
     if (it.slug && it.url) return openPost(it);
+    if (it.body) return openArticle(it);
     if (it.doc) return openTextDoc(it);
     const rich = it.blurb || it.abstract || it.media || (it.keywords && it.keywords.length);
     if (rich) return openDetail(it);
     const href = it.links && it.links[0] && it.links[0].href;
     if (href) return openHref(href);
     openDetail(it);
-  }, [openDetail, openTextDoc, openPost]);
+  }, [openDetail, openTextDoc, openPost, openArticle]);
 
   const closeWin = useCallback((wid) => {
     setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, closing: true, full: false } : w)));
@@ -858,11 +923,13 @@ function App() {
       {windows.map((w) => {
         const f = FILES[w.openId] || (w.post
           ? { kind: "post", title: w.title, post: w.post }
-          : w.embed
-            ? { kind: "embed", title: w.title, url: w.embed.url }
-            : w.doc
-              ? { kind: "text", title: w.title, heading: w.doc.heading, by: w.doc.by, body: w.doc.body }
-              : { kind: "detail", title: w.title, detail: w.detail });
+          : w.article
+            ? { kind: "article", title: w.title, article: w.article }
+            : w.embed
+              ? { kind: "embed", title: w.title, url: w.embed.url }
+              : w.doc
+                ? { kind: "text", title: w.title, heading: w.doc.heading, by: w.doc.by, body: w.doc.body }
+                : { kind: "detail", title: w.title, detail: w.detail });
         return (
           <Win key={w.wid} win={w} f={f} focused={w.z === Math.max(...windows.map((q) => q.z))}
             onFocus={() => focusWin(w.wid)} onClose={closeWin} onMin={minWin} onZoom={zoomWin}

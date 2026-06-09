@@ -424,6 +424,7 @@ body {
 .reader-content .sidenote-toggle { display: none; }
 .reader-content .sidenote-ref, .reader-content .sidenote-n { color: var(--accent); font-weight: 600; font-size: 0.78em; vertical-align: super; }
 .reader-content .sidenote { display: block; margin: 12px 0 16px; padding: 10px 14px; border-left: 3px solid var(--accent-soft); background: rgba(0,0,0,0.025); border-radius: 0 7px 7px 0; font-size: 13.5px; line-height: 1.55; color: var(--ink2); }
+.reader-content figure > video, .reader-content figure > img { border-radius: 10px; box-shadow: 0 8px 26px rgba(0,0,0,0.14); }
 
 /* ---------- embedded app (DOOM) ---------- */
 .embedwin { background: #000; }
@@ -489,6 +490,8 @@ body {
   .fgrid { grid-template-columns: repeat(auto-fill, 88px); }
   .flist .hdr, .flist .lrow { grid-template-columns: 1fr 84px 52px; }
   .textwrap { padding: 26px 22px 40px; }
+  .reader-doc { padding: 24px 18px 64px; }
+  .reader-head h1 { font-size: 26px; }
   .dmedia, .dmedia-el { max-height: 220px; }
 
   /* dock: shrink + horizontal scroll so every app is reachable */

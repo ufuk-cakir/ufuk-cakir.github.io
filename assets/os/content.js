@@ -183,6 +183,14 @@ window.SITE = {
       keywords: ["JAX", "IFU", "GPU", "open source"],
       media: { type: "image", src: "assets/images/rubix-logo.svg" },
       links: [{ label: "GitHub ↗", href: "https://github.com/ufuk-cakir/rubix" }],
+      body: [
+        { type: "media", media: { type: "image", src: "assets/images/rubix-logo.svg" } },
+        { type: "p", text: "RUBIX (Reconstruction Using Bayesian Inference eXperiments) is a modular, fully-tested, well-documented tool written in JAX that forward-models mock IFU (integral field unit) data cubes from cosmological simulations such as IllustrisTNG." },
+        { type: "h", text: "Why JAX" },
+        { type: "p", text: "By writing the whole pipeline in JAX it is differentiable end-to-end and parallelises across multiple GPUs, demonstrating performance improvements over state-of-the-art codes by a factor of ~600 — reducing compute times from hours to seconds." },
+        { type: "p", text: "It ships predefined telescope configurations (e.g. MUSE) and supports standard spectral libraries, and it is open source so the astrophysics community can build on it." },
+        { type: "links", links: [{ label: "GitHub ↗", href: "https://github.com/ufuk-cakir/rubix" }] },
+      ],
     },
     {
       name: "GAMMA dataset",
@@ -195,6 +203,14 @@ window.SITE = {
         { label: "Project page ↗", href: "research/gamma.html" },
         { label: "Workshop @ NeurIPS ↗", href: "https://neurips.cc/virtual/2023/76114" },
       ],
+      body: [
+        { type: "media", media: { type: "image", src: "assets/images/gamma_logo_v3.png" } },
+        { type: "p", text: "GAMMA (Galactic Attributes of Mass, Metallicity and Age) is a comprehensive dataset of galaxy data tailored for machine-learning applications." },
+        { type: "p", text: "It provides detailed 2D maps and 3D cubes of 11,727 galaxies, capturing essential attributes: stellar age, metallicity, and mass. I also built an interactive online dashboard to visualise the lower-dimensional image space." },
+        { type: "media", media: { type: "image", src: "assets/images/publication-viz.png" }, caption: "Exploring the learned image space." },
+        { type: "p", text: "This work was accepted at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023." },
+        { type: "links", links: [{ label: "Project page ↗", href: "research/gamma.html" }, { label: "Workshop @ NeurIPS ↗", href: "https://neurips.cc/virtual/2023/76114" }] },
+      ],
     },
     {
       name: "Eigengalaxies",
@@ -204,6 +220,12 @@ window.SITE = {
       keywords: ["PCA", "morphology"],
       media: { type: "video", src: "assets/videos/eigen10.mp4" },
       links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }],
+      body: [
+        { type: "media", media: { type: "video", src: "assets/videos/eigen10.mp4" }, caption: "Reconstructing a galaxy from a handful of eigengalaxies." },
+        { type: "p", text: "For my Bachelor thesis I investigated how machine learning can build galaxy-morphology models and encode the information contained in modern, state-of-the-art galaxy simulations." },
+        { type: "p", text: "Using simulation data from the IllustrisTNG project, I computed the 'eigengalaxies' — the basis vectors of the transformed image space — via Principal Component Analysis. A galaxy can then be represented (and reconstructed) from just a few of these components." },
+        { type: "links", links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }] },
+      ],
     },
     {
       name: "Evolutionary Spectrogram Optimization",
