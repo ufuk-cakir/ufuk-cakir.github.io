@@ -60,7 +60,7 @@ window.SITE = {
     ori: {
       title: "Oxford Robotics Institute — GOALS",
       venue: "Goal-Oriented Long-Lived Systems group",
-      logo: "talks/logos/ori.svg",
+      logo: "talks/logos/ori-logo.png",
       blurb:
         "I'm a DPhil student in the GOALS group (Goal-Oriented Long-Lived Systems) at the Oxford Robotics Institute, led by Prof. Nick Hawes. The group works on decision-making under uncertainty and long-term autonomy — planning for agents that must act well over long horizons in dynamic, uncertain environments.",
       keywords: ["decision-making", "uncertainty", "autonomy", "planning"],
@@ -72,7 +72,7 @@ window.SITE = {
     ie: {
       title: "Intelligent Earth CDT",
       venue: "UKRI CDT in AI for the Environment · Oxford",
-      logo: "talks/logos/intelligent-earth.svg",
+      logo: "talks/logos/ie-logo.png",
       blurb:
         "My DPhil is part of Intelligent Earth, the UKRI Centre for Doctoral Training in AI for the Environment at the University of Oxford — a programme bridging environmental science and AI across climate, biodiversity, natural hazards, and environmental solutions, with students co-advised across departments.",
       keywords: ["AI for the environment", "CDT", "climate", "Oxford"],
@@ -269,28 +269,45 @@ window.SITE = {
     },
   ],
 
-  /* Talks & posters only. (Projects / outreach / honours live in their
-     own sections.) */
+  /* Talks — Manim-animated slide decks (reveal.js). Each opens its deck
+     inside the OS. `deck` is the HTML file under /slides.
+     (GAMMA, the ESO poster, etc. live under Publications, not here.) */
   talks: [
     {
-      title: "GAMMA dataset",
-      venue: "ML4PS · NeurIPS",
-      year: "2023",
+      title: "IE Student Talk",
+      venue: "Intelligent Earth CDT",
+      year: "2025",
       blurb:
-        "Presented the GAMMA galaxy dataset at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023.",
-      keywords: ["dataset", "galaxies", "NeurIPS", "talk"],
-      media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
-      links: [{ label: "Workshop @ NeurIPS ↗", href: "https://neurips.cc/virtual/2023/76114" }],
+        "My Intelligent Earth CDT student talk — a Manim-animated reveal.js slide deck. Click to open the deck; use the arrow keys to advance.",
+      keywords: ["Intelligent Earth", "Manim", "talk"],
+      deck: "slides/ie-student-talk-25-final.html",
     },
     {
-      title: "Evolutionary spectrogram optimization (poster)",
-      venue: "ML4RS Workshop · ICLR, Vienna",
-      year: "2024",
+      title: "RUM Workshop",
+      venue: "RUM Workshop",
+      year: "2025",
       blurb:
-        "Poster on a genetic algorithm for optimising bioacoustic spectrograms, presented at the 2nd ML4RS Workshop at ICLR 2024 in Vienna.",
-      keywords: ["bioacoustics", "poster", "ICLR"],
-      media: { type: "image", src: "assets/images/eso logo.png" },
-      links: [{ label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" }],
+        "A Manim-animated presentation given at the RUM workshop. Click to open the deck; use the arrow keys to advance.",
+      keywords: ["RUM", "Manim", "workshop"],
+      deck: "slides/rum_presentation.html",
+    },
+    {
+      title: "Manim Tutorial",
+      venue: "Tutorial",
+      year: "",
+      blurb:
+        "A tutorial on creating mathematical animations with Manim, presented as an animated deck.",
+      keywords: ["Manim", "tutorial", "animation"],
+      deck: "slides/manim-tutorial.html",
+    },
+    {
+      title: "Plasticity as the Mirror of Empowerment",
+      venue: "Manim talk",
+      year: "2026",
+      blurb:
+        "The talk version of the essay — a Manim-animated walk from Shannon to a clean impossibility result about agency.",
+      keywords: ["empowerment", "agency", "Manim", "talk"],
+      deck: "slides/plasticity-empowerment.html",
     },
   ],
 

@@ -587,6 +587,55 @@ function NewsIcon() {
     fill: "#cfe6ff"
   }));
 }
+function SearchIcon() {
+  return /*#__PURE__*/React.createElement("svg", {
+    className: "art",
+    viewBox: "0 0 64 64",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("defs", null, /*#__PURE__*/React.createElement("linearGradient", {
+    id: "srchg",
+    x1: "0",
+    y1: "0",
+    x2: "0",
+    y2: "1"
+  }, /*#__PURE__*/React.createElement("stop", {
+    offset: "0",
+    stopColor: "#8a8f98"
+  }), /*#__PURE__*/React.createElement("stop", {
+    offset: "1",
+    stopColor: "#5a5f68"
+  }))), /*#__PURE__*/React.createElement("rect", {
+    x: "6",
+    y: "6",
+    width: "52",
+    height: "52",
+    rx: "14",
+    fill: "url(#srchg)"
+  }), /*#__PURE__*/React.createElement("rect", {
+    x: "6",
+    y: "6",
+    width: "52",
+    height: "26",
+    rx: "14",
+    fill: "#fff",
+    opacity: "0.14"
+  }), /*#__PURE__*/React.createElement("circle", {
+    cx: "29",
+    cy: "29",
+    r: "11",
+    fill: "none",
+    stroke: "#fff",
+    strokeWidth: "4"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "37",
+    y1: "37",
+    x2: "46",
+    y2: "46",
+    stroke: "#fff",
+    strokeWidth: "4.5",
+    strokeLinecap: "round"
+  }));
+}
 Object.assign(window, {
   FolderIcon,
   DocIcon,
@@ -599,5 +648,6 @@ Object.assign(window, {
   DoomIcon,
   TerminalIcon,
   NewsIcon,
+  SearchIcon,
   FILES
 });

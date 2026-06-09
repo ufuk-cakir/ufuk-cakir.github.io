@@ -836,6 +836,7 @@ function App() {
   /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback((it) => {
     if (it.slug && it.url) return openPost(it);
+    if (it.deck) return openEmbed(it.deck, it.title || it.name);
     if (it.body) return openArticle(it);
     if (it.doc) return openTextDoc(it);
     const rich = it.blurb || it.abstract || it.media || (it.keywords && it.keywords.length);
@@ -843,7 +844,7 @@ function App() {
     const href = it.links && it.links[0] && it.links[0].href;
     if (href) return openHref(href);
     openDetail(it);
-  }, [openDetail, openTextDoc, openPost, openArticle]);
+  }, [openDetail, openTextDoc, openPost, openArticle, openEmbed]);
 
   const closeWin = useCallback((wid) => {
     setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, closing: true, full: false } : w)));
@@ -926,6 +927,7 @@ function App() {
 
   /* dock config */
   const DOCK = [
+    { id: "search", node: <SearchIcon />, label: "Search", fn: () => setPalOpen(true) },
     { id: "about", node: <AppIcon from="#0a72e8" to="#5b3a8c" glyph={S.identity.initial} />, label: "About", key: "about" },
     { id: "publications", node: <FolderIcon />, label: "Publications", key: "publications" },
     { id: "projects", node: <FolderIcon />, label: "Projects", key: "projects" },
@@ -1115,7 +1117,7 @@ function App() {
           {DOCK.map((d, i) => d.sep
             ? <span className="sep" key={"s" + i}></span>
             : <div key={d.id} className={"di" + (isRunning(d.key) ? " running" : "") + (bounce === d.key ? " bouncing" : "")}
-                onClick={() => { if (d.href) { window.open(d.href, "_blank", "noopener"); } else { dockOpen(d.key); } }}>
+                onClick={() => { if (d.href) { window.open(d.href, "_blank", "noopener"); } else if (d.fn) { d.fn(); } else { dockOpen(d.key); } }}>
                 <span className="cap">{d.label}</span>
                 <span className="ico">{d.node}<span className="run"></span></span>
               </div>)}

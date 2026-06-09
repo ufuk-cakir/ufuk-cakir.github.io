@@ -355,8 +355,53 @@
       push(echoed.concat(out));
     }, [cwd, history, push]);
 
+    /* ---------- tab completion ---------- */
+    const CMDS = ["cat", "cd", "clear", "coffee", "date", "echo", "help", "history", "ls", "neofetch", "open", "pwd", "rickroll", "sudo", "whoami"];
+    const lcp = (a) => { if (!a.length) return ""; let p = a[0]; for (const s of a) { while (s.indexOf(p) !== 0) p = p.slice(0, -1); if (!p) break; } return p; };
+    const complete = useCallback((val) => {
+      const root = fsRef.current;
+      if (!/\s/.test(val)) {
+        const pref = val.toLowerCase();
+        const m = CMDS.filter((c) => c.indexOf(pref) === 0);
+        if (m.length === 1) return { value: m[0] + " " };
+        if (m.length > 1) { const p = lcp(m); return p.length > val.length ? { value: p } : { list: m }; }
+        return {};
+      }
+      const idx = val.lastIndexOf(" ");
+      const head = val.slice(0, idx + 1);
+      const frag = val.slice(idx + 1);
+      const sl = frag.lastIndexOf("/");
+      const dirPart = sl >= 0 ? frag.slice(0, sl + 1) : "";
+      const namePart = sl >= 0 ? frag.slice(sl + 1) : frag;
+      const dirNode = nodeAt(root, resolvePath(root, cwd, dirPart || "."));
+      if (!dirNode || dirNode.kind !== "dir") return {};
+      const showHidden = namePart.charAt(0) === ".";
+      const names = Object.keys(dirNode.children).filter((nm) => {
+        const ch = dirNode.children[nm];
+        if (ch.hidden && !showHidden) return false;
+        return nm.toLowerCase().indexOf(namePart.toLowerCase()) === 0;
+      });
+      const disp = (nm) => (dirNode.children[nm].kind === "dir" ? nm + "/" : nm);
+      if (names.length === 1) { const nm = names[0]; return { value: head + dirPart + nm + (dirNode.children[nm].kind === "dir" ? "/" : " ") }; }
+      if (names.length > 1) { const p = lcp(names); return p.length > namePart.length ? { value: head + dirPart + p } : { list: names.map(disp) }; }
+      return {};
+    }, [cwd]);
+
     /* ---------- input handling ---------- */
     const onKeyDown = useCallback((e) => {
+      if (e.ctrlKey && (e.key === "c" || e.key === "C")) {
+        e.preventDefault();
+        push([{ c: "prompt", t: promptPath(cwd) + " $ " + value + "^C" }]);
+        setValue(""); setHIdx(-1);
+        return;
+      }
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const r = complete(value);
+        if (r.value != null) setValue(r.value);
+        else if (r.list && r.list.length) push([{ c: "prompt", t: promptPath(cwd) + " $ " + value }, { c: "dim", t: r.list.join("    ") }]);
+        return;
+      }
       if (e.key === "Enter") {
         e.preventDefault();
         const raw = value;
@@ -389,7 +434,7 @@
           return h;
         });
       }
-    }, [value, run]);
+    }, [value, run, complete, push, cwd]);
 
     const cls = (c) =>
       "term-line" +
@@ -431,14 +476,18 @@
             gap: 8px; flex: 0 0 auto;
           }
           .term-ps1 { color: #7ee787; white-space: nowrap; }
-          .term-inputwrap { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; }
+          .term-inputwrap { position: relative; flex: 1; min-width: 0; }
+          /* visible layer: the typed text + a block caret right after it */
+          .term-shown { white-space: pre-wrap; word-break: break-word; color: #d7dbd9; min-height: 1.05em; }
+          /* the real input overlays it, transparent, just to capture keystrokes */
           .term-input {
-            flex: 1; min-width: 0; background: transparent; border: 0; outline: none;
-            color: #d7dbd9; font-family: inherit; font-size: inherit; line-height: 1.5;
-            padding: 0; caret-color: transparent;
+            position: absolute; inset: 0; width: 100%; height: 100%;
+            background: transparent; border: 0; outline: none;
+            color: transparent; caret-color: transparent;
+            font-family: inherit; font-size: inherit; line-height: 1.5; padding: 0;
           }
           .term-caret {
-            display: inline-block; width: 8px; height: 1.05em; margin-left: 1px;
+            display: inline-block; width: 8px; height: 1.05em;
             background: #7ee787; vertical-align: text-bottom;
             animation: term-blink 1.05s step-end infinite;
           }
@@ -454,6 +503,7 @@
         <div className="term-inputrow" onClick={focus}>
           <span className="term-ps1">{promptPath(cwd)} $</span>
           <label className="term-inputwrap">
+            <span className="term-shown">{value}<span className="term-caret" /></span>
             <input
               ref={inputRef}
               className="term-input"
@@ -466,7 +516,6 @@
               onKeyDown={onKeyDown}
               aria-label="terminal input"
             />
-            <span className="term-caret" />
           </label>
         </div>
       </div>

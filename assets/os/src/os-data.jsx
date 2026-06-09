@@ -143,7 +143,21 @@ function NewsIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg className="art" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="srchg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#8a8f98" /><stop offset="1" stopColor="#5a5f68" /></linearGradient>
+      </defs>
+      <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#srchg)" />
+      <rect x="6" y="6" width="52" height="26" rx="14" fill="#fff" opacity="0.14" />
+      <circle cx="29" cy="29" r="11" fill="none" stroke="#fff" strokeWidth="4" />
+      <line x1="37" y1="37" x2="46" y2="46" stroke="#fff" strokeWidth="4.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 Object.assign(window, {
-  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon, DoomIcon, TerminalIcon, NewsIcon,
+  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon, DoomIcon, TerminalIcon, NewsIcon, SearchIcon,
   FILES,
 });
