@@ -148,15 +148,49 @@ const STORE_KEY = "cakir-os-v5";
 function FinderContent({ fkey, onItem }) {
   /* favourites navigate the SAME window into that folder, with Back */
   const [stack, setStack] = useState([fkey]);
+  const [query, setQuery] = useState("");
+  const [tags, setTags] = useState([]);
+  const [sort, setSort] = useState({ key: null, dir: 1 });
   useEffect(() => { setStack([fkey]); }, [fkey]);
   const curKey = stack[stack.length - 1];
   const f = FILES[curKey] || FILES[fkey];
+  useEffect(() => { setQuery(""); setTags([]); setSort({ key: null, dir: 1 }); }, [curKey]);
+
   const fav = [
     ["Publications", "publications"], ["Projects", "projects"], ["Talks", "talks"],
     ["Writing", "writing"], ["Outreach", "outreach"],
   ];
   const go = (key) => setStack((s) => (key === s[s.length - 1] ? s : [...s, key]));
   const back = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
+
+  const allTags = useMemo(() => {
+    const s = new Set();
+    f.items.forEach((it) => (it.keywords || []).forEach((k) => s.add(k)));
+    return [...s].sort((a, b) => a.localeCompare(b));
+  }, [f]);
+
+  const items = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = f.items.filter((it) => {
+      if (tags.length) {
+        const ks = (it.keywords || []).map((k) => k.toLowerCase());
+        if (!tags.every((t) => ks.indexOf(t.toLowerCase()) !== -1)) return false;
+      }
+      if (!q) return true;
+      const hay = [it.title || it.name, it.venue || it.meta || it.kind, it.year || it.date, (it.keywords || []).join(" "), it.blurb, it.abstract].filter(Boolean).join(" ").toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+    if (sort.key) {
+      const val = (it) => (sort.key === "year" ? (it.year || it.date || "") : sort.key === "venue" ? (it.venue || it.kind || it.meta || "") : (it.title || it.name || "")).toString().toLowerCase();
+      list = list.slice().sort((a, b) => { const av = val(a), bv = val(b); return av < bv ? -sort.dir : av > bv ? sort.dir : 0; });
+    }
+    return list;
+  }, [f, query, tags, sort]);
+
+  const toggleTag = (t) => setTags((p) => (p.indexOf(t) !== -1 ? p.filter((x) => x !== t) : p.concat(t)));
+  const setSortKey = (k) => setSort((s) => (s.key === k ? { key: k, dir: -s.dir } : { key: k, dir: 1 }));
+  const arrow = (k) => (sort.key === k ? (sort.dir > 0 ? " ↑" : " ↓") : "");
+
   return (
     <div className="win-body">
       <div className="fsidebar">
@@ -170,23 +204,41 @@ function FinderContent({ fkey, onItem }) {
       <div className="fmain">
         <div className="ftoolbar">
           {stack.length > 1 && <button className="fback" onClick={back} title="Back" aria-label="Back">‹</button>}
-          <span style={{ fontWeight: 600, color: "var(--ink)" }}>{f.title}</span>
-          <span style={{ fontFamily: "var(--mono)", fontSize: 11.5 }}>{f.items.length} items</span>
+          <span className="ftitle">{f.title}</span>
+          <span className="fcount">{items.length === f.items.length ? f.items.length + " items" : items.length + " / " + f.items.length}</span>
+          <span className="fsearch">
+            <svg width="13" height="13" viewBox="0 0 16 16" aria-hidden="true"><circle cx="6.7" cy="6.7" r="4.6" fill="none" stroke="currentColor" strokeWidth="1.6"/><line x1="10.2" y1="10.2" x2="14.5" y2="14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+            <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Filter…" aria-label="Filter items" />
+            {query && <button className="fsearch-x" onClick={() => setQuery("")} aria-label="Clear">×</button>}
+          </span>
         </div>
+        {allTags.length > 0 && (
+          <div className="ftags">
+            {allTags.map((t) => (
+              <button key={t} className={"ftag" + (tags.indexOf(t) !== -1 ? " on" : "")} onClick={() => toggleTag(t)}>{t}</button>
+            ))}
+            {tags.length > 0 && <button className="ftag fclear" onClick={() => setTags([])}>clear</button>}
+          </div>
+        )}
         {f.view === "grid" ? (
           <div className="fgrid">
-            {f.items.map((it, i) => (
+            {items.map((it, i) => (
               <div className="fitem" key={i} onClick={() => { if (TOUCH) onItem(it); }} onDoubleClick={() => onItem(it)} title="Open">
                 <ItemThumb item={it} />
                 <div className="nm">{it.name || it.title}</div>
                 {(it.meta || it.venue) && <div className="mt">{it.meta || it.venue}</div>}
               </div>
             ))}
+            {!items.length && <div className="fempty">No matches</div>}
           </div>
         ) : (
           <div className="flist">
-            <div className="hdr"><span>Name</span><span>Venue</span><span>Year</span></div>
-            {f.items.map((it, i) => (
+            <div className="hdr">
+              <span className="sortable" onClick={() => setSortKey("title")}>Name{arrow("title")}</span>
+              <span className="sortable" onClick={() => setSortKey("venue")}>Venue{arrow("venue")}</span>
+              <span className="sortable" onClick={() => setSortKey("year")}>Year{arrow("year")}</span>
+            </div>
+            {items.map((it, i) => (
               <div className="lrow" key={i} onClick={() => { if (TOUCH) onItem(it); }} onDoubleClick={() => onItem(it)}>
                 <span className="nm">
                   <ItemThumb item={it} />
@@ -195,7 +247,10 @@ function FinderContent({ fkey, onItem }) {
                     {(it.blurb || it.abstract) && <span className="nm-sub">{it.blurb || it.abstract}</span>}
                     {it.keywords && it.keywords.length > 0 && (
                       <span className="kwchips">
-                        {it.keywords.slice(0, 4).map((k) => <span className="kw" key={k}>{k}</span>)}
+                        {it.keywords.slice(0, 4).map((k) => (
+                          <span className={"kw" + (tags.indexOf(k) !== -1 ? " on" : "")} key={k}
+                            onClick={(e) => { e.stopPropagation(); toggleTag(k); }} title={"Filter by " + k}>{k}</span>
+                        ))}
                       </span>
                     )}
                   </span>
@@ -204,6 +259,7 @@ function FinderContent({ fkey, onItem }) {
                 <span className="mt">{it.year || it.date}</span>
               </div>
             ))}
+            {!items.length && <div className="fempty">No matches</div>}
           </div>
         )}
       </div>

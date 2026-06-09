@@ -332,6 +332,25 @@ body {
 .flist .lrow .nm { align-items: center; }
 .flist .lrow .nm .nm-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .flist .lrow .nm .nm-title { color: var(--ink); line-height: 1.2; }
+
+/* ---------- finder as a searchable / sortable table ---------- */
+.ftoolbar .ftitle { font-weight: 600; color: var(--ink); white-space: nowrap; }
+.ftoolbar .fcount { font-family: var(--mono); font-size: 11px; color: var(--ink3); white-space: nowrap; }
+.ftoolbar .fsearch { margin-left: auto; display: flex; align-items: center; gap: 6px; background: rgba(0,0,0,0.05); border-radius: 7px; padding: 3px 8px; color: var(--ink3); min-width: 0; }
+.ftoolbar .fsearch input { border: 0; background: none; outline: none; font: inherit; font-size: 12.5px; color: var(--ink); width: 150px; max-width: 34vw; min-width: 40px; }
+.ftoolbar .fsearch-x { border: 0; background: none; color: var(--ink3); cursor: pointer; font-size: 15px; line-height: 1; padding: 0 2px; }
+.ftoolbar .fsearch-x:hover { color: var(--ink); }
+.ftags { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 14px; border-bottom: 0.5px solid rgba(0,0,0,0.07); max-height: 84px; overflow-y: auto; flex: none; }
+.ftags .ftag { font-size: 11px; font-weight: 500; color: var(--ink2); background: rgba(0,0,0,0.05); border: 0; border-radius: 999px; padding: 4px 10px; cursor: pointer; white-space: nowrap; }
+.ftags .ftag:hover { background: rgba(0,0,0,0.10); }
+.ftags .ftag.on { background: var(--accent); color: #fff; }
+.ftags .ftag.fclear { background: transparent; color: var(--accent); }
+.flist .hdr .sortable { cursor: pointer; user-select: none; }
+.flist .hdr .sortable:hover { color: var(--ink); }
+.fempty { padding: 26px; text-align: center; color: var(--ink3); font-size: 13px; }
+.kwchips .kw { cursor: pointer; }
+.kwchips .kw:hover { filter: brightness(0.96); }
+.kwchips .kw.on { background: var(--accent); color: #fff; }
 .flist .lrow .nm .nm-sub { font-size: 12px; color: var(--ink3); line-height: 1.4; max-width: 60ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .kwchips { display: flex; flex-wrap: wrap; gap: 4px; }
 .kwchips .kw {

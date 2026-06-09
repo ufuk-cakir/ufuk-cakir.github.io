@@ -278,14 +278,63 @@ function FinderContent({
 }) {
   /* favourites navigate the SAME window into that folder, with Back */
   const [stack, setStack] = useState([fkey]);
+  const [query, setQuery] = useState("");
+  const [tags, setTags] = useState([]);
+  const [sort, setSort] = useState({
+    key: null,
+    dir: 1
+  });
   useEffect(() => {
     setStack([fkey]);
   }, [fkey]);
   const curKey = stack[stack.length - 1];
   const f = FILES[curKey] || FILES[fkey];
+  useEffect(() => {
+    setQuery("");
+    setTags([]);
+    setSort({
+      key: null,
+      dir: 1
+    });
+  }, [curKey]);
   const fav = [["Publications", "publications"], ["Projects", "projects"], ["Talks", "talks"], ["Writing", "writing"], ["Outreach", "outreach"]];
   const go = key => setStack(s => key === s[s.length - 1] ? s : [...s, key]);
   const back = () => setStack(s => s.length > 1 ? s.slice(0, -1) : s);
+  const allTags = useMemo(() => {
+    const s = new Set();
+    f.items.forEach(it => (it.keywords || []).forEach(k => s.add(k)));
+    return [...s].sort((a, b) => a.localeCompare(b));
+  }, [f]);
+  const items = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = f.items.filter(it => {
+      if (tags.length) {
+        const ks = (it.keywords || []).map(k => k.toLowerCase());
+        if (!tags.every(t => ks.indexOf(t.toLowerCase()) !== -1)) return false;
+      }
+      if (!q) return true;
+      const hay = [it.title || it.name, it.venue || it.meta || it.kind, it.year || it.date, (it.keywords || []).join(" "), it.blurb, it.abstract].filter(Boolean).join(" ").toLowerCase();
+      return hay.indexOf(q) !== -1;
+    });
+    if (sort.key) {
+      const val = it => (sort.key === "year" ? it.year || it.date || "" : sort.key === "venue" ? it.venue || it.kind || it.meta || "" : it.title || it.name || "").toString().toLowerCase();
+      list = list.slice().sort((a, b) => {
+        const av = val(a),
+          bv = val(b);
+        return av < bv ? -sort.dir : av > bv ? sort.dir : 0;
+      });
+    }
+    return list;
+  }, [f, query, tags, sort]);
+  const toggleTag = t => setTags(p => p.indexOf(t) !== -1 ? p.filter(x => x !== t) : p.concat(t));
+  const setSortKey = k => setSort(s => s.key === k ? {
+    key: k,
+    dir: -s.dir
+  } : {
+    key: k,
+    dir: 1
+  });
+  const arrow = k => sort.key === k ? sort.dir > 0 ? " ↑" : " ↓" : "";
   return /*#__PURE__*/React.createElement("div", {
     className: "win-body"
   }, /*#__PURE__*/React.createElement("div", {
@@ -311,18 +360,52 @@ function FinderContent({
     title: "Back",
     "aria-label": "Back"
   }, "\u2039"), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontWeight: 600,
-      color: "var(--ink)"
-    }
+    className: "ftitle"
   }, f.title), /*#__PURE__*/React.createElement("span", {
-    style: {
-      fontFamily: "var(--mono)",
-      fontSize: 11.5
-    }
-  }, f.items.length, " items")), f.view === "grid" ? /*#__PURE__*/React.createElement("div", {
+    className: "fcount"
+  }, items.length === f.items.length ? f.items.length + " items" : items.length + " / " + f.items.length), /*#__PURE__*/React.createElement("span", {
+    className: "fsearch"
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "13",
+    height: "13",
+    viewBox: "0 0 16 16",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "6.7",
+    cy: "6.7",
+    r: "4.6",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.6"
+  }), /*#__PURE__*/React.createElement("line", {
+    x1: "10.2",
+    y1: "10.2",
+    x2: "14.5",
+    y2: "14.5",
+    stroke: "currentColor",
+    strokeWidth: "1.6",
+    strokeLinecap: "round"
+  })), /*#__PURE__*/React.createElement("input", {
+    value: query,
+    onChange: e => setQuery(e.target.value),
+    placeholder: "Filter\u2026",
+    "aria-label": "Filter items"
+  }), query && /*#__PURE__*/React.createElement("button", {
+    className: "fsearch-x",
+    onClick: () => setQuery(""),
+    "aria-label": "Clear"
+  }, "\xD7"))), allTags.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "ftags"
+  }, allTags.map(t => /*#__PURE__*/React.createElement("button", {
+    key: t,
+    className: "ftag" + (tags.indexOf(t) !== -1 ? " on" : ""),
+    onClick: () => toggleTag(t)
+  }, t)), tags.length > 0 && /*#__PURE__*/React.createElement("button", {
+    className: "ftag fclear",
+    onClick: () => setTags([])
+  }, "clear")), f.view === "grid" ? /*#__PURE__*/React.createElement("div", {
     className: "fgrid"
-  }, f.items.map((it, i) => /*#__PURE__*/React.createElement("div", {
+  }, items.map((it, i) => /*#__PURE__*/React.createElement("div", {
     className: "fitem",
     key: i,
     onClick: () => {
@@ -336,11 +419,22 @@ function FinderContent({
     className: "nm"
   }, it.name || it.title), (it.meta || it.venue) && /*#__PURE__*/React.createElement("div", {
     className: "mt"
-  }, it.meta || it.venue)))) : /*#__PURE__*/React.createElement("div", {
+  }, it.meta || it.venue))), !items.length && /*#__PURE__*/React.createElement("div", {
+    className: "fempty"
+  }, "No matches")) : /*#__PURE__*/React.createElement("div", {
     className: "flist"
   }, /*#__PURE__*/React.createElement("div", {
     className: "hdr"
-  }, /*#__PURE__*/React.createElement("span", null, "Name"), /*#__PURE__*/React.createElement("span", null, "Venue"), /*#__PURE__*/React.createElement("span", null, "Year")), f.items.map((it, i) => /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "sortable",
+    onClick: () => setSortKey("title")
+  }, "Name", arrow("title")), /*#__PURE__*/React.createElement("span", {
+    className: "sortable",
+    onClick: () => setSortKey("venue")
+  }, "Venue", arrow("venue")), /*#__PURE__*/React.createElement("span", {
+    className: "sortable",
+    onClick: () => setSortKey("year")
+  }, "Year", arrow("year"))), items.map((it, i) => /*#__PURE__*/React.createElement("div", {
     className: "lrow",
     key: i,
     onClick: () => {
@@ -360,13 +454,20 @@ function FinderContent({
   }, it.blurb || it.abstract), it.keywords && it.keywords.length > 0 && /*#__PURE__*/React.createElement("span", {
     className: "kwchips"
   }, it.keywords.slice(0, 4).map(k => /*#__PURE__*/React.createElement("span", {
-    className: "kw",
-    key: k
+    className: "kw" + (tags.indexOf(k) !== -1 ? " on" : ""),
+    key: k,
+    onClick: e => {
+      e.stopPropagation();
+      toggleTag(k);
+    },
+    title: "Filter by " + k
   }, k))))), /*#__PURE__*/React.createElement("span", {
     className: "mt"
   }, it.venue || it.kind), /*#__PURE__*/React.createElement("span", {
     className: "mt"
-  }, it.year || it.date))))));
+  }, it.year || it.date))), !items.length && /*#__PURE__*/React.createElement("div", {
+    className: "fempty"
+  }, "No matches"))));
 }
 function TextContent({
   f
