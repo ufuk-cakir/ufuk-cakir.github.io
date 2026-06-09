@@ -94,6 +94,8 @@ function IconArt({ type, src }) {
   if (type === "terminal") return <TerminalIcon />;
   if (type === "news") return <NewsIcon />;
   if (type === "mail") return <MailIcon />;
+  if (type === "concept") return <ConceptIcon />;
+  if (type === "graph") return <GraphIcon />;
   if (type === "folder") return <FolderIcon />;
   if (type === "txt") return <DocIcon tag="TXT" tagColor="var(--accent)" />;
   if (type === "pdf") return <DocIcon tag="PDF" tagColor="#e5341c" />;
@@ -114,8 +116,10 @@ const ICONS = [
   { id: "talks", type: "folder", label: "Talks", open: "talks" },
   { id: "writing", type: "folder", label: "Writing", open: "writing" },
   { id: "outreach", type: "folder", label: "Outreach", open: "outreach" },
+  { id: "concepts", type: "folder", label: "Concepts", open: "concepts" },
   { id: "whyresearch", type: "txt", label: "Why Research?.txt", open: "whyresearch" },
   { id: "background", type: "txt", label: "Background.txt", open: "background" },
+  { id: "graph", type: "graph", label: "Graph", open: "graph" },
   { id: "ori", type: "logo", src: S.groups.ori.logo, label: "Oxford Robotics Institute", open: "ori" },
   { id: "ie", type: "logo", src: S.groups.ie.logo, label: "Intelligent Earth CDT", open: "ie" },
 ];
@@ -139,7 +143,7 @@ function defaultWidgetPos() {
   return { clock: { x: 40, y: 56 }, weather: { x: 40, y: 250 }, note: { x: 40, y: 452 } };
 }
 
-const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], post: [980, 680], embed: [820, 600], about: [360, 470], mail: [400, 470], terminal: [680, 440], news: [680, 620] };
+const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], post: [980, 680], embed: [820, 600], about: [360, 470], mail: [400, 470], terminal: [680, 440], news: [680, 620], note: [640, 600], graph: [960, 680] };
 const STORE_KEY = "cakir-os-v5";
 
 /* ============================================================
@@ -158,7 +162,7 @@ function FinderContent({ fkey, onItem }) {
 
   const fav = [
     ["Publications", "publications"], ["Projects", "projects"], ["Talks", "talks"],
-    ["Writing", "writing"], ["Outreach", "outreach"],
+    ["Writing", "writing"], ["Outreach", "outreach"], ["Concepts", "concepts"],
   ];
   const go = (key) => setStack((s) => (key === s[s.length - 1] ? s : [...s, key]));
   const back = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
@@ -682,8 +686,132 @@ function MailContent() {
   );
 }
 
+/* ---------- markdown (concept notes) ---------- */
+const conceptTitle = (id) => { const c = (S.concepts || []).find((x) => x.id === id); return c ? c.title : null; };
+function renderMarkdown(md) {
+  const math = [];
+  let s = String(md || "");
+  s = s.replace(/\$\$([\s\S]+?)\$\$/g, (m, tex) => { math.push({ tex, display: true }); return "@@M" + (math.length - 1) + "@@"; });
+  s = s.replace(/\$([^$\n]+?)\$/g, (m, tex) => { math.push({ tex, display: false }); return "@@M" + (math.length - 1) + "@@"; });
+  s = s.replace(/\[\[([^\]|]+?)(?:\|([^\]]+?))?\]\]/g, (m, id, label) => "[" + (label || conceptTitle(id.trim()) || id.trim()) + "](#c/" + id.trim() + ")");
+  let html = window.marked ? window.marked.parse(s) : s.replace(/\n\n/g, "<br><br>");
+  html = html.replace(/@@M(\d+)@@/g, (m, i) => { const d = math[+i]; if (!d) return ""; try { return window.katex.renderToString(d.tex, { displayMode: d.display, throwOnError: false }); } catch (e) { return d.tex; } });
+  return html;
+}
+
+function NoteContent({ f }) {
+  const c = f.note || {};
+  const ref = useRef(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    ref.current.innerHTML = renderMarkdown(c.md);
+    ref.current.querySelectorAll('a[href^="#c/"]').forEach((a) => {
+      a.classList.add("wikilink");
+      a.addEventListener("click", (e) => { e.preventDefault(); window.dispatchEvent(new CustomEvent("os-open", { detail: { concept: a.getAttribute("href").slice(3) } })); });
+    });
+  }, [c]);
+  return (
+    <div className="win-body postwin">
+      <div className="readerbar">
+        <span className="rb-title">{slugify(c.title || "note")}.md</span>
+        <span className="rb-actions"><span className="note-kind">concept</span></span>
+      </div>
+      <div className="reader-scroll">
+        <article className="reader-doc">
+          <header className="reader-head">
+            {c.tags && c.tags.length > 0 && <div className="reader-kicker">{c.tags.join(" · ")}</div>}
+            <h1>{c.title}</h1>
+          </header>
+          <div ref={ref} className="reader-content"></div>
+        </article>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- graph view ---------- */
+function buildGraph(openers) {
+  const nodes = []; const byId = {};
+  const add = (id, label, type, tags, open) => { if (byId[id]) return; const nd = { id, label, type, tags: tags || [], open }; nodes.push(nd); byId[id] = nd; };
+  const sl = (s) => slugify(s || "");
+  (S.publications || []).forEach((it) => { const t = it.title || it.name; if (t) add("pub:" + sl(t), t, "publication", it.keywords, () => openers.openItem(it)); });
+  (S.projects || []).forEach((it) => { const t = it.name || it.title; if (t) add("proj:" + sl(t), t, "project", it.keywords, () => openers.openItem(it)); });
+  (S.talks || []).forEach((it) => { const t = it.title || it.name; if (t) add("talk:" + sl(t), t, "talk", it.keywords, () => openers.openItem(it)); });
+  (S.writing || []).forEach((it) => { if (it.title) add("post:" + sl(it.title), it.title, "writing", it.keywords, () => openers.openItem(it)); });
+  (S.outreach || []).forEach((it) => { const t = it.name || it.title; if (t) add("out:" + sl(t), t, "outreach", it.keywords, () => openers.openItem(it)); });
+  (S.concepts || []).forEach((c) => add("c:" + c.id, c.title, "concept", c.tags, () => openers.openConcept(c.id)));
+  const edges = []; const seen = {};
+  const link = (a, b, w) => { if (a === b || !byId[a] || !byId[b]) return; const k = a < b ? a + "|" + b : b + "|" + a; if (seen[k]) { seen[k].w = Math.max(seen[k].w, w); return; } const e = { a, b, w }; seen[k] = e; edges.push(e); };
+  (S.concepts || []).forEach((c) => (c.related || []).forEach((r) => link("c:" + c.id, r.indexOf(":") >= 0 ? r : "c:" + r, 2)));
+  (S.writing || []).forEach((it) => (it.concepts || []).forEach((cid) => link("post:" + sl(it.title), "c:" + cid, 2)));
+  const tagMap = {};
+  nodes.forEach((nd) => (nd.tags || []).forEach((t) => { const k = String(t).toLowerCase(); (tagMap[k] = tagMap[k] || []).push(nd.id); }));
+  Object.keys(tagMap).forEach((k) => { const ids = tagMap[k]; for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) link(ids[i], ids[j], 1); });
+  return { nodes, edges };
+}
+function computeLayout(graph, W, H) {
+  const nodes = graph.nodes, edges = graph.edges, n = nodes.length;
+  const pos = {}, vel = {};
+  const R = Math.min(W, H) * 0.34;
+  nodes.forEach((nd, i) => { const a = (i / Math.max(1, n)) * Math.PI * 2; pos[nd.id] = { x: W / 2 + Math.cos(a) * R + (Math.random() - 0.5) * 40, y: H / 2 + Math.sin(a) * R + (Math.random() - 0.5) * 40 }; vel[nd.id] = { x: 0, y: 0 }; });
+  const REP = 5400, SPRING = 0.02, IDEAL = 115, CENTER = 0.013, DAMP = 0.85;
+  for (let it = 0; it < 340; it++) {
+    for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) {
+      const a = nodes[i].id, b = nodes[j].id; let dx = pos[a].x - pos[b].x, dy = pos[a].y - pos[b].y; let d2 = dx * dx + dy * dy || 0.01; let d = Math.sqrt(d2); let f = REP / d2; vel[a].x += dx / d * f; vel[a].y += dy / d * f; vel[b].x -= dx / d * f; vel[b].y -= dy / d * f;
+    }
+    edges.forEach((e) => { let dx = pos[e.b].x - pos[e.a].x, dy = pos[e.b].y - pos[e.a].y; let d = Math.sqrt(dx * dx + dy * dy) || 0.01; let f = SPRING * (d - IDEAL) * (e.w || 1); vel[e.a].x += dx / d * f; vel[e.a].y += dy / d * f; vel[e.b].x -= dx / d * f; vel[e.b].y -= dy / d * f; });
+    nodes.forEach((nd) => { const p = pos[nd.id], v = vel[nd.id]; v.x += (W / 2 - p.x) * CENTER; v.y += (H / 2 - p.y) * CENTER; v.x *= DAMP; v.y *= DAMP; p.x += v.x; p.y += v.y; p.x = Math.max(28, Math.min(W - 28, p.x)); p.y = Math.max(28, Math.min(H - 28, p.y)); });
+  }
+  return pos;
+}
+const GRAPH_COLORS = { publication: "#3aa0ff", project: "#2f7de0", talk: "#c89bff", writing: "#3ad07a", outreach: "#23c4c4", concept: "#f0b429" };
+function GraphView({ openFile, openItem, openConcept }) {
+  const W = 900, H = 600;
+  const graph = useMemo(() => buildGraph({ openFile, openItem, openConcept }), [openFile, openItem, openConcept]);
+  const [pos, setPos] = useState(() => computeLayout(graph, W, H));
+  const [hover, setHover] = useState(null);
+  const svgRef = useRef(null);
+  const neighbors = useMemo(() => { const m = {}; graph.edges.forEach((e) => { (m[e.a] = m[e.a] || {})[e.b] = 1; (m[e.b] = m[e.b] || {})[e.a] = 1; }); return m; }, [graph]);
+  const dragNode = (e, id) => {
+    e.stopPropagation(); e.preventDefault();
+    const r = svgRef.current.getBoundingClientRect(); const scX = W / r.width, scY = H / r.height;
+    const ox = e.clientX, oy = e.clientY, start = { x: pos[id].x, y: pos[id].y }; let moved = false;
+    const mv = (ev) => { const dx = (ev.clientX - ox) * scX, dy = (ev.clientY - oy) * scY; if (Math.hypot(ev.clientX - ox, ev.clientY - oy) > 3) moved = true; setPos((p) => ({ ...p, [id]: { x: start.x + dx, y: start.y + dy } })); };
+    const up = () => { document.removeEventListener("pointermove", mv); document.removeEventListener("pointerup", up); if (!moved) { const nd = graph.nodes.find((x) => x.id === id); nd && nd.open && nd.open(); } };
+    document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up);
+  };
+  return (
+    <div className="win-body graphwin">
+      <div className="graph-bar"><span className="graph-title">Knowledge graph</span><span className="graph-hint">drag to rearrange · click a node to open · hover to focus</span></div>
+      <div className="graph-stage">
+        <svg ref={svgRef} viewBox={"0 0 " + W + " " + H} preserveAspectRatio="xMidYMid meet" className="graph-svg">
+          <g>
+            {graph.edges.map((e, i) => { const a = pos[e.a], b = pos[e.b]; if (!a || !b) return null; const lit = hover && (hover === e.a || hover === e.b); const dim = hover && !lit; return <line key={i} x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke={lit ? "var(--accent)" : "#1c1c1e"} strokeOpacity={dim ? 0.05 : lit ? 0.5 : 0.12} strokeWidth={e.w > 1 ? 1.8 : 1} />; })}
+          </g>
+          <g>
+            {graph.nodes.map((nd) => { const p = pos[nd.id]; if (!p) return null; const isN = hover && (hover === nd.id || (neighbors[hover] && neighbors[hover][nd.id])); const dim = hover && !isN; const rad = nd.type === "concept" ? 9 : 7;
+              return (
+                <g key={nd.id} transform={"translate(" + p.x + " " + p.y + ")"} opacity={dim ? 0.22 : 1} style={{ cursor: "pointer" }}
+                  onPointerDown={(e) => dragNode(e, nd.id)} onPointerEnter={() => setHover(nd.id)} onPointerLeave={() => setHover((h) => (h === nd.id ? null : h))}>
+                  <circle r={rad} fill={GRAPH_COLORS[nd.type] || "#999"} stroke="#fff" strokeWidth="1.6" />
+                  <text x={rad + 4} y={3.5} fontSize="11" fill="#1c1c1e" style={{ paintOrder: "stroke", stroke: "#fbfbfa", strokeWidth: 3 }}>{nd.label.length > 28 ? nd.label.slice(0, 27) + "…" : nd.label}</text>
+                </g>
+              );
+            })}
+          </g>
+        </svg>
+        <div className="graph-legend">
+          {[["publication", "Publications"], ["project", "Projects"], ["talk", "Talks"], ["writing", "Writing"], ["outreach", "Outreach"], ["concept", "Concepts"]].map(([t, l]) => (
+            <span key={t}><i style={{ background: GRAPH_COLORS[t] }}></i>{l}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- window shell ---------- */
-function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen, onItem, onToggleFull, onResize }) {
+function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen, onItem, onToggleFull, onResize, onConcept }) {
   const ttlDown = (e) => { onFocus(); beginDrag(e, win.x, win.y, (x, y) => onDrag(win.wid, Math.max(28, x), Math.max(28, y))); };
   const MINW = 320, MINH = 220;
   const rzDown = (e, dir) => {
@@ -710,6 +838,8 @@ function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen,
       {f.kind === "detail" && <DetailContent f={f} />}
       {f.kind === "post" && <PostContent f={f} win={win} onToggleFull={onToggleFull} focused={focused} />}
       {f.kind === "article" && <ArticleContent f={f} win={win} onToggleFull={onToggleFull} focused={focused} />}
+      {f.kind === "note" && <NoteContent f={f} />}
+      {f.kind === "graph" && <GraphView openFile={onOpen} onItem={onItem} openItem={onItem} openConcept={onConcept} />}
       {f.kind === "embed" && <EmbedContent f={f} />}
       {f.kind === "mail" && <MailContent />}
       {f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp)}
@@ -877,6 +1007,19 @@ function App() {
     });
   }, []);
 
+  const openConcept = useCallback((id) => {
+    const c = (S.concepts || []).find((x) => x.id === id);
+    if (!c) return;
+    const key = "note:" + id;
+    setWindows((ws) => {
+      const ex = ws.find((w) => w.openId === key && !w.closing);
+      if (ex) return ws.map((w) => (w.wid === ex.wid ? { ...w, min: false, z: nextZ() } : w));
+      const [w, h] = SIZE.note;
+      const { x, y } = placeWin(ws.length, w, h);
+      return [...ws, { wid: uid(), openId: key, note: c, title: c.title, x, y, w, h, z: nextZ(), min: false }];
+    });
+  }, []);
+
   /* open an embedded page (e.g. a video) in its own in-OS window */
   const openEmbed = useCallback((url, title, hint) => {
     const key = "embed:" + url;
@@ -893,15 +1036,17 @@ function App() {
   useEffect(() => {
     const onOpen = (e) => {
       const d = (e && e.detail) || {};
-      if (d.url) openEmbed(d.url, d.title, d.hint);
+      if (d.concept) openConcept(d.concept);
+      else if (d.url) openEmbed(d.url, d.title, d.hint);
       else if (d.key) openFile(d.key);
     };
     window.addEventListener("os-open", onOpen);
     return () => window.removeEventListener("os-open", onOpen);
-  }, [openEmbed, openFile]);
+  }, [openEmbed, openFile, openConcept]);
 
   /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback((it) => {
+    if (it.concept) return openConcept(it.id);
     if (it.slug && it.url) return openPost(it);
     if (it.deck) return openEmbed(it.deck, it.title || it.name, "Use the arrow keys to navigate the slides");
     if (it.body) return openArticle(it);
@@ -911,7 +1056,7 @@ function App() {
     const href = it.links && it.links[0] && it.links[0].href;
     if (href) return openHref(href);
     openDetail(it);
-  }, [openDetail, openTextDoc, openPost, openArticle, openEmbed]);
+  }, [openDetail, openTextDoc, openPost, openArticle, openEmbed, openConcept]);
 
   const closeWin = useCallback((wid) => {
     setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, closing: true, full: false } : w)));
@@ -1002,7 +1147,9 @@ function App() {
     { id: "talks", node: <FolderIcon />, label: "Talks", key: "talks" },
     { id: "writing", node: <FolderIcon />, label: "Writing", key: "writing" },
     { id: "outreach", node: <FolderIcon />, label: "Outreach", key: "outreach" },
+    { id: "concepts", node: <ConceptIcon />, label: "Concepts", key: "concepts" },
     { id: "news", node: <NewsIcon />, label: "News", key: "news" },
+    { id: "graph", node: <GraphIcon />, label: "Graph", key: "graph" },
     { sep: true },
     ...(L.email ? [{ id: "mail", node: <MailIcon />, label: "Mail", key: "mail" }] : []),
     { id: "scholar", node: <GlobeIcon />, label: "Scholar", href: L.scholar },
@@ -1026,6 +1173,8 @@ function App() {
       { key: "background", title: "Background", cat: "Note", type: "txt", run: () => openFile("background") },
       { key: "ori", title: S.groups.ori.title, cat: "Affiliation", type: "logo", src: S.groups.ori.logo, run: () => openFile("ori") },
       { key: "ie", title: S.groups.ie.title, cat: "Affiliation", type: "logo", src: S.groups.ie.logo, run: () => openFile("ie") },
+      { key: "concepts", title: "Concepts", cat: "Folder", type: "concept", run: () => openFile("concepts") },
+      { key: "graph", title: "Graph", cat: "App", type: "graph", run: () => openFile("graph") },
       { key: "news", title: "News", cat: "App", type: "news", run: () => openFile("news") },
       { key: "mail", title: "Mail", cat: "App", type: "mail", run: () => openFile("mail") },
       { key: "terminal", title: "Terminal", cat: "App", type: "terminal", run: () => openFile("terminal") },
@@ -1037,7 +1186,7 @@ function App() {
         key: cat + ":" + i + ":" + title, title,
         sub: [it.venue || it.meta, it.year || it.date].filter(Boolean).join(" · "),
         cat, type: it.type || type,
-        text: [title, it.venue || it.meta, (it.keywords || []).join(" "), it.blurb, it.abstract].filter(Boolean).join(" "),
+        text: [title, it.venue || it.meta, (it.keywords || it.tags || []).join(" "), it.blurb, it.abstract].filter(Boolean).join(" "),
         run: () => runner(it),
       });
     });
@@ -1046,8 +1195,9 @@ function App() {
     add(S.talks, "Talk", "pdf", openItem);
     add(S.writing, "Writing", "txt", (it) => openPost(it));
     add(S.outreach, "Outreach", "image", openItem);
+    add((S.concepts || []).map((c) => ({ title: c.title, venue: (c.tags || []).join(", "), keywords: c.tags, id: c.id })), "Concept", "concept", (it) => openConcept(it.id));
     return out;
-  }, [openFile, openItem, openPost]);
+  }, [openFile, openItem, openPost, openConcept]);
 
   /* menubar menus */
   const MENUS = {
@@ -1070,6 +1220,8 @@ function App() {
       { t: "Talks", fn: () => openFile("talks") },
       { t: "Writing", fn: () => openFile("writing") },
       { t: "Outreach", fn: () => openFile("outreach") },
+      { t: "Concepts", fn: () => openFile("concepts") },
+      { t: "Graph", fn: () => openFile("graph") },
       { sep: true },
       { t: "Google Scholar ↗", fn: () => openHref(L.scholar) },
     ] },
@@ -1128,17 +1280,19 @@ function App() {
       {windows.map((w) => {
         const f = FILES[w.openId] || (w.post
           ? { kind: "post", title: w.title, post: w.post }
-          : w.article
-            ? { kind: "article", title: w.title, article: w.article }
-            : w.embed
-              ? { kind: "embed", title: w.title, url: w.embed.url, hint: w.embed.hint }
-              : w.doc
-                ? { kind: "text", title: w.title, heading: w.doc.heading, by: w.doc.by, body: w.doc.body }
-                : { kind: "detail", title: w.title, detail: w.detail });
+          : w.note
+            ? { kind: "note", title: w.title, note: w.note }
+            : w.article
+              ? { kind: "article", title: w.title, article: w.article }
+              : w.embed
+                ? { kind: "embed", title: w.title, url: w.embed.url, hint: w.embed.hint }
+                : w.doc
+                  ? { kind: "text", title: w.title, heading: w.doc.heading, by: w.doc.by, body: w.doc.body }
+                  : { kind: "detail", title: w.title, detail: w.detail });
         return (
           <Win key={w.wid} win={w} f={f} focused={w.z === Math.max(...windows.map((q) => q.z))}
             onFocus={() => focusWin(w.wid)} onClose={closeWin} onMin={minWin} onZoom={zoomWin}
-            onDrag={dragWin} onOpen={openFile} onItem={openItem} onToggleFull={toggleFull} onResize={resizeWin} />
+            onDrag={dragWin} onOpen={openFile} onItem={openItem} onToggleFull={toggleFull} onResize={resizeWin} onConcept={openConcept} />
         );
       })}
 

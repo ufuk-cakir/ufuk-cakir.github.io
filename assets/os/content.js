@@ -128,7 +128,7 @@ window.SITE = {
       year: "2023",
       abstract:
         "A dataset of 2D maps and 3D cubes for 11,727 galaxies capturing essential attributes (stellar age, metallicity and mass) tailored for machine-learning applications. It ships with an interactive dashboard for exploring the lower-dimensional image space. Accepted at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023.",
-      keywords: ["dataset", "galaxies", "IllustrisTNG", "machine learning"],
+      keywords: ["dataset", "astrophysics"],
       media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
       links: [
         {
@@ -144,7 +144,7 @@ window.SITE = {
       year: "2022",
       abstract:
         "Using Principal Component Analysis to compute 'eigengalaxies' — the basis vectors of a transformed galaxy-image space — to encode the morphological information contained in state-of-the-art simulations. Built on data from the IllustrisTNG project.",
-      keywords: ["PCA", "morphology", "IllustrisTNG"],
+      keywords: ["astrophysics"],
       media: { type: "video", src: "assets/videos/eigen10.mp4" },
       links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }],
     },
@@ -154,7 +154,7 @@ window.SITE = {
       year: "2024",
       abstract:
         "A fully-tested, well-documented genetic algorithm that optimises bioacoustic spectrograms to enable real-time monitoring of critically endangered species. Developed with the Machine Learning for Ecology group at AIMS (Cape Town), funded by the Baden-Württemberg-Stipendium. Poster at the 2nd ML4RS Workshop, ICLR Vienna 2024.",
-      keywords: ["bioacoustics", "genetic algorithm", "conservation"],
+      keywords: ["bioacoustics", "genetic algorithm"],
       media: { type: "image", src: "assets/images/eso logo.png" },
       links: [
         { label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" },
@@ -178,7 +178,7 @@ window.SITE = {
       meta: "JAX · open source",
       blurb:
         "A modular, fully-tested, well-documented JAX tool that forward-models mock IFU cubes from cosmological simulations such as IllustrisTNG. It ships predefined telescope configs (e.g. MUSE) and standard spectral libraries, and parallelises across GPUs for ~600× speedups — turning hours of compute into seconds.",
-      keywords: ["JAX", "IFU", "GPU", "open source"],
+      keywords: ["astrophysics", "JAX"],
       media: { type: "image", src: "assets/images/rubix-logo.svg" },
       links: [
         { label: "GitHub ↗", href: "https://github.com/ufuk-cakir/rubix" },
@@ -214,7 +214,7 @@ window.SITE = {
       meta: "Dataset · 2023",
       blurb:
         "2D maps and 3D cubes of 11,727 galaxies (stellar age, metallicity, mass) built for machine learning, with an interactive dashboard for the lower-dimensional image space.",
-      keywords: ["dataset", "galaxies", "ML"],
+      keywords: ["dataset", "galaxies"],
       media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
       links: [
         { label: "Project page ↗", href: "research/gamma.html" },
@@ -262,7 +262,7 @@ window.SITE = {
       meta: "B.Sc. thesis · 2022",
       blurb:
         "PCA basis vectors of galaxy images from IllustrisTNG, used to model galaxy morphology in a compact, interpretable space.",
-      keywords: ["PCA", "morphology"],
+      keywords: ["galaxies", "thesis"],
       media: { type: "video", src: "assets/videos/eigen10.mp4" },
       links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }],
       body: [
@@ -290,7 +290,7 @@ window.SITE = {
       meta: "AIMS · 2024",
       blurb:
         "A genetic algorithm to optimise bioacoustic spectrograms for real-time monitoring of endangered species, developed with the ML for Ecology group at AIMS.",
-      keywords: ["bioacoustics", "genetic algorithm", "conservation"],
+      keywords: ["bioacoustics", "genetic algorithm"],
       media: { type: "image", src: "assets/images/eso logo.png" },
       links: [
         { label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" },
@@ -301,7 +301,7 @@ window.SITE = {
       meta: "M.Sc. thesis",
       blurb:
         "A differentiable JAX pipeline that generates galaxy images from physical input parameters, implementing astrophysical processes so the whole pipeline can be embedded inside a larger ML framework. Open source, by design.",
-      keywords: ["JAX", "differentiable", "galaxies"],
+      keywords: ["JAX", "astrophysics"],
       media: { type: "image", src: "assets/images/ml_astro.png" },
     },
     {
@@ -472,6 +472,83 @@ window.SITE = {
           href: "https://sorbonne-universite.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=b92c0e54-205f-4e1b-a59d-aeca00a3f13e",
         },
       ],
+    },
+  ],
+
+  /* ---- Concepts: math / concept notes, written in Markdown ----
+     Each is a node in the Graph view. Use String.raw`` for the `md` so
+     you can paste LaTeX without escaping backslashes. Link concepts to
+     each other with [[concept-id]] (or [[concept-id|custom label]]).
+     `tags` connect nodes that share a topic; `related` are explicit links.
+     Reference a concept from a blog post via the post's `concepts: [...]`. */
+  concepts: [
+    {
+      id: "information-theory",
+      title: "Information Theory",
+      tags: ["information theory"],
+      related: ["entropy", "kl-divergence", "mutual-information"],
+      md: String.raw`The mathematics of *uncertainty* and *communication*, founded by Claude Shannon (1948). It gives us a way to measure information in bits.
+
+The core quantities all build on one idea — the surprise of an event $x$ is $-\log p(x)$. From there we get [[entropy]], [[kl-divergence]], and [[mutual-information]].`,
+    },
+    {
+      id: "entropy",
+      title: "Entropy",
+      tags: ["information theory"],
+      related: ["kl-divergence", "mutual-information"],
+      md: String.raw`The **entropy** of a random variable $X$ is the average surprise — how uncertain we are about its outcome:
+
+$$H(X) = -\sum_x p(x)\,\log p(x)$$
+
+It is maximal for a uniform distribution and zero when $X$ is deterministic. Measured in bits when $\log$ is base 2.
+
+See also [[kl-divergence]] and [[mutual-information]].`,
+    },
+    {
+      id: "kl-divergence",
+      title: "KL Divergence",
+      tags: ["information theory"],
+      related: ["entropy", "mutual-information"],
+      md: String.raw`The **Kullback–Leibler divergence** measures how much a distribution $P$ diverges from a reference $Q$:
+
+$$D_{KL}(P \,\|\, Q) = \sum_x P(x)\,\log\frac{P(x)}{Q(x)}$$
+
+It is non-negative, and zero **iff** $P = Q$. It is *not* symmetric, so it is a divergence, not a distance.
+
+It is the "extra bits" you pay for coding samples from $P$ using a code optimised for $Q$. Built on [[entropy]].`,
+    },
+    {
+      id: "mutual-information",
+      title: "Mutual Information",
+      tags: ["information theory"],
+      related: ["entropy", "empowerment"],
+      md: String.raw`**Mutual information** measures how much knowing $Y$ reduces uncertainty about $X$:
+
+$$I(X; Y) = \sum_{x,y} p(x,y)\,\log\frac{p(x,y)}{p(x)\,p(y)} = H(X) - H(X \mid Y)$$
+
+It is symmetric and non-negative, and equals the [[kl-divergence]] between the joint and the product of marginals. It underpins [[empowerment]].`,
+    },
+    {
+      id: "empowerment",
+      title: "Empowerment",
+      tags: ["information theory", "agency"],
+      related: ["mutual-information"],
+      md: String.raw`**Empowerment** is an information-theoretic measure of an agent's *influence* over its environment — the channel capacity from its actions $A$ to future sensory states $S'$:
+
+$$\mathfrak{E} = \max_{p(a)} \, I(A; S')$$
+
+Intuitively: how many distinguishable futures can the agent reliably bring about? It is a special case of [[mutual-information]].`,
+    },
+    {
+      id: "pca",
+      title: "Principal Component Analysis",
+      tags: ["PCA", "machine learning"],
+      related: [],
+      md: String.raw`**PCA** finds an orthogonal basis that captures the most variance in the data. The principal components are the eigenvectors of the covariance matrix $C$:
+
+$$C = \frac{1}{n} X^\top X, \qquad C v_i = \lambda_i v_i$$
+
+Projecting onto the top-$k$ eigenvectors gives the best rank-$k$ linear reconstruction — exactly the trick behind the *eigengalaxies* basis.`,
     },
   ],
 };

@@ -101,6 +101,9 @@ const FILES = {
   mail: { kind: "mail", title: "Mail" },
   terminal: { kind: "terminal", title: "Terminal" },
   news: { kind: "news", title: "News" },
+  concepts: { kind: "finder", title: "Concepts", icon: "folder", view: "list",
+    items: (SITE_.concepts || []).map((c) => ({ type: "concept", title: c.title, venue: (c.tags || []).join(", "), keywords: c.tags, id: c.id, concept: true })) },
+  graph: { kind: "graph", title: "Graph" },
 };
 
 function DoomIcon() {
@@ -156,7 +159,29 @@ function SearchIcon() {
   );
 }
 
+function ConceptIcon() {
+  return (
+    <svg className="art" viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="11" y="8" width="42" height="48" rx="6" fill="#fff" stroke="#e6c98a" strokeWidth="1.4" />
+      <rect x="11" y="8" width="42" height="11" rx="6" fill="#ffe9a0" />
+      <text x="32" y="17" textAnchor="middle" fill="#9a6400" fontFamily="Georgia, serif" fontSize="8" fontWeight="700" fontStyle="italic">∑ ∫ π</text>
+      <g stroke="#d9cBA0" strokeWidth="2.4" strokeLinecap="round"><line x1="18" y1="28" x2="46" y2="28"/><line x1="18" y1="35" x2="46" y2="35"/><line x1="18" y1="42" x2="38" y2="42"/></g>
+    </svg>
+  );
+}
+function GraphIcon() {
+  return (
+    <svg className="art" viewBox="0 0 64 64" aria-hidden="true">
+      <defs><linearGradient id="grphg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3a3f4a"/><stop offset="1" stopColor="#1d2128"/></linearGradient></defs>
+      <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#grphg)" />
+      <g stroke="#8a93a3" strokeWidth="2"><line x1="20" y1="22" x2="40" y2="18"/><line x1="20" y1="22" x2="24" y2="44"/><line x1="40" y1="18" x2="46" y2="40"/><line x1="24" y1="44" x2="46" y2="40"/></g>
+      <circle cx="20" cy="22" r="5" fill="#5fb3ff"/><circle cx="40" cy="18" r="5" fill="#7ee787"/>
+      <circle cx="24" cy="44" r="5" fill="#ffd23e"/><circle cx="46" cy="40" r="5" fill="#c89bff"/>
+    </svg>
+  );
+}
+
 Object.assign(window, {
-  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon, DoomIcon, TerminalIcon, NewsIcon, SearchIcon,
+  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon, DoomIcon, TerminalIcon, NewsIcon, SearchIcon, ConceptIcon, GraphIcon,
   FILES,
 });
