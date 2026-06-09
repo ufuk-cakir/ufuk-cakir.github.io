@@ -13,14 +13,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/os/os.css?v=16" />
+  <link rel="stylesheet" href="assets/os/os.css?v=17" />
 
-  <!-- KaTeX: renders the math in Writing posts natively in the desktop -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous" />
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-  <!-- marked: renders Concept notes written in Markdown -->
-  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- KaTeX (math in Writing posts) and marked (Concept notes) load on demand
+       when such a window opens — see ensureKatex()/ensureMarked() in os-app.js —
+       so a normal visit downloads neither (~350 KB saved). -->
 
   <script defer src="https://cloud.umami.is/script.js" data-website-id="7fdc73e8-2e5f-41d0-b916-fd14979bcd41"></script>
 </head>
@@ -42,13 +39,14 @@
     </div>
   </noscript>
 
-  <!-- content first (plain data), then React, then apps, then the desktop -->
-  <script src="assets/os/content.js?v=16"></script>
-  <script src="assets/os/vendor/react.production.min.js"></script>
-  <script src="assets/os/vendor/react-dom.production.min.js"></script>
-  <script src="assets/os/os-data.js?v=16"></script>
-  <script src="assets/os/apps/terminal.js?v=16"></script>
-  <script src="assets/os/apps/news.js?v=16"></script>
-  <script src="assets/os/os-app.js?v=16"></script>
+  <!-- content first (plain data), then React, then apps, then the desktop.
+       defer keeps this load order while letting them fetch without blocking parse. -->
+  <script defer src="assets/os/content.js?v=17"></script>
+  <script defer src="assets/os/vendor/react.production.min.js"></script>
+  <script defer src="assets/os/vendor/react-dom.production.min.js"></script>
+  <script defer src="assets/os/os-data.js?v=17"></script>
+  <script defer src="assets/os/apps/terminal.js?v=17"></script>
+  <script defer src="assets/os/apps/news.js?v=17"></script>
+  <script defer src="assets/os/os-app.js?v=17"></script>
 </body>
 </html>

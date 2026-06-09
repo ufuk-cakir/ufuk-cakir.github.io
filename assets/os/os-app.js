@@ -19,6 +19,44 @@ const isSmall = () => window.innerWidth <= 768;
 const uid = () => "w" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4);
 const slugify = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 
+/* ---------- on-demand loaders for heavy CDN libs ----------
+   KaTeX (math) and marked (markdown) are only needed once a Writing post
+   with math or a Concept note is opened — most visits never touch them.
+   Loading them lazily keeps ~350 KB of JS/CSS off the initial page load.
+   Each loader is memoised so a library is fetched at most once. */
+function loadScript(src) {
+  return new Promise(resolve => {
+    const el = document.createElement("script");
+    el.src = src;
+    el.crossOrigin = "anonymous";
+    el.onload = resolve;
+    el.onerror = resolve; // resolve either way; callers degrade gracefully
+    document.head.appendChild(el);
+  });
+}
+const KATEX_VER = "0.16.11";
+let _katexPromise = null;
+function ensureKatex() {
+  if (window.renderMathInElement) return Promise.resolve();
+  if (_katexPromise) return _katexPromise;
+  const base = "https://cdn.jsdelivr.net/npm/katex@" + KATEX_VER + "/dist/";
+  const css = document.createElement("link");
+  css.rel = "stylesheet";
+  css.href = base + "katex.min.css";
+  css.crossOrigin = "anonymous";
+  document.head.appendChild(css);
+  _katexPromise = loadScript(base + "katex.min.js").then(() => loadScript(base + "contrib/auto-render.min.js"));
+  return _katexPromise;
+}
+let _markedPromise = null;
+function ensureMarked() {
+  if (window.marked) return Promise.resolve();
+  if (_markedPromise) return _markedPromise;
+  _markedPromise = loadScript("https://cdn.jsdelivr.net/npm/marked/marked.min.js");
+  return _markedPromise;
+}
+const hasMath = s => /\$|\\\(|\\\[/.test(String(s || ""));
+
 /* local stand-in for the design tool's useTweaks (no host bridge) */
 function useTweaks(defaults) {
   const [v, setV] = useState(defaults);
@@ -90,25 +128,59 @@ function matchEntry(q, e) {
 }
 
 /* ---------- media preview (looping muted video / image) ---------- */
+/* A looping muted preview clip. It plays only while actually on screen and
+   pauses (and never even fetches) while off screen / in a hidden window — many
+   of these can exist at once, so decoding them all would be needless RAM/GPU.
+   Falls back to plain autoplay where IntersectionObserver is unavailable. */
+function VideoPreview({
+  src,
+  className
+}) {
+  const ref = useRef(null);
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    v.muted = true;
+    const play = () => {
+      const p = v.play();
+      if (p && p.catch) p.catch(() => {});
+    };
+    if (typeof IntersectionObserver === "undefined") {
+      play();
+      return;
+    }
+    const io = new IntersectionObserver(entries => {
+      for (const e of entries) {
+        if (e.isIntersecting) play();else if (!v.paused) v.pause();
+      }
+    }, {
+      threshold: 0.01
+    });
+    io.observe(v);
+    return () => {
+      io.disconnect();
+      v.pause();
+    };
+  }, [src]);
+  return /*#__PURE__*/React.createElement("video", {
+    className: className,
+    src: src,
+    loop: true,
+    playsInline: true,
+    muted: true,
+    preload: "metadata",
+    ref: ref
+  });
+}
 function Preview({
   media,
   className
 }) {
   if (!media) return null;
-  if (media.type === "video") {
-    return /*#__PURE__*/React.createElement("video", {
-      className: className,
-      src: media.src,
-      autoPlay: true,
-      loop: true,
-      playsInline: true,
-      muted: true,
-      preload: "metadata",
-      ref: el => {
-        if (el) el.muted = true;
-      }
-    });
-  }
+  if (media.type === "video") return /*#__PURE__*/React.createElement(VideoPreview, {
+    src: media.src,
+    className: className
+  });
   return /*#__PURE__*/React.createElement("img", {
     className: className,
     src: media.src,
@@ -864,29 +936,33 @@ function PostContent({
       ref.current.innerHTML = "";
       ref.current.appendChild(document.importNode(bodyEl, true));
       setState("ready");
-      if (window.renderMathInElement) {
-        try {
-          window.renderMathInElement(ref.current, {
-            delimiters: [{
-              left: "$$",
-              right: "$$",
-              display: true
-            }, {
-              left: "\\[",
-              right: "\\]",
-              display: true
-            }, {
-              left: "\\(",
-              right: "\\)",
-              display: false
-            }, {
-              left: "$",
-              right: "$",
-              display: false
-            }],
-            throwOnError: false
-          });
-        } catch (e) {}
+      // typeset math only if the post actually contains any (loads KaTeX on demand)
+      if (hasMath(bodyEl.textContent)) {
+        ensureKatex().then(() => {
+          if (!alive || !ref.current || !window.renderMathInElement) return;
+          try {
+            window.renderMathInElement(ref.current, {
+              delimiters: [{
+                left: "$$",
+                right: "$$",
+                display: true
+              }, {
+                left: "\\[",
+                right: "\\]",
+                display: true
+              }, {
+                left: "\\(",
+                right: "\\)",
+                display: false
+              }, {
+                left: "$",
+                right: "$",
+                display: false
+              }],
+              throwOnError: false
+            });
+          } catch (e) {}
+        });
       }
       ref.current.querySelectorAll("video").forEach(v => {
         const p = v.play();
@@ -1257,18 +1333,28 @@ function NoteContent({
   const ref = useRef(null);
   useEffect(() => {
     if (!ref.current) return;
-    ref.current.innerHTML = renderMarkdown(c.md);
-    ref.current.querySelectorAll('a[href^="#c/"]').forEach(a => {
-      a.classList.add("wikilink");
-      a.addEventListener("click", e => {
-        e.preventDefault();
-        window.dispatchEvent(new CustomEvent("os-open", {
-          detail: {
-            concept: a.getAttribute("href").slice(3)
-          }
-        }));
+    let alive = true;
+    const md = c.md;
+    const draw = () => {
+      if (!alive || !ref.current) return;
+      ref.current.innerHTML = renderMarkdown(md);
+      ref.current.querySelectorAll('a[href^="#c/"]').forEach(a => {
+        a.classList.add("wikilink");
+        a.addEventListener("click", e => {
+          e.preventDefault();
+          window.dispatchEvent(new CustomEvent("os-open", {
+            detail: {
+              concept: a.getAttribute("href").slice(3)
+            }
+          }));
+        });
       });
-    });
+    };
+    // markdown needs marked; render math only if the note contains any (KaTeX on demand)
+    Promise.all([ensureMarked(), hasMath(md) ? ensureKatex() : null]).then(draw);
+    return () => {
+      alive = false;
+    };
   }, [c]);
   return /*#__PURE__*/React.createElement("div", {
     className: "win-body postwin"
