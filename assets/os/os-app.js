@@ -426,20 +426,85 @@ function DetailContent({
   }, ln.label || "Open ↗"))))));
 }
 
-/* reading view — frames the real /blog post; full-screen + deep-link */
+/* reading view — pulls the real /blog post body into the OS DOM and
+   renders it natively in an editor-style document (no iframe), so it
+   matches the rest of the OS. Full-screen + deep-link handled by Win. */
 function PostContent({
   f,
   win,
   onToggleFull
 }) {
   const post = f.post;
+  const ref = useRef(null);
+  const [state, setState] = useState("loading");
+  useEffect(() => {
+    let alive = true;
+    setState("loading");
+    fetch(post.url).then(r => r.text()).then(html => {
+      if (!alive || !ref.current) return;
+      const doc = new DOMParser().parseFromString(html, "text/html");
+      const bodyEl = doc.querySelector(".post-body") || doc.querySelector("article") || doc.body;
+      const base = post.url.replace(/[^/]*$/, ""); // e.g. "blog/"
+      // rewrite relative asset URLs so they resolve from the site root
+      bodyEl.querySelectorAll("[src],[poster],[href]").forEach(el => {
+        ["src", "poster", "href"].forEach(a => {
+          const v = el.getAttribute(a);
+          if (v && !/^(https?:|mailto:|data:|#|\/)/.test(v)) el.setAttribute(a, base + v);
+        });
+      });
+      // make embedded animations play on their own (blog.js isn't here)
+      bodyEl.querySelectorAll("video").forEach(v => {
+        v.setAttribute("autoplay", "");
+        v.setAttribute("loop", "");
+        v.setAttribute("playsinline", "");
+        v.muted = true;
+        v.setAttribute("preload", "auto");
+      });
+      ref.current.innerHTML = "";
+      ref.current.appendChild(document.importNode(bodyEl, true));
+      setState("ready");
+      if (window.renderMathInElement) {
+        try {
+          window.renderMathInElement(ref.current, {
+            delimiters: [{
+              left: "$$",
+              right: "$$",
+              display: true
+            }, {
+              left: "\\[",
+              right: "\\]",
+              display: true
+            }, {
+              left: "\\(",
+              right: "\\)",
+              display: false
+            }, {
+              left: "$",
+              right: "$",
+              display: false
+            }],
+            throwOnError: false
+          });
+        } catch (e) {}
+      }
+      ref.current.querySelectorAll("video").forEach(v => {
+        const p = v.play();
+        if (p && p.catch) p.catch(() => {});
+      });
+    }).catch(() => {
+      if (alive) setState("error");
+    });
+    return () => {
+      alive = false;
+    };
+  }, [post.url]);
   return /*#__PURE__*/React.createElement("div", {
     className: "win-body postwin"
   }, /*#__PURE__*/React.createElement("div", {
     className: "readerbar"
   }, /*#__PURE__*/React.createElement("span", {
     className: "rb-title"
-  }, post.title), /*#__PURE__*/React.createElement("span", {
+  }, post.slug, ".md"), /*#__PURE__*/React.createElement("span", {
     className: "rb-actions"
   }, /*#__PURE__*/React.createElement("a", {
     className: "rb-link",
@@ -449,12 +514,26 @@ function PostContent({
   }, "Open page \u2197"), /*#__PURE__*/React.createElement("button", {
     className: "rb-full",
     onClick: () => onToggleFull(win.wid)
-  }, win.full ? "Exit full screen" : "⤢ Full screen"))), /*#__PURE__*/React.createElement("iframe", {
-    className: "reader-frame",
-    src: post.url,
-    title: post.title,
-    loading: "lazy"
-  }));
+  }, win.full ? "Exit full screen" : "⤢ Full screen"))), /*#__PURE__*/React.createElement("div", {
+    className: "reader-scroll"
+  }, /*#__PURE__*/React.createElement("article", {
+    className: "reader-doc"
+  }, /*#__PURE__*/React.createElement("header", {
+    className: "reader-head"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "reader-kicker"
+  }, [post.kind, post.date].filter(Boolean).join(" · ")), /*#__PURE__*/React.createElement("h1", null, post.title)), state === "loading" && /*#__PURE__*/React.createElement("div", {
+    className: "reader-status"
+  }, "Loading\u2026"), state === "error" && /*#__PURE__*/React.createElement("div", {
+    className: "reader-status"
+  }, "Couldn\u2019t load this post. ", /*#__PURE__*/React.createElement("a", {
+    href: post.url,
+    target: "_blank",
+    rel: "noopener"
+  }, "Open it directly \u2197")), /*#__PURE__*/React.createElement("div", {
+    ref: ref,
+    className: "reader-content"
+  }))));
 }
 
 /* generic embedded app (e.g. DOOM) */
@@ -966,6 +1045,48 @@ function App() {
       }];
     });
   }, []);
+
+  /* open an embedded page (e.g. a video) in its own in-OS window */
+  const openEmbed = useCallback((url, title) => {
+    const key = "embed:" + url;
+    setWindows(ws => {
+      const ex = ws.find(w => w.openId === key && !w.closing);
+      if (ex) return ws.map(w => w.wid === ex.wid ? {
+        ...w,
+        min: false,
+        z: nextZ()
+      } : w);
+      const [w, h] = SIZE.embed;
+      const {
+        x,
+        y
+      } = placeWin(ws.length, w, h);
+      return [...ws, {
+        wid: uid(),
+        openId: key,
+        embed: {
+          url
+        },
+        title: title || "Window",
+        x,
+        y,
+        w,
+        h,
+        z: nextZ(),
+        min: false
+      }];
+    });
+  }, []);
+
+  /* bridge for self-contained apps (Terminal, …) to open OS windows */
+  useEffect(() => {
+    const onOpen = e => {
+      const d = e && e.detail || {};
+      if (d.url) openEmbed(d.url, d.title);else if (d.key) openFile(d.key);
+    };
+    window.addEventListener("os-open", onOpen);
+    return () => window.removeEventListener("os-open", onOpen);
+  }, [openEmbed, openFile]);
 
   /* item double-click: post → reader; text doc → text window; rich → detail; bare link → open */
   const openItem = useCallback(it => {
@@ -1479,6 +1600,10 @@ function App() {
       kind: "post",
       title: w.title,
       post: w.post
+    } : w.embed ? {
+      kind: "embed",
+      title: w.title,
+      url: w.embed.url
     } : w.doc ? {
       kind: "text",
       title: w.title,

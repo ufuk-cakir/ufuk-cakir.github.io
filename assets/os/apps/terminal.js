@@ -343,7 +343,12 @@
                 t: "(opening a classic...)"
               });
               try {
-                window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+                window.dispatchEvent(new CustomEvent("os-open", {
+                  detail: {
+                    url: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0",
+                    title: "🎵 Never Gonna Give You Up"
+                  }
+                }));
               } catch (e) {}
               break;
             }
@@ -442,7 +447,12 @@
             t: "Never gonna let you down..."
           });
           try {
-            window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+            window.dispatchEvent(new CustomEvent("os-open", {
+              detail: {
+                url: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0",
+                title: "🎵 Never Gonna Give You Up"
+              }
+            }));
           } catch (e) {}
           break;
         case "sudo":

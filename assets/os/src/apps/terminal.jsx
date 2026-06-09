@@ -273,7 +273,7 @@
           if (node.secret) {
             node.text.split("\n").forEach((t) => out.push({ c: "green", t }));
             out.push({ c: "dim", t: "(opening a classic...)" });
-            try { window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank"); } catch (e) {}
+            try { window.dispatchEvent(new CustomEvent("os-open", { detail: { url: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0", title: "🎵 Never Gonna Give You Up" } })); } catch (e) {}
             break;
           }
           if (node.text != null) { node.text.split("\n").forEach((t) => out.push({ t })); break; }
@@ -330,7 +330,7 @@
 
         case "rickroll":
           out.push({ c: "green", t: "Never gonna let you down..." });
-          try { window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank"); } catch (e) {}
+          try { window.dispatchEvent(new CustomEvent("os-open", { detail: { url: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0", title: "🎵 Never Gonna Give You Up" } })); } catch (e) {}
           break;
 
         case "sudo":
