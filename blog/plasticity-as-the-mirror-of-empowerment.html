@@ -1,105 +1,35 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plasticity as the Mirror of Empowerment</title>
-  <meta name="description" content="An expository walk through Abel et al. (2025), &quot;Plasticity as the Mirror of Empowerment&quot;: directed information, the mirror, and the tension between an agent shaping its world and being shaped by it.">
-  <meta name="author" content="Ufuk Çakır">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Plasticity as the Mirror of Empowerment — WIP</title>
+    <meta name="description" content="Work in progress." />
+    <meta name="author" content="Ufuk Çakır" />
+    <link rel="stylesheet" href="assets/blog.css" />
+    <style>
+      .wip-page {
+        min-height: 82vh;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        text-align: center; gap: 1rem; padding: 2rem;
+      }
+      .wip-emoji { font-size: 3rem; line-height: 1; }
+      .wip-label {
+        font-family: var(--mono); font-size: .78rem; letter-spacing: .14em; text-transform: uppercase;
+        background: #ffe0a3; color: #9a6400; border-radius: 7px; padding: 5px 12px; font-weight: 700;
+      }
+      .wip-page h1 { font-size: 1.5rem; font-weight: 700; color: var(--ink); margin: .3rem 0 0; }
+      .wip-page p { color: var(--muted); margin: 0; }
+    </style>
+  </head>
+  <body>
+    <main class="wip-page" id="content">
+      <div class="wip-emoji">🚧</div>
+      <span class="wip-label">Work in progress</span>
+      <h1>Plasticity as the Mirror of Empowerment</h1>
+      <p>This piece is still being written — check back soon.</p>
+    </main>
 
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="Plasticity as the Mirror of Empowerment">
-  <meta property="og:description" content="An expository walk through Abel et al. (2025), &quot;Plasticity as the Mirror of Empowerment&quot;: directed information, the mirror, and the tension between an agent shaping its world and being shaped by it.">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" crossorigin="anonymous">
-  <link rel="stylesheet" href="assets/blog.css">
-</head>
-<body>
-  <a class="skip-link" href="#content">Skip to content</a>
-
-  <article class="post">
-    <header class="post-header">
-      <p class="post-kicker">Talk notes</p>
-      <h1 class="post-title">Plasticity as the Mirror of Empowerment</h1>
-      <p class="post-subtitle">A walk from Shannon to a clean impossibility result about agency — and why an agent cannot maximally <em>shape</em> the world and be maximally <em>shaped by</em> it at once.</p>
-      <p class="post-meta">June 2026 · 10 min read · GOALS Reading Group <span class="post-links"><a href="https://arxiv.org/abs/2505.10361">paper</a> · <a href="https://github.com/ufuk-cakir">code / slides</a></span></p>
-    </header>
-
-    <div class="post-body" id="content">
-      <p>Two of the most-studied intrinsic drives in reinforcement learning pull in opposite directions, and almost nobody had noticed. <strong>Empowerment</strong> asks an agent to <em>shape</em> its world; <strong>plasticity</strong> asks it to be <em>shaped by</em> the world. Abel, Barreto, and colleagues show these are not two ideas at all — they are the <em>same</em> quantity, read in opposite directions — and that this forces a hard trade-off. This is the write-up of a talk I gave on their paper.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-1" role="doc-noteref">1</label><input type="checkbox" id="sn-1" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">1</span>Abel, Barreto, et al. (2025), <em>Plasticity as the Mirror of Empowerment</em>, NeurIPS 2025. The talk deliberately forgets MDPs and reinforcement learning and rebuilds the result from information theory up.</small></span></p>
-<figure class="anim anim--full" data-clip="title"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/9abc698d0a00b6264bb2fc47e6a816b761606ff1be0d450d3250917a278831b6.mp4.jpg"><source src="media/9abc698d0a00b6264bb2fc47e6a816b761606ff1be0d450d3250917a278831b6.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption>The whole story in one line. Everything below is an attempt to earn it.</figcaption></figure>
-<p>Here is the plan. We forget Markov decision processes entirely and build from the ground up: ordinary information theory, then <em>directed</em> information, then the paper's two definitions, and finally the one-line theorem that ties them together. If you remember a single picture, make it the mirror in <a href="#the-mirror">Figure 6</a>.</p>
-<h2 id="agency-has-two-directions">Agency has two directions</h2>
-<p>Drop an agent into an environment and let them interact. Two questions you might ask about that agent feel completely different:</p>
-<ul>
-<li><em>How much can the agent <strong>change</strong> about its future?</em> — its reach, its influence, its grip on outcomes.</li>
-<li><em>How much does the agent <strong>respond</strong> to what it sees?</em> — its sensitivity, its willingness to update, its openness.</li>
-</ul>
-<p>The first is <strong><span class="c-empow">empowerment</span></strong>. The intuition that made it popular is a reachability picture: an empowered agent is one whose actions <em>now</em> fan out into many distinguishable futures <em>later</em>.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-2" role="doc-noteref">2</label><input type="checkbox" id="sn-2" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">2</span>Klyubin, Polani &amp; Nehaniv (2005) introduced empowerment as the channel capacity from an agent's actions to its later sensors. The reachable-futures reading is the one most people carry around in their heads.</small></span></p>
-<figure class="anim" data-clip="empowerment-reach"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/0d83cd4f1911c857ca257bcf5a84ca3cfed4fa01b393f3deb00f1ecaf94b2314.mp4.jpg"><source src="media/0d83cd4f1911c857ca257bcf5a84ca3cfed4fa01b393f3deb00f1ecaf94b2314.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption><span class="fig-label">Figure 2.</span> <span class="c-empow">Empowerment</span> as reach. An agent with more empowerment can steer itself into a larger set of distinguishable futures; the green cells are outcomes its current choices can still reach. <span class="fig-credit">intuition after Myers et al. (2024)</span></figcaption></figure>
-<p>The second question is <strong><span class="c-plast">plasticity</span></strong>: how much an agent's behaviour bends to what it observes. A rock has none — it does the same thing whatever happens. A thermostat has a little. A good learner has a lot. Hold on to the suspicion that these two qualities might be in conflict; we will make it precise.</p>
-<h2 id="interaction-is-a-two-way-stream">Interaction is a two-way stream</h2>
-<p>To talk about either quantity we need a clean model of <em>interaction</em> — and crucially one with <strong>no MDP, no reward, no state</strong>. There is just an agent and an environment trading symbols over a shared interface.</p>
-<figure class="anim" data-clip="two-way-stream"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/f4c1978c26a29da0abd85169f1aacb6f2bfa666fb9cfc685d592d0d6def7dddf.mp4.jpg"><source src="media/f4c1978c26a29da0abd85169f1aacb6f2bfa666fb9cfc685d592d0d6def7dddf.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption><span class="fig-label">Figure 3.</span> The interface. The agent emits an action \(A\); the environment answers with an observation \(O\); repeat. The whole history is one interleaved stream \(A_1\,O_1\,A_2\,O_2\,\ldots\)</figcaption></figure>
-<p>Formally the interface is a pair of finite alphabets \((\mathcal{A}, \mathcal{O})\) with \(|\mathcal{A}| \ge 2\) and \(|\mathcal{O}| \ge 2\).<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-3" role="doc-noteref">3</label><input type="checkbox" id="sn-3" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">3</span>The two-symbol minimum just says both sides can do <em>something</em>: an interface with a one-letter alphabet carries no information in that direction, so neither quantity is interesting.</small></span> An <strong>agent</strong> is a map from histories ending in an observation to a distribution over the next action, and an <strong>environment</strong> is its mirror image — a map from histories ending in an action to a distribution over the next observation:</p>
-<span class="math-display">\[\lambda : \mathcal{H}_{\cdots\mathcal{O}} \to \Delta(\mathcal{A}), \qquad e : \mathcal{H}_{\cdots\mathcal{A}} \to \Delta(\mathcal{O}).\]</span>
-<p>Notice the symmetry already sitting in the definitions: swap the roles of \(\mathcal{A}\) and \(\mathcal{O}\) and an agent <em>is</em> an environment.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-4" role="doc-noteref">4</label><input type="checkbox" id="sn-4" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">4</span>This is Remark 2.8 in the paper. It is the seed of everything: the formalism does not privilege &quot;agent&quot; over &quot;environment&quot; — the labels are a choice of viewpoint on the same stream.</small></span> That symmetry is the whole result in embryo.</p>
-<h2 id="a-two-minute-refresher-on-information">A two-minute refresher on information</h2>
-<p>Information theory measures <em>choices</em>, not meaning.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-5" role="doc-noteref">5</label><input type="checkbox" id="sn-5" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">5</span>Shannon (1948), <em>A Mathematical Theory of Communication</em>. &quot;Information is about choices&quot; — the semantic content of a message is, famously, irrelevant to its information content.</small></span> The uncertainty in a random variable is its entropy,</p>
-<span class="math-display">\[H(X) = -\sum_{x} p(x)\,\log p(x),\]</span>
-<p>and the amount that learning \(Y\) tells you about \(X\) is the <strong>mutual information</strong>, the overlap of the two uncertainties:</p>
-<figure class="anim" data-clip="mutual-information"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/d249ec847d39ca7765be1d94dd9f1db144bb65e11f3034077b5da12cb651a686.mp4.jpg"><source src="media/d249ec847d39ca7765be1d94dd9f1db144bb65e11f3034077b5da12cb651a686.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption><span class="fig-label">Figure 4.</span> Mutual information \(I(X;Y) = H(X) - H(X\mid Y)\) is the overlap of two entropies — how much knowing one variable shrinks your uncertainty about the other.</figcaption></figure>
-<p>The single fact to carry forward is that mutual information is <strong>symmetric</strong>:</p>
-<span class="math-display">\[I(X;Y) = I(Y;X).\]</span>
-<p>Knowing the weather tells you exactly as much about the barometer as the barometer tells you about the weather. This symmetry is comforting and, for our purposes, <em>too coarse</em>: in a feedback loop the agent's actions and the environment's observations are tangled in time, and we want to separate &quot;the agent drove this&quot; from &quot;the environment drove this.&quot; Plain mutual information throws that distinction away.</p>
-<h3 id="directed-information-puts-the-arrow-back">Directed information puts the arrow back</h3>
-<p>Massey's <strong>directed information</strong> keeps the arrow of time. Instead of correlating the whole streams, it sums up, step by step, only what the <em>past and present</em> of \(X\) tells you about \(Y_i\) given \(Y\)'s own past:</p>
-<span class="math-display">\[\mathbb{I}(X_{1:n}\to Y_{1:n}) \;\stackrel{\text{def}}{=}\; \sum_{i=1}^{n}\mathbb{I}\!\left(X_{1:i};\,Y_i \mid Y_{1:i-1}\right).\]</span>
-<p>The conditioning on \(Y_{1:i-1}\) is the important part: it credits \(X\) only with the <em>new</em> influence it has on \(Y_i\), after accounting for what \(Y\)'s own history already explained.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-6" role="doc-noteref">6</label><input type="checkbox" id="sn-6" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">6</span>Massey (1990) coined &quot;directed information&quot;; the idea traces back to Marko's (1973) bidirectional information theory, where a total flow splits into two transfers \(K = T_{12} + T_{21}\).</small></span> Unlike mutual information, it is <strong>not</strong> symmetric — and that asymmetry is exactly what we were missing.</p>
-<p>It does, however, obey a beautiful conservation law. The symmetric mutual information between two streams splits <em>exactly</em> into the two directed flows:</p>
-<span class="math-display">\[\mathbb{I}(X_{1:n};\,Y_{1:n}) \;=\; \underbrace{\mathbb{I}(X_{1:n}\to Y_{1:n})}_{\text{forward}} \;+\; \underbrace{\mathbb{I}(Y_{1:n}\hookrightarrow X_{1:n})}_{\text{delayed feedback}}.\]</span>
-<p>The forward term is the ordinary directed information; the backward term \(\hookrightarrow\) is a <em>strictly delayed</em> version (it starts the sum at \(i=2\)), because in a feedback loop \(Y\) can only react to \(X\)'s past, never its present.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-7" role="doc-noteref">7</label><input type="checkbox" id="sn-7" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">7</span>The hook arrow is the paper's notation for the delayed flow \(\mathbb{I}(Y_{1:n}\hookrightarrow X_{1:n}) = \sum_{i=2}^{n}\mathbb{I}(Y_{1:i-1};\,X_i \mid X_{1:i-1})\). The total is conserved: nudging one flow up must push the other down. Keep this law in your pocket — it is the tension, in disguise.</small></span></p>
-<h2 id="the-two-protagonists-defined">The two protagonists, defined</h2>
-<p>Now point those directed flows at the agent–environment stream. There are only two arrows you can draw, and each is a known quantity.</p>
-<p><strong><span class="c-empow">Empowerment</span></strong> is the information that flows <em>from the agent's actions to the environment's observations</em> — the agent writing on the world:</p>
-<figure class="anim" data-clip="empowerment"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/ba377c27c8034e93c3f28269bb438dc61a8340424142228d5ad791170d036020.mp4.jpg"><source src="media/ba377c27c8034e93c3f28269bb438dc61a8340424142228d5ad791170d036020.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption><span class="fig-label">Figure 5.</span> <span class="c-empow">Empowerment</span> \(\mathfrak{E}(\lambda) = \mathbb{I}(A \to O)\) — the directed information from actions to observations, maximised over what the agent could do. How much of the world's response the agent authored.</figcaption></figure>
-<p><strong><span class="c-plast">Plasticity</span></strong> is the information that flows the <em>other way</em>, from the environment's observations into the agent's actions — the world writing on the agent:</p>
-<figure class="anim" data-clip="plasticity"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/05f0e142abdba03f764d4835269c5b6bd0a3571051e8e56cf98961b1b4b3ee0d.mp4.jpg"><source src="media/05f0e142abdba03f764d4835269c5b6bd0a3571051e8e56cf98961b1b4b3ee0d.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption><span class="fig-label">Figure 6.</span> <span class="c-plast">Plasticity</span> \(\mathfrak{P}(\lambda) = \mathbb{I}(O \to A)\) — the directed information from observations to actions. How much the agent's behaviour was authored by what it saw. <span class="fig-credit">Abel et al. (2025), Definition 4.1</span></figcaption></figure>
-<p>A constant or open-loop policy has zero plasticity; it ignores its observations. A policy whose actions genuinely depend on what it sees is plastic — and, notably, a <em>deterministic</em> agent can still be highly plastic, because plasticity is about dependence on observations, not randomness.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-8" role="doc-noteref">8</label><input type="checkbox" id="sn-8" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">8</span>This trips people up: plasticity is not entropy of the policy. A deterministic but observation-sensitive controller — &quot;if I see this, do that&quot; — has high plasticity. Noise for its own sake does not.</small></span> In their general form both quantities carry index ranges \(a{:}b\) and \(c{:}d\) over which window of the stream we read, and a max over the opponent, but the short forms \(\mathbb{I}(A\to O)\) and \(\mathbb{I}(O\to A)\) are all we need for the punchline.</p>
-<h2 id="the-mirror">The mirror</h2>
-<p>Look at the two definitions side by side. <span class="c-empow">Empowerment</span> is \(\mathbb{I}(A\to O)\). <span class="c-plast">Plasticity</span> is \(\mathbb{I}(O\to A)\). They are the <strong>same functional</strong> — directed information across the interface — evaluated with the direction of influence reversed.</p>
-<figure class="anim anim--full" data-clip="the-mirror"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/11127b18eb5787917fcf3fc9842642c57fa821529299f0ef37a0761b2233775e.mp4.jpg"><source src="media/11127b18eb5787917fcf3fc9842642c57fa821529299f0ef37a0761b2233775e.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption><span class="fig-label">Figure 6</span> <strong>The mirror.</strong> <span class="c-plast">Plasticity</span> (observations shaping actions, \(O\to A\)) and <span class="c-empow">empowerment</span> (actions shaping observations, \(A\to O\)) are one directed-information flow read in opposite directions around the same loop.</figcaption></figure>
-<p>This is the paper's central observation, and once you see it you cannot unsee it. Because an agent and an environment are <em>structurally interchangeable</em> — recall the swap-the-alphabets remark — your empowerment is, from the environment's seat, <em>its</em> plasticity, and vice versa:</p>
-<span class="math-display">\[\mathfrak{E}_{c:d}^{\,a:b}(\lambda) \;=\; \mathfrak{P}_{c:d}^{\,a:b}(e), \qquad \mathfrak{P}_{c:d}^{\,a:b}(\lambda) \;=\; \mathfrak{E}_{c:d}^{\,a:b}(e).\]</span>
-<p>It is cleanest when the &quot;environment&quot; is another agent. At a poker table, the information I manage to push into your behaviour <em>is</em> your plasticity to me; the information you extract from mine <em>is</em> my plasticity to you.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-9" role="doc-noteref">9</label><input type="checkbox" id="sn-9" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">9</span>Paper §4.3, the two-player reading. Empowerment and plasticity stop being two intrinsic drives and become two ends of a single shared channel — what one player gains in shaping power, the other concedes in openness.</small></span> Two drives that the literature developed independently turn out to be one quantity wearing two hats.</p>
-<h2 id="the-tension">The tension</h2>
-<p>The mirror is pretty. The consequence is sharp. Take the conservation law from earlier and read it across the interface: the symmetric mutual information between actions and observations is exactly empowerment plus plasticity,</p>
-<span class="math-display">\[\mathbb{I}(A_{a:b};\,O_{c:d}) \;=\; \underbrace{\mathbb{I}(A\to O)}_{\text{empowerment}} + \underbrace{\mathbb{I}(O\to A)}_{\text{plasticity}}.\]</span>
-<p>But the left-hand side is just mutual information through a finite channel, and a finite channel has a finite <strong>capacity</strong>. Over a window, no more than \(m\) bits can cross the interface in total:</p>
-<span class="math-display">\[\mathbb{I}(A_{a:b};\,O_{c:d}) \;\le\; m, \qquad m = \min\!\big\{(b-a+1)\log|\mathcal{O}|,\ (d-c+1)\log|\mathcal{A}|\big\}.\]</span>
-<p>Substitute, and the two protagonists are forced to share one fixed budget. That is <strong>Theorem 4.8</strong>, the plasticity–empowerment tension:</p>
-<span class="math-display">\[\boxed{\;\mathfrak{E} + \mathfrak{P} \;\le\; m\;}\]</span>
-<figure class="anim anim--full" data-clip="tension-frontier"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/dc0d8ea921696ea0bac3c8970b983ca12341b754854740b680fcea2e50594795.mp4.jpg"><source src="media/dc0d8ea921696ea0bac3c8970b983ca12341b754854740b680fcea2e50594795.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption><span class="fig-label">Figure 7</span> <strong>The frontier.</strong> Every agent lives in the blue feasible triangle \(\mathfrak{E} + \mathfrak{P} \le m\). The hatched region is impossible. You can be maximally <span class="c-empow">empowered</span> or maximally <span class="c-plast">plastic</span>, but every bit of one is a bit you cannot spend on the other.</figcaption></figure>
-<p>The geometry says it all. The reachable agents form a triangle bounded by the line \(\mathfrak{E} + \mathfrak{P} = m\). Pure empowerment (\(\mathfrak{P}=0,\ \mathfrak{E}=m\)) sits in one corner — an agent that shapes the world maximally while ignoring it. Pure plasticity (\(\mathfrak{E}=0,\ \mathfrak{P}=m\)) sits in the other — an agent infinitely shaped by a world it cannot touch. Everyone else is on or under the frontier, trading one for the other bit for bit. There is no corner where both are large.</p>
-<p>This is not a fact about any particular algorithm; it is a fact about <em>information through a finite interface</em>. The environment — through the alphabet sizes and the window length — sets the budget, and the agent only gets to choose how to split it.<span class="sidenote-anchor"><label class="sidenote-ref" for="sn-10" role="doc-noteref">10</label><input type="checkbox" id="sn-10" class="sidenote-toggle" aria-hidden="true"><small class="sidenote" role="note"><span class="sidenote-n">10</span>A corollary the paper draws out: when the environment is rich and the agent's action channel is narrow, \(m\) is small and the agent is squeezed on both fronts at once. The environment really does have the final say over how much agency is even on the table.</small></span></p>
-<h2 id="why-i-care-about-this">Why I care about this</h2>
-<p>I find this result clarifying because the two drives it unifies are usually sold as unambiguously good. We want empowered agents; we want plastic, adaptable agents. The mirror says you cannot have a single window that maximises both — and that the very symmetry making empowerment attractive (your reach into the world) is the symmetry making plasticity unavoidable (the world's reach into you). Any objective that asks for &quot;more agency&quot; has to say <em>which direction</em>, and on <em>whose budget</em>.</p>
-<figure class="anim anim--full" data-clip="closing"><div class="anim-stage" data-autoplay="true"><video class="anim-video" playsinline muted preload="none" poster="media/posters/e1b583dd2746168ae0a1692b34a0d26205f8f5c018cca4023c897cd881111905.mp4.jpg"><source src="media/e1b583dd2746168ae0a1692b34a0d26205f8f5c018cca4023c897cd881111905.mp4" type="video/mp4"></video><button class="anim-replay" type="button" aria-label="Replay animation">↻ replay</button></div><figcaption>One quantity, two directions, one budget.</figcaption></figure>
-<p><em>Slides, Manim source, and the full deck are <a href="https://github.com/ufuk-cakir">on GitHub</a>. Errors in this write-up are mine, not the authors'.</em></p>
-
-    </div>
-
-    <footer class="post-footer">
-      <p>&copy; Ufuk Çakır</p>
-    </footer>
-  </article>
-
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js" crossorigin="anonymous"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-  <script defer src="assets/blog.js"></script>
-</body>
+    <script defer src="assets/blog.js"></script>
+  </body>
 </html>
