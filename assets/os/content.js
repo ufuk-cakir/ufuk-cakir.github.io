@@ -298,7 +298,7 @@ window.SITE = {
       blurb:
         "A tutorial on creating mathematical animations with Manim, presented as an animated deck.",
       keywords: ["Manim", "tutorial", "animation"],
-      deck: "slides/manim-tutorial.html",
+      deck: "slides/final-manim-talk.html",
     },
     {
       title: "Plasticity as the Mirror of Empowerment",

@@ -260,8 +260,8 @@ const SIZE = {
   finder: [720, 460],
   text: [620, 558],
   detail: [600, 640],
-  post: [820, 640],
-  embed: [760, 580],
+  post: [980, 680],
+  embed: [820, 600],
   about: [360, 470],
   mail: [400, 470],
   terminal: [680, 440],
@@ -1105,11 +1105,21 @@ function Win({
   onDrag,
   onOpen,
   onItem,
-  onToggleFull
+  onToggleFull,
+  onResize
 }) {
   const ttlDown = e => {
     onFocus();
     beginDrag(e, win.x, win.y, (x, y) => onDrag(win.wid, Math.max(28, x), Math.max(28, y)));
+  };
+  const MINW = 320,
+    MINH = 220;
+  const rzDown = (e, dir) => {
+    e.stopPropagation();
+    onFocus();
+    const sw = dir === "b" ? 0 : win.w,
+      sh = dir === "r" ? 0 : win.h;
+    beginDrag(e, sw, sh, (w, h) => onResize(win.wid, dir === "b" ? null : Math.max(MINW, w), dir === "r" ? null : Math.max(MINH, h)));
   };
   return /*#__PURE__*/React.createElement("div", {
     className: "window" + (focused ? " focused" : "") + (win.full ? " full" : "") + (win.closing ? " closing" : " opening"),
@@ -1159,7 +1169,11 @@ function Win({
     focused: focused
   }), f.kind === "embed" && /*#__PURE__*/React.createElement(EmbedContent, {
     f: f
-  }), f.kind === "mail" && /*#__PURE__*/React.createElement(MailContent, null), f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp), f.kind === "news" && window.NewsApp && React.createElement(window.NewsApp), f.kind === "about" && /*#__PURE__*/React.createElement(AboutContent, null));
+  }), f.kind === "mail" && /*#__PURE__*/React.createElement(MailContent, null), f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp), f.kind === "news" && window.NewsApp && React.createElement(window.NewsApp), f.kind === "about" && /*#__PURE__*/React.createElement(AboutContent, null), !win.full && /*#__PURE__*/React.createElement("div", {
+    className: "rh rh-br",
+    onPointerDown: e => rzDown(e, "br"),
+    title: "Drag to resize"
+  }));
 }
 
 /* ============================================================
@@ -1587,6 +1601,12 @@ function App() {
     x,
     y
   } : w)), []);
+  const resizeWin = useCallback((wid, w, h) => setWindows(ws => ws.map(x => x.wid === wid ? {
+    ...x,
+    w: w != null ? w : x.w,
+    h: h != null ? h : x.h,
+    _z: null
+  } : x)), []);
   const toggleFull = useCallback(wid => {
     setWindows(ws => ws.map(w => w.wid === wid ? {
       ...w,
@@ -2068,7 +2088,8 @@ function App() {
       onDrag: dragWin,
       onOpen: openFile,
       onItem: openItem,
-      onToggleFull: toggleFull
+      onToggleFull: toggleFull,
+      onResize: resizeWin
     });
   }), /*#__PURE__*/React.createElement("div", {
     className: "menubar" + (lightWP ? " on-light" : "")

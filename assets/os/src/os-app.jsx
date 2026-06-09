@@ -139,7 +139,7 @@ function defaultWidgetPos() {
   return { clock: { x: 40, y: 56 }, weather: { x: 40, y: 250 }, note: { x: 40, y: 452 } };
 }
 
-const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], post: [820, 640], embed: [760, 580], about: [360, 470], mail: [400, 470], terminal: [680, 440], news: [680, 620] };
+const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], post: [980, 680], embed: [820, 600], about: [360, 470], mail: [400, 470], terminal: [680, 440], news: [680, 620] };
 const STORE_KEY = "cakir-os-v5";
 
 /* ============================================================
@@ -627,8 +627,16 @@ function MailContent() {
 }
 
 /* ---------- window shell ---------- */
-function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen, onItem, onToggleFull }) {
+function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen, onItem, onToggleFull, onResize }) {
   const ttlDown = (e) => { onFocus(); beginDrag(e, win.x, win.y, (x, y) => onDrag(win.wid, Math.max(28, x), Math.max(28, y))); };
+  const MINW = 320, MINH = 220;
+  const rzDown = (e, dir) => {
+    e.stopPropagation(); onFocus();
+    const sw = dir === "b" ? 0 : win.w, sh = dir === "r" ? 0 : win.h;
+    beginDrag(e, sw, sh, (w, h) => onResize(win.wid,
+      dir === "b" ? null : Math.max(MINW, w),
+      dir === "r" ? null : Math.max(MINH, h)));
+  };
   return (
     <div className={"window" + (focused ? " focused" : "") + (win.full ? " full" : "") + (win.closing ? " closing" : " opening")}
       style={{ left: win.x, top: win.y, width: win.w, height: win.h, zIndex: win.z, display: win.min ? "none" : "flex" }}
@@ -651,6 +659,7 @@ function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen,
       {f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp)}
       {f.kind === "news" && window.NewsApp && React.createElement(window.NewsApp)}
       {f.kind === "about" && <AboutContent />}
+      {!win.full && <div className="rh rh-br" onPointerDown={(e) => rzDown(e, "br")} title="Drag to resize"></div>}
     </div>
   );
 }
@@ -861,6 +870,7 @@ function App() {
     }));
   }, []);
   const dragWin = useCallback((wid, x, y) => setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, x, y } : w))), []);
+  const resizeWin = useCallback((wid, w, h) => setWindows((ws) => ws.map((x) => (x.wid === wid ? { ...x, w: w != null ? w : x.w, h: h != null ? h : x.h, _z: null } : x))), []);
   const toggleFull = useCallback((wid) => {
     setWindows((ws) => ws.map((w) => (w.wid === wid ? { ...w, full: !w.full, min: false, z: nextZ() } : w)));
   }, []);
@@ -1072,7 +1082,7 @@ function App() {
         return (
           <Win key={w.wid} win={w} f={f} focused={w.z === Math.max(...windows.map((q) => q.z))}
             onFocus={() => focusWin(w.wid)} onClose={closeWin} onMin={minWin} onZoom={zoomWin}
-            onDrag={dragWin} onOpen={openFile} onItem={openItem} onToggleFull={toggleFull} />
+            onDrag={dragWin} onOpen={openFile} onItem={openItem} onToggleFull={toggleFull} onResize={resizeWin} />
         );
       })}
 
