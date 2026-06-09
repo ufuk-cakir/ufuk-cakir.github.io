@@ -137,6 +137,9 @@ function IconArt({
     glyph: S.identity.initial
   });
   if (type === "embed") return /*#__PURE__*/React.createElement(DoomIcon, null);
+  if (type === "terminal") return /*#__PURE__*/React.createElement(TerminalIcon, null);
+  if (type === "news") return /*#__PURE__*/React.createElement(NewsIcon, null);
+  if (type === "mail") return /*#__PURE__*/React.createElement(MailIcon, null);
   if (type === "folder") return /*#__PURE__*/React.createElement(FolderIcon, null);
   if (type === "txt") return /*#__PURE__*/React.createElement(DocIcon, {
     tag: "TXT",
@@ -211,11 +214,6 @@ const ICONS = [{
   src: S.groups.ie.logo,
   label: "Intelligent Earth CDT",
   open: "ie"
-}, {
-  id: "doom",
-  type: "embed",
-  label: "DOOM",
-  open: "doom"
 }];
 function defaultIconPos() {
   const W = window.innerWidth;
@@ -263,7 +261,10 @@ const SIZE = {
   detail: [600, 640],
   post: [820, 640],
   embed: [760, 580],
-  about: [360, 470]
+  about: [360, 470],
+  mail: [400, 470],
+  terminal: [680, 440],
+  news: [680, 620]
 };
 const STORE_KEY = "cakir-os-v5";
 
@@ -271,12 +272,19 @@ const STORE_KEY = "cakir-os-v5";
    Window content
    ============================================================ */
 function FinderContent({
-  f,
-  onOpen,
+  fkey,
   onItem
 }) {
-  const [active, setActive] = useState(f.title);
+  /* favourites navigate the SAME window into that folder, with Back */
+  const [stack, setStack] = useState([fkey]);
+  useEffect(() => {
+    setStack([fkey]);
+  }, [fkey]);
+  const curKey = stack[stack.length - 1];
+  const f = FILES[curKey] || FILES[fkey];
   const fav = [["Publications", "publications"], ["Projects", "projects"], ["Talks", "talks"], ["Writing", "writing"], ["Outreach", "outreach"]];
+  const go = key => setStack(s => key === s[s.length - 1] ? s : [...s, key]);
+  const back = () => setStack(s => s.length > 1 ? s.slice(0, -1) : s);
   return /*#__PURE__*/React.createElement("div", {
     className: "win-body"
   }, /*#__PURE__*/React.createElement("div", {
@@ -285,12 +293,8 @@ function FinderContent({
     className: "sh"
   }, "Favourites"), fav.map(([nm, key]) => /*#__PURE__*/React.createElement("div", {
     key: key,
-    className: "si" + (nm === active ? " active" : ""),
-    onDoubleClick: () => onOpen(key),
-    onClick: () => {
-      setActive(nm);
-      if (TOUCH) onOpen(key);
-    }
+    className: "si" + (key === curKey ? " active" : ""),
+    onClick: () => go(key)
   }, /*#__PURE__*/React.createElement("span", {
     className: "d",
     style: {
@@ -300,7 +304,12 @@ function FinderContent({
     className: "fmain"
   }, /*#__PURE__*/React.createElement("div", {
     className: "ftoolbar"
-  }, /*#__PURE__*/React.createElement("span", {
+  }, stack.length > 1 && /*#__PURE__*/React.createElement("button", {
+    className: "fback",
+    onClick: back,
+    title: "Back",
+    "aria-label": "Back"
+  }, "\u2039"), /*#__PURE__*/React.createElement("span", {
     style: {
       fontWeight: 600,
       color: "var(--ink)"
@@ -590,6 +599,24 @@ function Palette({
     className: "pal-cat"
   }, r.cat))))));
 }
+function MailContent() {
+  const email = L.email;
+  const c = S.contact || {};
+  const mailto = "mailto:" + email + (c.subject ? "?subject=" + encodeURIComponent(c.subject) : "");
+  return /*#__PURE__*/React.createElement("div", {
+    className: "win-body mailwin"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mailwrap"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mail-ic"
+  }, /*#__PURE__*/React.createElement(MailIcon, null)), /*#__PURE__*/React.createElement("h2", null, "Get in touch"), c.blurb && /*#__PURE__*/React.createElement("p", null, c.blurb), /*#__PURE__*/React.createElement("a", {
+    className: "mail-addr",
+    href: mailto
+  }, email), /*#__PURE__*/React.createElement("a", {
+    className: "mail-btn",
+    href: mailto
+  }, "Compose email \u2197")));
+}
 
 /* ---------- window shell ---------- */
 function Win({
@@ -639,8 +666,7 @@ function Win({
   })), /*#__PURE__*/React.createElement("div", {
     className: "title"
   }, win.title || f.title)), f.kind === "finder" && /*#__PURE__*/React.createElement(FinderContent, {
-    f: f,
-    onOpen: onOpen,
+    fkey: win.openId,
     onItem: onItem
   }), f.kind === "text" && /*#__PURE__*/React.createElement(TextContent, {
     f: f
@@ -652,7 +678,7 @@ function Win({
     onToggleFull: onToggleFull
   }), f.kind === "embed" && /*#__PURE__*/React.createElement(EmbedContent, {
     f: f
-  }), f.kind === "about" && /*#__PURE__*/React.createElement(AboutContent, null));
+  }), f.kind === "mail" && /*#__PURE__*/React.createElement(MailContent, null), f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp), f.kind === "news" && window.NewsApp && React.createElement(window.NewsApp), f.kind === "about" && /*#__PURE__*/React.createElement(AboutContent, null));
 }
 
 /* ============================================================
@@ -661,10 +687,20 @@ function Win({
 function ClockWidget({
   now
 }) {
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const ss = String(now.getSeconds()).padStart(2, "0");
+  /* always Oxford (Europe/London) time, regardless of the visitor's zone */
+  const tp = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  }).formatToParts(now);
+  const get = t => (tp.find(p => p.type === t) || {}).value || "00";
+  const hh = get("hour"),
+    mm = get("minute"),
+    ss = get("second");
   const date = now.toLocaleDateString("en-GB", {
+    timeZone: "Europe/London",
     weekday: "long",
     day: "numeric",
     month: "long"
@@ -1113,12 +1149,17 @@ function App() {
     label: "Outreach",
     key: "outreach"
   }, {
+    id: "news",
+    node: /*#__PURE__*/React.createElement(NewsIcon, null),
+    label: "News",
+    key: "news"
+  }, {
     sep: true
   }, ...(L.email ? [{
     id: "mail",
     node: /*#__PURE__*/React.createElement(MailIcon, null),
-    label: "Email",
-    href: "mailto:" + L.email
+    label: "Mail",
+    key: "mail"
   }] : []), {
     id: "scholar",
     node: /*#__PURE__*/React.createElement(GlobeIcon, null),
@@ -1131,6 +1172,11 @@ function App() {
     href: L.github
   }, {
     sep: true
+  }, {
+    id: "terminal",
+    node: /*#__PURE__*/React.createElement(TerminalIcon, null),
+    label: "Terminal",
+    key: "terminal"
   }, {
     id: "doom",
     node: /*#__PURE__*/React.createElement(DoomIcon, null),
@@ -1204,6 +1250,24 @@ function App() {
       type: "logo",
       src: S.groups.ie.logo,
       run: () => openFile("ie")
+    }, {
+      key: "news",
+      title: "News",
+      cat: "App",
+      type: "news",
+      run: () => openFile("news")
+    }, {
+      key: "mail",
+      title: "Mail",
+      cat: "App",
+      type: "mail",
+      run: () => openFile("mail")
+    }, {
+      key: "terminal",
+      title: "Terminal",
+      cat: "App",
+      type: "terminal",
+      run: () => openFile("terminal")
     }, {
       key: "doom",
       title: "DOOM",
@@ -1530,10 +1594,16 @@ function App() {
   })), /*#__PURE__*/React.createElement("span", {
     className: "clock"
   }, now.toLocaleDateString("en-GB", {
+    timeZone: "Europe/London",
     weekday: "short",
     day: "numeric",
     month: "short"
-  }), "  ", String(now.getHours()).padStart(2, "0"), ":", String(now.getMinutes()).padStart(2, "0")))), openMenu && anchorRef.current[openMenu] && /*#__PURE__*/React.createElement("div", {
+  }), "  ", now.toLocaleTimeString("en-GB", {
+    timeZone: "Europe/London",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false
+  })))), openMenu && anchorRef.current[openMenu] && /*#__PURE__*/React.createElement("div", {
     className: "menu-pop",
     style: {
       left: Math.min(anchorRef.current[openMenu].getBoundingClientRect().left, window.innerWidth - 240)

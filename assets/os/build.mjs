@@ -15,13 +15,18 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const Babel = require("@babel/standalone");
 
-const files = ["os-data", "os-app"];
-for (const name of files) {
-  const src = readFileSync(new URL(`./src/${name}.jsx`, import.meta.url), "utf8");
+const files = [
+  { src: "src/os-data.jsx", out: "os-data.js" },
+  { src: "src/os-app.jsx", out: "os-app.js" },
+  { src: "src/apps/terminal.jsx", out: "apps/terminal.js" },
+  { src: "src/apps/news.jsx", out: "apps/news.js" },
+];
+for (const f of files) {
+  const src = readFileSync(new URL(`./${f.src}`, import.meta.url), "utf8");
   const { code } = Babel.transform(src, {
     presets: [["react", { runtime: "classic" }]],
-    filename: `${name}.jsx`,
+    filename: f.src,
   });
-  writeFileSync(new URL(`./${name}.js`, import.meta.url), code);
-  console.log(`built ${name}.js`);
+  writeFileSync(new URL(`./${f.out}`, import.meta.url), code);
+  console.log(`built ${f.out}`);
 }

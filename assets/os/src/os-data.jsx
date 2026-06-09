@@ -99,6 +99,9 @@ const FILES = {
   ori: { kind: "detail", title: SITE_.groups.ori.title, detail: groupDetail(SITE_.groups.ori) },
   ie: { kind: "detail", title: SITE_.groups.ie.title, detail: groupDetail(SITE_.groups.ie) },
   doom: { kind: "embed", title: "DOOM", url: "https://archive.org/embed/msdos_DOOM_1993" },
+  mail: { kind: "mail", title: "Mail" },
+  terminal: { kind: "terminal", title: "Terminal" },
+  news: { kind: "news", title: "News" },
 };
 
 function DoomIcon() {
@@ -113,8 +116,34 @@ function DoomIcon() {
     </svg>
   );
 }
+function TerminalIcon() {
+  return (
+    <svg className="art" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="termg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#3a3a40" /><stop offset="1" stopColor="#1b1b1f" /></linearGradient>
+      </defs>
+      <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#termg)" />
+      <rect x="6" y="6" width="52" height="14" rx="14" fill="#fff" opacity="0.10" />
+      <path d="M16 26l9 7-9 7" fill="none" stroke="#3ad07a" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round" />
+      <line x1="30" y1="42" x2="46" y2="42" stroke="#cfcfd4" strokeWidth="3.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+function NewsIcon() {
+  return (
+    <svg className="art" viewBox="0 0 64 64" aria-hidden="true">
+      <rect x="8" y="12" width="48" height="40" rx="6" fill="#fff" stroke="#d2d2d6" strokeWidth="1.2" />
+      <rect x="8" y="12" width="48" height="11" rx="6" fill="#e5341c" />
+      <text x="32" y="21" textAnchor="middle" fill="#fff" fontFamily="Georgia, serif" fontSize="8" fontWeight="700" letterSpacing="0.5">NEWS</text>
+      <g stroke="#c7c7cc" strokeWidth="2.4" strokeLinecap="round">
+        <line x1="15" y1="31" x2="33" y2="31" /><line x1="15" y1="38" x2="33" y2="38" /><line x1="15" y1="45" x2="28" y2="45" />
+      </g>
+      <rect x="37" y="29" width="12" height="10" rx="1.5" fill="#cfe6ff" />
+    </svg>
+  );
+}
 
 Object.assign(window, {
-  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon, DoomIcon,
+  FolderIcon, DocIcon, ImageIcon, AppIcon, MailIcon, GlobeIcon, GitHubIcon, TrashIcon, DoomIcon, TerminalIcon, NewsIcon,
   FILES,
 });

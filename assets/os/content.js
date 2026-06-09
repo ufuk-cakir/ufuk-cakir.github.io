@@ -34,13 +34,20 @@ window.SITE = {
   },
 
   links: {
-    email: "",
+    email: "ufukcakir@robots.ox.ac.uk",
     scholar:
       "https://scholar.google.com/citations?user=8K_Vt_0AAAAJ&hl=en&oi=sra",
     github: "https://github.com/ufuk-cakir",
     twitter: "https://twitter.com/ufuk_cakir_",
     linkedin: "https://www.linkedin.com/in/cakir-ufuk/",
     orcid: "https://orcid.org/0009-0005-9196-1986",
+  },
+
+  /* the Mail app */
+  contact: {
+    subject: "Hello Ufuk",
+    blurb:
+      "Always happy to talk research, collaborations, or science communication — drop me a line and I'll get back to you.",
   },
 
   about: {
@@ -226,15 +233,11 @@ window.SITE = {
         { label: "Conference site ↗", href: "https://astroai-lab.de/conferences/czs-school-2023/" },
       ],
     },
-  ],
-
-  talks: [
     {
-      title: "Cleaning Up Our Planet — 4th Lindau Online Sciathon",
-      venue: "Lindau Nobel Laureate Meeting (finalist)",
-      year: "2024",
+      name: "Cleaning Up Our Planet — Lindau Sciathon",
+      meta: "Lindau · 2024",
       blurb:
-        "A project with the Lindau Alumni Network combining molecular simulations and machine learning to improve the efficiency of plastic-degrading enzymes. Selected as a finalist and presented at the Lindau Nobel Laureate Meeting 2024 — I animated and edited the video.",
+        "A 4th Lindau Online Sciathon project with the Lindau Alumni Network, combining molecular simulations and machine learning to improve the efficiency of plastic-degrading enzymes. Selected as a finalist; I animated and edited the video.",
       keywords: ["sciathon", "ML", "sustainability", "finalist"],
       media: { type: "video", src: "assets/videos/lindau-sciathon-2024.mp4" },
       links: [
@@ -242,28 +245,18 @@ window.SITE = {
         { label: "Sciathon results ↗", href: "https://sciathon.org/results-2024/" },
       ],
     },
-    {
-      title: "Quantum Simulation — Science Young-to-Young",
-      venue: "4EU+ · Sorbonne, Milan, Heidelberg",
-      year: "2023",
-      blurb:
-        "An animated explainer on quantum simulation produced with international students for the 4EU+ Science Young-to-Young programme. I coordinated, animated, and edited the piece in After Effects and Premiere Pro.",
-      keywords: ["science communication", "animation", "4EU+"],
-      media: { type: "video", src: "assets/videos/syty intro.mp4" },
-      links: [
-        {
-          label: "Full video (Sorbonne) ↗",
-          href: "https://sorbonne-universite.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=b92c0e54-205f-4e1b-a59d-aeca00a3f13e",
-        },
-      ],
-    },
+  ],
+
+  /* Talks & posters only. (Projects / outreach / honours live in their
+     own sections.) */
+  talks: [
     {
       title: "GAMMA dataset",
       venue: "ML4PS · NeurIPS",
       year: "2023",
       blurb:
         "Presented the GAMMA galaxy dataset at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023.",
-      keywords: ["dataset", "galaxies", "NeurIPS"],
+      keywords: ["dataset", "galaxies", "NeurIPS", "talk"],
       media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
       links: [{ label: "Workshop @ NeurIPS ↗", href: "https://neurips.cc/virtual/2023/76114" }],
     },
@@ -277,14 +270,25 @@ window.SITE = {
       media: { type: "image", src: "assets/images/eso logo.png" },
       links: [{ label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" }],
     },
+  ],
+
+  /* News & announcements (newest first) — shown in the News app. */
+  news: [
     {
+      date: "2024",
+      tag: "Honour",
       title: "Young Scientist — 73rd Lindau Nobel Laureate Meeting",
-      venue: "Lindau, Germany",
-      year: "2024",
-      blurb:
+      body:
         "Selected as a Young Scientist to attend the 73rd Lindau Nobel Laureate Meeting, engaging with Nobel Laureates and young scientists from around the world.",
-      keywords: ["Lindau", "young scientist"],
       media: { type: "image", src: "assets/images/sciathon-discussion.JPEG" },
+    },
+    {
+      date: "2024",
+      tag: "Finalist",
+      title: "Lindau Sciathon project selected as a finalist",
+      body:
+        "Our 4th Lindau Online Sciathon project — combining molecular simulations and machine learning to improve plastic-degrading enzymes — was selected as a finalist and presented at the Lindau Nobel Laureate Meeting.",
+      href: "https://www.youtube.com/watch?v=_3ahZlp7I7k",
     },
   ],
 
@@ -353,6 +357,20 @@ window.SITE = {
         "An animation illustrating the evolution of a quantum wavefunction under the Schrödinger equation.",
       keywords: ["animation", "quantum"],
       media: { type: "video", src: "assets/videos/schroedinger.mp4" },
+    },
+    {
+      name: "Quantum Simulation — Science Young-to-Young",
+      meta: "4EU+ · 2023",
+      blurb:
+        "An animated explainer on quantum simulation produced with international students (Sorbonne, Milan, Heidelberg) for the 4EU+ Science Young-to-Young programme. I coordinated, animated, and edited it in After Effects and Premiere Pro.",
+      keywords: ["science communication", "animation", "4EU+"],
+      media: { type: "video", src: "assets/videos/syty intro.mp4" },
+      links: [
+        {
+          label: "Full video (Sorbonne) ↗",
+          href: "https://sorbonne-universite.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=b92c0e54-205f-4e1b-a59d-aeca00a3f13e",
+        },
+      ],
     },
   ],
 };

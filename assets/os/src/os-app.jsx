@@ -90,6 +90,9 @@ function IconArt({ type, src }) {
   if (type === "logo") return <img className="art art-logo" src={src} alt="" />;
   if (type === "about") return <AppIcon from="#0a72e8" to="#5b3a8c" glyph={S.identity.initial} />;
   if (type === "embed") return <DoomIcon />;
+  if (type === "terminal") return <TerminalIcon />;
+  if (type === "news") return <NewsIcon />;
+  if (type === "mail") return <MailIcon />;
   if (type === "folder") return <FolderIcon />;
   if (type === "txt") return <DocIcon tag="TXT" tagColor="var(--accent)" />;
   if (type === "pdf") return <DocIcon tag="PDF" tagColor="#e5341c" />;
@@ -114,7 +117,6 @@ const ICONS = [
   { id: "background", type: "txt", label: "Background.txt", open: "background" },
   { id: "ori", type: "logo", src: S.groups.ori.logo, label: "Oxford Robotics Institute", open: "ori" },
   { id: "ie", type: "logo", src: S.groups.ie.logo, label: "Intelligent Earth CDT", open: "ie" },
-  { id: "doom", type: "embed", label: "DOOM", open: "doom" },
 ];
 function defaultIconPos() {
   const W = window.innerWidth;
@@ -136,31 +138,37 @@ function defaultWidgetPos() {
   return { clock: { x: 40, y: 56 }, weather: { x: 40, y: 250 }, note: { x: 40, y: 452 } };
 }
 
-const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], post: [820, 640], embed: [760, 580], about: [360, 470] };
+const SIZE = { finder: [720, 460], text: [620, 558], detail: [600, 640], post: [820, 640], embed: [760, 580], about: [360, 470], mail: [400, 470], terminal: [680, 440], news: [680, 620] };
 const STORE_KEY = "cakir-os-v5";
 
 /* ============================================================
    Window content
    ============================================================ */
-function FinderContent({ f, onOpen, onItem }) {
-  const [active, setActive] = useState(f.title);
+function FinderContent({ fkey, onItem }) {
+  /* favourites navigate the SAME window into that folder, with Back */
+  const [stack, setStack] = useState([fkey]);
+  useEffect(() => { setStack([fkey]); }, [fkey]);
+  const curKey = stack[stack.length - 1];
+  const f = FILES[curKey] || FILES[fkey];
   const fav = [
     ["Publications", "publications"], ["Projects", "projects"], ["Talks", "talks"],
     ["Writing", "writing"], ["Outreach", "outreach"],
   ];
+  const go = (key) => setStack((s) => (key === s[s.length - 1] ? s : [...s, key]));
+  const back = () => setStack((s) => (s.length > 1 ? s.slice(0, -1) : s));
   return (
     <div className="win-body">
       <div className="fsidebar">
         <div className="sh">Favourites</div>
         {fav.map(([nm, key]) => (
-          <div key={key} className={"si" + (nm === active ? " active" : "")}
-            onDoubleClick={() => onOpen(key)} onClick={() => { setActive(nm); if (TOUCH) onOpen(key); }}>
+          <div key={key} className={"si" + (key === curKey ? " active" : "")} onClick={() => go(key)}>
             <span className="d" style={{ background: "#3aa0ff" }}></span>{nm}
           </div>
         ))}
       </div>
       <div className="fmain">
         <div className="ftoolbar">
+          {stack.length > 1 && <button className="fback" onClick={back} title="Back" aria-label="Back">‹</button>}
           <span style={{ fontWeight: 600, color: "var(--ink)" }}>{f.title}</span>
           <span style={{ fontFamily: "var(--mono)", fontSize: 11.5 }}>{f.items.length} items</span>
         </div>
@@ -354,6 +362,23 @@ function Palette({ index, onClose }) {
   );
 }
 
+function MailContent() {
+  const email = L.email;
+  const c = S.contact || {};
+  const mailto = "mailto:" + email + (c.subject ? "?subject=" + encodeURIComponent(c.subject) : "");
+  return (
+    <div className="win-body mailwin">
+      <div className="mailwrap">
+        <div className="mail-ic"><MailIcon /></div>
+        <h2>Get in touch</h2>
+        {c.blurb && <p>{c.blurb}</p>}
+        <a className="mail-addr" href={mailto}>{email}</a>
+        <a className="mail-btn" href={mailto}>Compose email ↗</a>
+      </div>
+    </div>
+  );
+}
+
 /* ---------- window shell ---------- */
 function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen, onItem, onToggleFull }) {
   const ttlDown = (e) => { onFocus(); beginDrag(e, win.x, win.y, (x, y) => onDrag(win.wid, Math.max(28, x), Math.max(28, y))); };
@@ -369,11 +394,14 @@ function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen,
         </div>
         <div className="title">{win.title || f.title}</div>
       </div>
-      {f.kind === "finder" && <FinderContent f={f} onOpen={onOpen} onItem={onItem} />}
+      {f.kind === "finder" && <FinderContent fkey={win.openId} onItem={onItem} />}
       {f.kind === "text" && <TextContent f={f} />}
       {f.kind === "detail" && <DetailContent f={f} />}
       {f.kind === "post" && <PostContent f={f} win={win} onToggleFull={onToggleFull} />}
       {f.kind === "embed" && <EmbedContent f={f} />}
+      {f.kind === "mail" && <MailContent />}
+      {f.kind === "terminal" && window.TerminalApp && React.createElement(window.TerminalApp)}
+      {f.kind === "news" && window.NewsApp && React.createElement(window.NewsApp)}
       {f.kind === "about" && <AboutContent />}
     </div>
   );
@@ -383,10 +411,11 @@ function Win({ win, f, focused, onFocus, onClose, onMin, onZoom, onDrag, onOpen,
    Widgets
    ============================================================ */
 function ClockWidget({ now }) {
-  const hh = String(now.getHours()).padStart(2, "0");
-  const mm = String(now.getMinutes()).padStart(2, "0");
-  const ss = String(now.getSeconds()).padStart(2, "0");
-  const date = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
+  /* always Oxford (Europe/London) time, regardless of the visitor's zone */
+  const tp = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/London", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(now);
+  const get = (t) => (tp.find((p) => p.type === t) || {}).value || "00";
+  const hh = get("hour"), mm = get("minute"), ss = get("second");
+  const date = now.toLocaleDateString("en-GB", { timeZone: "Europe/London", weekday: "long", day: "numeric", month: "long" });
   return (
     <div className="w-clock">
       <div className="time">{hh}:{mm}<span className="ss"> {ss}</span></div>
@@ -619,11 +648,13 @@ function App() {
     { id: "talks", node: <FolderIcon />, label: "Talks", key: "talks" },
     { id: "writing", node: <FolderIcon />, label: "Writing", key: "writing" },
     { id: "outreach", node: <FolderIcon />, label: "Outreach", key: "outreach" },
+    { id: "news", node: <NewsIcon />, label: "News", key: "news" },
     { sep: true },
-    ...(L.email ? [{ id: "mail", node: <MailIcon />, label: "Email", href: "mailto:" + L.email }] : []),
+    ...(L.email ? [{ id: "mail", node: <MailIcon />, label: "Mail", key: "mail" }] : []),
     { id: "scholar", node: <GlobeIcon />, label: "Scholar", href: L.scholar },
     { id: "github", node: <GitHubIcon />, label: "GitHub", href: L.github },
     { sep: true },
+    { id: "terminal", node: <TerminalIcon />, label: "Terminal", key: "terminal" },
     { id: "doom", node: <DoomIcon />, label: "DOOM", key: "doom" },
   ];
   const isRunning = (key) => key && windows.some((w) => w.openId === key && !w.closing);
@@ -642,6 +673,9 @@ function App() {
       { key: "background", title: "Background", cat: "Note", type: "txt", run: () => openFile("background") },
       { key: "ori", title: S.groups.ori.title, cat: "Affiliation", type: "logo", src: S.groups.ori.logo, run: () => openFile("ori") },
       { key: "ie", title: S.groups.ie.title, cat: "Affiliation", type: "logo", src: S.groups.ie.logo, run: () => openFile("ie") },
+      { key: "news", title: "News", cat: "App", type: "news", run: () => openFile("news") },
+      { key: "mail", title: "Mail", cat: "App", type: "mail", run: () => openFile("mail") },
+      { key: "terminal", title: "Terminal", cat: "App", type: "terminal", run: () => openFile("terminal") },
       { key: "doom", title: "DOOM", cat: "App", type: "embed", run: () => openFile("doom") },
     ];
     apps.forEach((e) => out.push({ ...e, primary: true }));
@@ -770,7 +804,7 @@ function App() {
           </button>
           <svg width="22" height="13" viewBox="0 0 26 14"><rect x="0.5" y="2" width="20" height="10" rx="2.5" fill="none" stroke="currentColor" strokeWidth="1"/><rect x="2" y="3.5" width="15" height="7" rx="1" fill="currentColor"/><rect x="21.5" y="5" width="2" height="4" rx="1" fill="currentColor"/></svg>
           <svg width="17" height="13" viewBox="0 0 18 14"><path d="M9 3C5.5 3 2.7 4.4 1 6.4l1.4 1.5C3.9 6.2 6.3 5 9 5s5.1 1.2 6.6 2.9L17 6.4C15.3 4.4 12.5 3 9 3z" fill="currentColor"/><path d="M9 7.5c-1.9 0-3.6.8-4.7 2l1.5 1.6C6.5 10.3 7.7 9.7 9 9.7s2.5.6 3.2 1.4l1.5-1.6C12.6 8.3 10.9 7.5 9 7.5z" fill="currentColor"/><circle cx="9" cy="12" r="1.4" fill="currentColor"/></svg>
-          <span className="clock">{now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}  {String(now.getHours()).padStart(2, "0")}:{String(now.getMinutes()).padStart(2, "0")}</span>
+          <span className="clock">{now.toLocaleDateString("en-GB", { timeZone: "Europe/London", weekday: "short", day: "numeric", month: "short" })}  {now.toLocaleTimeString("en-GB", { timeZone: "Europe/London", hour: "2-digit", minute: "2-digit", hour12: false })}</span>
         </span>
       </div>
 
