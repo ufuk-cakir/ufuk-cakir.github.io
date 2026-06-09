@@ -225,7 +225,7 @@ function FinderContent({ fkey, onItem }) {
             {items.map((it, i) => (
               <div className="fitem" key={i} onClick={() => { if (TOUCH) onItem(it); }} onDoubleClick={() => onItem(it)} title="Open">
                 <ItemThumb item={it} />
-                <div className="nm">{it.name || it.title}</div>
+                <div className="nm">{it.name || it.title}{it.wip && <span className="wip-badge">WIP</span>}</div>
                 {(it.meta || it.venue) && <div className="mt">{it.meta || it.venue}</div>}
               </div>
             ))}
@@ -243,7 +243,7 @@ function FinderContent({ fkey, onItem }) {
                 <span className="nm">
                   <ItemThumb item={it} />
                   <span className="nm-main">
-                    <span className="nm-title">{it.title || it.name}</span>
+                    <span className="nm-title">{it.title || it.name}{it.wip && <span className="wip-badge">WIP</span>}</span>
                     {(it.blurb || it.abstract) && <span className="nm-sub">{it.blurb || it.abstract}</span>}
                     {it.keywords && it.keywords.length > 0 && (
                       <span className="kwchips">

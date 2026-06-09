@@ -417,7 +417,9 @@ function FinderContent({
     item: it
   }), /*#__PURE__*/React.createElement("div", {
     className: "nm"
-  }, it.name || it.title), (it.meta || it.venue) && /*#__PURE__*/React.createElement("div", {
+  }, it.name || it.title, it.wip && /*#__PURE__*/React.createElement("span", {
+    className: "wip-badge"
+  }, "WIP")), (it.meta || it.venue) && /*#__PURE__*/React.createElement("div", {
     className: "mt"
   }, it.meta || it.venue))), !items.length && /*#__PURE__*/React.createElement("div", {
     className: "fempty"
@@ -449,7 +451,9 @@ function FinderContent({
     className: "nm-main"
   }, /*#__PURE__*/React.createElement("span", {
     className: "nm-title"
-  }, it.title || it.name), (it.blurb || it.abstract) && /*#__PURE__*/React.createElement("span", {
+  }, it.title || it.name, it.wip && /*#__PURE__*/React.createElement("span", {
+    className: "wip-badge"
+  }, "WIP")), (it.blurb || it.abstract) && /*#__PURE__*/React.createElement("span", {
     className: "nm-sub"
   }, it.blurb || it.abstract), it.keywords && it.keywords.length > 0 && /*#__PURE__*/React.createElement("span", {
     className: "kwchips"

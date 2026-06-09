@@ -27,9 +27,8 @@ window.SITE = {
     photoThumb: "assets/os/portrait-thumb.jpg",
     scatter: { a: "Ufuk", b: "Çakır", c: "DPHIL · OXFORD · 2026" },
     currently: [
-      "→ AI for the environment",
-      "→ decision-making under uncertainty",
-      "→ open to collaborate",
+      "Thinking about how to tackle wildfire suppression.",
+      "Training RL agents in our own JaxWildfire Simulator.",
     ],
   },
 
@@ -51,8 +50,7 @@ window.SITE = {
   },
 
   about: {
-    p:
-      "DPhil student at the Intelligent Earth UKRI CDT in AI for the Environment, University of Oxford, working with the GOALS group at the Oxford Robotics Institute. Trained as a physicist, with roots in scientific machine learning and galaxy morphology.",
+    p: "DPhil student at the Intelligent Earth UKRI CDT in AI for the Environment, University of Oxford, working with the GOALS group at the Oxford Robotics Institute. Trained as a physicist, with roots in scientific machine learning and galaxy morphology.",
   },
 
   /* Affiliation badges on the desktop (open a detail card). */
@@ -74,7 +72,7 @@ window.SITE = {
       venue: "UKRI CDT in AI for the Environment · Oxford",
       logo: "talks/logos/ie-logo.png",
       blurb:
-        "My DPhil is part of Intelligent Earth, the UKRI Centre for Doctoral Training in AI for the Environment at the University of Oxford — a programme bridging environmental science and AI across climate, biodiversity, natural hazards, and environmental solutions, with students co-advised across departments.",
+        "My DPhil is part of Intelligent Earth, the UKRI Centre for Doctoral Training in AI for the Environment at the University of Oxford. This programme bridges environmental science and AI across climate, biodiversity, natural hazards, and environmental solutions, with students co-advised across departments.",
       keywords: ["AI for the environment", "CDT", "climate", "Oxford"],
       links: [
         {
@@ -91,16 +89,13 @@ window.SITE = {
     body: [
       {
         lead: true,
-        text:
-          "DPhil student at the Intelligent Earth UKRI CDT in AI for the Environment, University of Oxford, working with the GOALS group at the Oxford Robotics Institute.",
+        text: "DPhil student at the Intelligent Earth UKRI CDT in AI for the Environment, University of Oxford, working with the GOALS group at the Oxford Robotics Institute.",
       },
       {
-        text:
-          "I trained as a physicist in Heidelberg, working where scientific machine learning meets astrophysics — from galaxy morphology and cosmological simulations (IllustrisTNG) to differentiable, JAX-based modelling tools.",
+        text: "In physics class during school, we covered introductions to Quantum Physics. I remember I was so excited and confused when I was told how electrons behave in the double slit experiment. I was asking myself: How the hell do they know if they are observed or not? After a bachelors and masters degree in Physics from the University of Heidelberg, I think I still do not know the full answer.",
       },
       {
-        text:
-          "Along the way I've enjoyed building open-source research software (RUBIX), datasets (GAMMA), and science-communication animations, and I care about open, reproducible science.",
+        text: "But I think it was these experience that sparked my interest in Science. Asking questions about the very foundations of Nature. Is that not exciting?",
       },
     ],
   },
@@ -111,21 +106,17 @@ window.SITE = {
     body: [
       {
         lead: true,
-        text:
-          "A short note on what pulls me toward research — these are my own words, and a work in progress.",
+        text: "A personal note on what pulls me toward research",
       },
       {
-        text:
-          "I keep coming back to the same thing: using machine learning to understand the physical world, and building tools that let other scientists do the same. The part I love was never just the prediction — it's turning messy, high-dimensional scientific data into something we can reason about and act on.",
+        text: "I think this is always a very deep question to ask a scientist: What makes you want to do research?",
       },
       {
-        text:
-          "My path runs from physics and galaxy morphology toward decision-making and AI for the environment. The common thread is the same throughout: careful, open, reproducible science in service of questions that actually matter.",
+        text: "After finishing my Master of Science in Physics, it was clear that I wanted to do a PhD. I had done reserach and published papers in the field of computational astrophysics already, and I loved everything about the process or writing code to answer questions. Then the big Turkey-Syria Earthquake in 2023 hit. I know the exact moment, sitting in front of the TV, watching the News and asking myself: What can I do to prevent such suffering in the future?",
       },
       {
         ph: true,
-        text:
-          "[ Replace this paragraph with your own motivation — the problem that keeps you up at night, and why you, why now. ]",
+        text: "When I saw that a new CDT at Oxford called Intelligent Earth had a specific stream dedicated to tackling Natural Hazard using AI approaches, it was a natural fit. So here we are.",
       },
     ],
   },
@@ -136,11 +127,14 @@ window.SITE = {
       venue: "ML4PS @ NeurIPS",
       year: "2023",
       abstract:
-        "A dataset of 2D maps and 3D cubes for 11,727 galaxies capturing essential attributes — stellar age, metallicity and mass — tailored for machine-learning applications. It ships with an interactive dashboard for exploring the lower-dimensional image space. Accepted at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023.",
+        "A dataset of 2D maps and 3D cubes for 11,727 galaxies capturing essential attributes (stellar age, metallicity and mass) tailored for machine-learning applications. It ships with an interactive dashboard for exploring the lower-dimensional image space. Accepted at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023.",
       keywords: ["dataset", "galaxies", "IllustrisTNG", "machine learning"],
       media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
       links: [
-        { label: "Workshop @ NeurIPS ↗", href: "https://neurips.cc/virtual/2023/76114" },
+        {
+          label: "Workshop @ NeurIPS ↗",
+          href: "https://neurips.cc/virtual/2023/76114",
+        },
         { label: "Project page ↗", href: "research/gamma.html" },
       ],
     },
@@ -162,14 +156,18 @@ window.SITE = {
         "A fully-tested, well-documented genetic algorithm that optimises bioacoustic spectrograms to enable real-time monitoring of critically endangered species. Developed with the Machine Learning for Ecology group at AIMS (Cape Town), funded by the Baden-Württemberg-Stipendium. Poster at the 2nd ML4RS Workshop, ICLR Vienna 2024.",
       keywords: ["bioacoustics", "genetic algorithm", "conservation"],
       media: { type: "image", src: "assets/images/eso logo.png" },
-      links: [{ label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" }],
+      links: [
+        { label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" },
+      ],
     },
     {
       title: "Full publication list →",
       venue: "Google Scholar",
       year: "",
       links: [
-        { href: "https://scholar.google.com/citations?user=8K_Vt_0AAAAJ&hl=en&oi=sra" },
+        {
+          href: "https://scholar.google.com/citations?user=8K_Vt_0AAAAJ&hl=en&oi=sra",
+        },
       ],
     },
   ],
@@ -182,14 +180,33 @@ window.SITE = {
         "A modular, fully-tested, well-documented JAX tool that forward-models mock IFU cubes from cosmological simulations such as IllustrisTNG. It ships predefined telescope configs (e.g. MUSE) and standard spectral libraries, and parallelises across GPUs for ~600× speedups — turning hours of compute into seconds.",
       keywords: ["JAX", "IFU", "GPU", "open source"],
       media: { type: "image", src: "assets/images/rubix-logo.svg" },
-      links: [{ label: "GitHub ↗", href: "https://github.com/ufuk-cakir/rubix" }],
+      links: [
+        { label: "GitHub ↗", href: "https://github.com/ufuk-cakir/rubix" },
+      ],
       body: [
-        { type: "media", media: { type: "image", src: "assets/images/rubix-logo.svg" } },
-        { type: "p", text: "RUBIX (Reconstruction Using Bayesian Inference eXperiments) is a modular, fully-tested, well-documented tool written in JAX that forward-models mock IFU (integral field unit) data cubes from cosmological simulations such as IllustrisTNG." },
+        {
+          type: "media",
+          media: { type: "image", src: "assets/images/rubix-logo.svg" },
+        },
+        {
+          type: "p",
+          text: "RUBIX (Reconstruction Using Bayesian Inference eXperiments) is a modular, fully-tested, well-documented tool written in JAX that forward-models mock IFU (integral field unit) data cubes from cosmological simulations such as IllustrisTNG.",
+        },
         { type: "h", text: "Why JAX" },
-        { type: "p", text: "By writing the whole pipeline in JAX it is differentiable end-to-end and parallelises across multiple GPUs, demonstrating performance improvements over state-of-the-art codes by a factor of ~600 — reducing compute times from hours to seconds." },
-        { type: "p", text: "It ships predefined telescope configurations (e.g. MUSE) and supports standard spectral libraries, and it is open source so the astrophysics community can build on it." },
-        { type: "links", links: [{ label: "GitHub ↗", href: "https://github.com/ufuk-cakir/rubix" }] },
+        {
+          type: "p",
+          text: "By writing the whole pipeline in JAX it is differentiable end-to-end and parallelises across multiple GPUs, demonstrating performance improvements over state-of-the-art codes by a factor of ~600 — reducing compute times from hours to seconds.",
+        },
+        {
+          type: "p",
+          text: "It ships predefined telescope configurations (e.g. MUSE) and supports standard spectral libraries, and it is open source so the astrophysics community can build on it.",
+        },
+        {
+          type: "links",
+          links: [
+            { label: "GitHub ↗", href: "https://github.com/ufuk-cakir/rubix" },
+          ],
+        },
       ],
     },
     {
@@ -201,15 +218,43 @@ window.SITE = {
       media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
       links: [
         { label: "Project page ↗", href: "research/gamma.html" },
-        { label: "Workshop @ NeurIPS ↗", href: "https://neurips.cc/virtual/2023/76114" },
+        {
+          label: "Workshop @ NeurIPS ↗",
+          href: "https://neurips.cc/virtual/2023/76114",
+        },
       ],
       body: [
-        { type: "media", media: { type: "image", src: "assets/images/gamma_logo_v3.png" } },
-        { type: "p", text: "GAMMA (Galactic Attributes of Mass, Metallicity and Age) is a comprehensive dataset of galaxy data tailored for machine-learning applications." },
-        { type: "p", text: "It provides detailed 2D maps and 3D cubes of 11,727 galaxies, capturing essential attributes: stellar age, metallicity, and mass. I also built an interactive online dashboard to visualise the lower-dimensional image space." },
-        { type: "media", media: { type: "image", src: "assets/images/publication-viz.png" }, caption: "Exploring the learned image space." },
-        { type: "p", text: "This work was accepted at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023." },
-        { type: "links", links: [{ label: "Project page ↗", href: "research/gamma.html" }, { label: "Workshop @ NeurIPS ↗", href: "https://neurips.cc/virtual/2023/76114" }] },
+        {
+          type: "media",
+          media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
+        },
+        {
+          type: "p",
+          text: "GAMMA (Galactic Attributes of Mass, Metallicity and Age) is a comprehensive dataset of galaxy data tailored for machine-learning applications.",
+        },
+        {
+          type: "p",
+          text: "It provides detailed 2D maps and 3D cubes of 11,727 galaxies, capturing essential attributes: stellar age, metallicity, and mass. I also built an interactive online dashboard to visualise the lower-dimensional image space.",
+        },
+        {
+          type: "media",
+          media: { type: "image", src: "assets/images/publication-viz.png" },
+          caption: "Exploring the learned image space.",
+        },
+        {
+          type: "p",
+          text: "This work was accepted at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023.",
+        },
+        {
+          type: "links",
+          links: [
+            { label: "Project page ↗", href: "research/gamma.html" },
+            {
+              label: "Workshop @ NeurIPS ↗",
+              href: "https://neurips.cc/virtual/2023/76114",
+            },
+          ],
+        },
       ],
     },
     {
@@ -221,10 +266,23 @@ window.SITE = {
       media: { type: "video", src: "assets/videos/eigen10.mp4" },
       links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }],
       body: [
-        { type: "media", media: { type: "video", src: "assets/videos/eigen10.mp4" }, caption: "Reconstructing a galaxy from a handful of eigengalaxies." },
-        { type: "p", text: "For my Bachelor thesis I investigated how machine learning can build galaxy-morphology models and encode the information contained in modern, state-of-the-art galaxy simulations." },
-        { type: "p", text: "Using simulation data from the IllustrisTNG project, I computed the 'eigengalaxies' — the basis vectors of the transformed image space — via Principal Component Analysis. A galaxy can then be represented (and reconstructed) from just a few of these components." },
-        { type: "links", links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }] },
+        {
+          type: "media",
+          media: { type: "video", src: "assets/videos/eigen10.mp4" },
+          caption: "Reconstructing a galaxy from a handful of eigengalaxies.",
+        },
+        {
+          type: "p",
+          text: "For my Bachelor thesis I investigated how machine learning can build galaxy-morphology models and encode the information contained in modern, state-of-the-art galaxy simulations.",
+        },
+        {
+          type: "p",
+          text: "Using simulation data from the IllustrisTNG project, I computed the 'eigengalaxies' — the basis vectors of the transformed image space — via Principal Component Analysis. A galaxy can then be represented (and reconstructed) from just a few of these components.",
+        },
+        {
+          type: "links",
+          links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }],
+        },
       ],
     },
     {
@@ -234,7 +292,9 @@ window.SITE = {
         "A genetic algorithm to optimise bioacoustic spectrograms for real-time monitoring of endangered species, developed with the ML for Ecology group at AIMS.",
       keywords: ["bioacoustics", "genetic algorithm", "conservation"],
       media: { type: "image", src: "assets/images/eso logo.png" },
-      links: [{ label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" }],
+      links: [
+        { label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" },
+      ],
     },
     {
       name: "Differentiable galaxy image pipeline",
@@ -252,7 +312,10 @@ window.SITE = {
       keywords: ["organising", "scientific ML", "Heidelberg"],
       media: { type: "video", src: "assets/videos/czs.mp4" },
       links: [
-        { label: "Conference site ↗", href: "https://astroai-lab.de/conferences/czs-school-2023/" },
+        {
+          label: "Conference site ↗",
+          href: "https://astroai-lab.de/conferences/czs-school-2023/",
+        },
       ],
     },
     {
@@ -263,8 +326,14 @@ window.SITE = {
       keywords: ["sciathon", "ML", "sustainability", "finalist"],
       media: { type: "video", src: "assets/videos/lindau-sciathon-2024.mp4" },
       links: [
-        { label: "Watch on YouTube ↗", href: "https://www.youtube.com/watch?v=_3ahZlp7I7k" },
-        { label: "Sciathon results ↗", href: "https://sciathon.org/results-2024/" },
+        {
+          label: "Watch on YouTube ↗",
+          href: "https://www.youtube.com/watch?v=_3ahZlp7I7k",
+        },
+        {
+          label: "Sciathon results ↗",
+          href: "https://sciathon.org/results-2024/",
+        },
       ],
     },
   ],
@@ -302,11 +371,9 @@ window.SITE = {
     },
     {
       title: "Plasticity as the Mirror of Empowerment",
-      venue: "Manim talk",
+      venue: "Work in progress",
       year: "2026",
-      blurb:
-        "The talk version of the essay — a Manim-animated walk from Shannon to a clean impossibility result about agency.",
-      keywords: ["empowerment", "agency", "Manim", "talk"],
+      wip: true,
       deck: "slides/plasticity-empowerment.html",
     },
   ],
@@ -317,16 +384,14 @@ window.SITE = {
       date: "2024",
       tag: "Honour",
       title: "Young Scientist — 73rd Lindau Nobel Laureate Meeting",
-      body:
-        "Selected as a Young Scientist to attend the 73rd Lindau Nobel Laureate Meeting, engaging with Nobel Laureates and young scientists from around the world.",
+      body: "Selected as a Young Scientist to attend the 73rd Lindau Nobel Laureate Meeting, engaging with Nobel Laureates and young scientists from around the world.",
       media: { type: "image", src: "assets/images/sciathon-discussion.JPEG" },
     },
     {
       date: "2024",
       tag: "Finalist",
       title: "Lindau Sciathon project selected as a finalist",
-      body:
-        "Our 4th Lindau Online Sciathon project — combining molecular simulations and machine learning to improve plastic-degrading enzymes — was selected as a finalist and presented at the Lindau Nobel Laureate Meeting.",
+      body: "Our 4th Lindau Online Sciathon project — combining molecular simulations and machine learning to improve plastic-degrading enzymes — was selected as a finalist and presented at the Lindau Nobel Laureate Meeting.",
       href: "https://www.youtube.com/watch?v=_3ahZlp7I7k",
     },
   ],
@@ -359,16 +424,13 @@ window.SITE = {
         body: [
           {
             lead: true,
-            text:
-              "I love making animations to visualize science — turning equations and abstract concepts into something you can actually watch.",
+            text: "I love making animations to visualize science — turning equations and abstract concepts into something you can actually watch.",
           },
           {
-            text:
-              "Most of these are built in Adobe After Effects and Premiere Pro, with a few in Python. They've been used for public outreach, science-communication projects, and conference talks — from quantum-simulation explainers to relaxation dynamics in disordered spin systems.",
+            text: "Most of these are built in Adobe After Effects and Premiere Pro, with a few in Python. They've been used for public outreach, science-communication projects, and conference talks — from quantum-simulation explainers to relaxation dynamics in disordered spin systems.",
           },
           {
-            text:
-              "If a concept is hard to picture, that's usually the one I want to animate. Double-click the clips in this folder to watch a few.",
+            text: "If a concept is hard to picture, that's usually the one I want to animate. Double-click the clips in this folder to watch a few.",
           },
         ],
       },
