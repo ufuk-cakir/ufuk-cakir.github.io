@@ -323,7 +323,7 @@ window.SITE = {
       meta: "Lindau · 2024",
       blurb:
         "A 4th Lindau Online Sciathon project with the Lindau Alumni Network, combining molecular simulations and machine learning to improve the efficiency of plastic-degrading enzymes. Selected as a finalist; I animated and edited the video.",
-      keywords: ["sciathon", "ML", "sustainability", "finalist"],
+      keywords: ["hackathon", "sustainability"],
       media: { type: "video", src: "assets/videos/lindau-sciathon-2024.mp4" },
       links: [
         {
