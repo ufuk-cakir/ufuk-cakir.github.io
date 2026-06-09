@@ -1745,11 +1745,6 @@ function App() {
     node: /*#__PURE__*/React.createElement(TerminalIcon, null),
     label: "Terminal",
     key: "terminal"
-  }, {
-    id: "doom",
-    node: /*#__PURE__*/React.createElement(DoomIcon, null),
-    label: "DOOM",
-    key: "doom"
   }];
   const isRunning = key => key && windows.some(w => w.openId === key && !w.closing);
 
@@ -1836,12 +1831,6 @@ function App() {
       cat: "App",
       type: "terminal",
       run: () => openFile("terminal")
-    }, {
-      key: "doom",
-      title: "DOOM",
-      cat: "App",
-      type: "embed",
-      run: () => openFile("doom")
     }];
     apps.forEach(e => out.push({
       ...e,

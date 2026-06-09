@@ -941,7 +941,6 @@ function App() {
     { id: "github", node: <GitHubIcon />, label: "GitHub", href: L.github },
     { sep: true },
     { id: "terminal", node: <TerminalIcon />, label: "Terminal", key: "terminal" },
-    { id: "doom", node: <DoomIcon />, label: "DOOM", key: "doom" },
   ];
   const isRunning = (key) => key && windows.some((w) => w.openId === key && !w.closing);
 
@@ -962,7 +961,6 @@ function App() {
       { key: "news", title: "News", cat: "App", type: "news", run: () => openFile("news") },
       { key: "mail", title: "Mail", cat: "App", type: "mail", run: () => openFile("mail") },
       { key: "terminal", title: "Terminal", cat: "App", type: "terminal", run: () => openFile("terminal") },
-      { key: "doom", title: "DOOM", cat: "App", type: "embed", run: () => openFile("doom") },
     ];
     apps.forEach((e) => out.push({ ...e, primary: true }));
     const add = (arr, cat, type, runner) => (arr || []).forEach((it, i) => {

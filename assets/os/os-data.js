@@ -419,11 +419,6 @@ const FILES = {
     title: SITE_.groups.ie.title,
     detail: groupDetail(SITE_.groups.ie)
   },
-  doom: {
-    kind: "embed",
-    title: "DOOM",
-    url: "https://archive.org/embed/msdos_DOOM_1993"
-  },
   mail: {
     kind: "mail",
     title: "Mail"

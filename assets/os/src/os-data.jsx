@@ -98,7 +98,6 @@ const FILES = {
   about: { kind: "about", title: "About Me" },
   ori: { kind: "detail", title: SITE_.groups.ori.title, detail: groupDetail(SITE_.groups.ori) },
   ie: { kind: "detail", title: SITE_.groups.ie.title, detail: groupDetail(SITE_.groups.ie) },
-  doom: { kind: "embed", title: "DOOM", url: "https://archive.org/embed/msdos_DOOM_1993" },
   mail: { kind: "mail", title: "Mail" },
   terminal: { kind: "terminal", title: "Terminal" },
   news: { kind: "news", title: "News" },

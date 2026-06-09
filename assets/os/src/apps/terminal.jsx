@@ -333,6 +333,12 @@
           try { window.dispatchEvent(new CustomEvent("os-open", { detail: { url: "https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&rel=0", title: "🎵 Never Gonna Give You Up" } })); } catch (e) {}
           break;
 
+        case "doom":
+        case "freedoom":
+          out.push({ c: "green", t: "Rip and tear... booting FREEDOOM (click the canvas to begin)." });
+          try { window.dispatchEvent(new CustomEvent("os-open", { detail: { url: "https://archive.org/embed/fdprev-v13", title: "FREEDOOM" } })); } catch (e) {}
+          break;
+
         case "sudo":
           out.push({ c: "err", t: "Nice try. This incident will be reported." });
           break;
