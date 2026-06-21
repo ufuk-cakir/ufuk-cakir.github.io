@@ -203,6 +203,21 @@ const STORE_KEY = "cakir-os-v5";
 /* ============================================================
    Window content
    ============================================================ */
+
+/* normalize a publication status into a CSS-class slug ("under review" -> "under-review") */
+function statusSlug(s) { return (s || "").toLowerCase().trim().replace(/[^a-z]+/g, "-"); }
+
+/* render an author list, bolding the site owner (SITE_PUBLICATIONS.me substring) */
+function Authors({ list }) {
+  const me = ((window.SITE_PUBLICATIONS || {}).me || "").toLowerCase();
+  return (list || []).map((a, i) => {
+    const mine = me && a.toLowerCase().indexOf(me) !== -1;
+    return (
+      <span key={i}>{mine ? <b className="au-me">{a}</b> : a}{i < list.length - 1 ? ", " : ""}</span>
+    );
+  });
+}
+
 function FinderContent({ fkey, onItem }) {
   /* favourites navigate the SAME window into that folder, with Back */
   const [stack, setStack] = useState([fkey]);
@@ -301,7 +316,8 @@ function FinderContent({ fkey, onItem }) {
                 <span className="nm">
                   <ItemThumb item={it} />
                   <span className="nm-main">
-                    <span className="nm-title">{it.title || it.name}{it.wip && <span className="wip-badge">WIP</span>}</span>
+                    <span className="nm-title">{it.title || it.name}{it.wip && <span className="wip-badge">WIP</span>}{it.status && <span className={"status-badge s-" + statusSlug(it.status)}>{it.status}</span>}</span>
+                    {it.authors && it.authors.length > 0 && <span className="nm-authors"><Authors list={it.authors} /></span>}
                     {(it.blurb || it.abstract) && <span className="nm-sub">{it.blurb || it.abstract}</span>}
                     {it.keywords && it.keywords.length > 0 && (
                       <span className="kwchips">
@@ -318,6 +334,11 @@ function FinderContent({ fkey, onItem }) {
               </div>
             ))}
             {!items.length && <div className="fempty">No matches</div>}
+          </div>
+        )}
+        {f.footer && (
+          <div className="ffooter">
+            <a className="ffooter-btn" href={f.footer.href} target="_blank" rel="noopener">{f.footer.label}</a>
           </div>
         )}
       </div>
@@ -348,14 +369,20 @@ function DetailContent({ f }) {
   const title = d.title || d.name;
   const sub = [d.venue || d.meta, d.year].filter(Boolean).join(" · ");
   const text = d.abstract || d.blurb;
+  const authors = d.authors || [];
   const links = d.links || [];
   return (
     <div className="win-body detailwin">
       <div className="detailwrap">
         {d.media && <div className="dmedia"><Preview media={d.media} className="dmedia-el" /></div>}
         <div className="dbody">
-          {sub && <div className="dkicker">{sub}</div>}
+          {(sub || d.status) && (
+            <div className="dkicker">
+              {sub}{d.status && <span className={"status-badge s-" + statusSlug(d.status)}>{d.status}</span>}
+            </div>
+          )}
           <h1 className="dtitle">{title}</h1>
+          {authors.length > 0 && <div className="dauthors"><Authors list={authors} /></div>}
           {text && <p className="dtext">{text}</p>}
           {d.keywords && d.keywords.length > 0 && (
             <div className="dtags">{d.keywords.map((k) => <span className="dtag" key={k}>{k}</span>)}</div>

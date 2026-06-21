@@ -26,6 +26,9 @@ for (const f of files) {
   const { code } = Babel.transform(src, {
     presets: [["react", { runtime: "classic" }]],
     filename: f.src,
+    // Emit non-ASCII as \uXXXX escapes so rebuilds produce stable, ASCII-only
+    // output (keeps git diffs minimal and avoids encoding surprises on deploy).
+    generatorOpts: { jsescOption: { minimal: false } },
   });
   writeFileSync(new URL(`./${f.out}`, import.meta.url), code);
   console.log(`built ${f.out}`);

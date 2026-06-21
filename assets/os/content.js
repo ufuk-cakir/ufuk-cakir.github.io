@@ -121,56 +121,8 @@ window.SITE = {
     ],
   },
 
-  publications: [
-    {
-      title: "GAMMA: Galactic Attributes of Mass, Metallicity and Age",
-      venue: "ML4PS @ NeurIPS",
-      year: "2023",
-      abstract:
-        "A dataset of 2D maps and 3D cubes for 11,727 galaxies capturing essential attributes (stellar age, metallicity and mass) tailored for machine-learning applications. It ships with an interactive dashboard for exploring the lower-dimensional image space. Accepted at the Machine Learning and the Physical Sciences workshop at NeurIPS 2023.",
-      keywords: ["dataset", "astrophysics"],
-      media: { type: "image", src: "assets/images/gamma_logo_v3.png" },
-      links: [
-        {
-          label: "Workshop @ NeurIPS ↗",
-          href: "https://neurips.cc/virtual/2023/76114",
-        },
-        { label: "Project page ↗", href: "research/gamma.html" },
-      ],
-    },
-    {
-      title: "Eigengalaxies — ML models for galaxy morphology",
-      venue: "B.Sc. thesis",
-      year: "2022",
-      abstract:
-        "Using Principal Component Analysis to compute 'eigengalaxies' — the basis vectors of a transformed galaxy-image space — to encode the morphological information contained in state-of-the-art simulations. Built on data from the IllustrisTNG project.",
-      keywords: ["astrophysics"],
-      media: { type: "video", src: "assets/videos/eigen10.mp4" },
-      links: [{ label: "Read more ↗", href: "galaxy-morphology.html" }],
-    },
-    {
-      title: "Evolutionary spectrogram optimization for bioacoustics",
-      venue: "ML4RS @ ICLR (poster)",
-      year: "2024",
-      abstract:
-        "A fully-tested, well-documented genetic algorithm that optimises bioacoustic spectrograms to enable real-time monitoring of critically endangered species. Developed with the Machine Learning for Ecology group at AIMS (Cape Town), funded by the Baden-Württemberg-Stipendium. Poster at the 2nd ML4RS Workshop, ICLR Vienna 2024.",
-      keywords: ["bioacoustics", "genetic algorithm"],
-      media: { type: "image", src: "assets/images/eso logo.png" },
-      links: [
-        { label: "Poster (PDF) ↗", href: "assets/posters/eso-poster.pdf" },
-      ],
-    },
-    {
-      title: "Full publication list →",
-      venue: "Google Scholar",
-      year: "",
-      links: [
-        {
-          href: "https://scholar.google.com/citations?user=8K_Vt_0AAAAJ&hl=en&oi=sra",
-        },
-      ],
-    },
-  ],
+  /* Publications now live in their own file — assets/os/publications.js
+     (window.SITE_PUBLICATIONS). It also feeds the BibTeX/CV exporter. */
 
   projects: [
     {

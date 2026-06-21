@@ -331,6 +331,58 @@ function groupDetail(g) {
   } : {});
 }
 
+/* ---------- PUBLICATIONS (from window.SITE_PUBLICATIONS) ---------- */
+/* Rich publication entries (publications.js) carry citation metadata and a
+   summary/abstract split. Normalize them into the item shape the finder and
+   detail card already render: summary -> list subtitle (blurb), abstract ->
+   detail body, typed links -> labeled buttons. */
+const PUBS = window.SITE_PUBLICATIONS || {
+  items: []
+};
+const PUB_LINK_LABELS = {
+  arxiv: "arXiv",
+  pdf: "PDF",
+  doi: "DOI",
+  code: "Code",
+  page: "Project page",
+  slides: "Slides",
+  poster: "Poster",
+  video: "Video",
+  workshop: "Workshop",
+  dataset: "Dataset",
+  blog: "Blog"
+};
+function pubLink(ln) {
+  if (ln.label) return {
+    label: ln.label,
+    href: ln.href
+  };
+  return {
+    label: (PUB_LINK_LABELS[ln.type] || "Link") + " ↗",
+    href: ln.href
+  };
+}
+function normalizePub(p) {
+  return {
+    type: "pdf",
+    title: p.title,
+    authors: p.authors || [],
+    venue: p.venue || "",
+    year: p.year || "",
+    status: p.status || "",
+    blurb: p.summary || "",
+    // summary -> list subtitle
+    abstract: p.abstract || "",
+    // abstract -> detail card
+    keywords: p.keywords || [],
+    media: p.media,
+    links: (p.links || []).map(pubLink)
+  };
+}
+const PUB_ITEMS = (PUBS.items || []).map(normalizePub);
+/* keep the command palette + search index (which read SITE.publications) working */
+SITE_.publications = PUB_ITEMS;
+
 /* window content descriptors keyed by id */
 const FILES = {
   publications: {
@@ -338,10 +390,11 @@ const FILES = {
     title: "Publications",
     icon: "folder",
     view: "list",
-    items: SITE_.publications.map(p => ({
-      type: "pdf",
-      ...p
-    }))
+    footer: PUBS.scholar ? {
+      label: "View all on Google Scholar ↗",
+      href: PUBS.scholar
+    } : null,
+    items: PUB_ITEMS
   },
   projects: {
     kind: "finder",

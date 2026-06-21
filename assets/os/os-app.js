@@ -358,6 +358,26 @@ const STORE_KEY = "cakir-os-v5";
 /* ============================================================
    Window content
    ============================================================ */
+
+/* normalize a publication status into a CSS-class slug ("under review" -> "under-review") */
+function statusSlug(s) {
+  return (s || "").toLowerCase().trim().replace(/[^a-z]+/g, "-");
+}
+
+/* render an author list, bolding the site owner (SITE_PUBLICATIONS.me substring) */
+function Authors({
+  list
+}) {
+  const me = ((window.SITE_PUBLICATIONS || {}).me || "").toLowerCase();
+  return (list || []).map((a, i) => {
+    const mine = me && a.toLowerCase().indexOf(me) !== -1;
+    return /*#__PURE__*/React.createElement("span", {
+      key: i
+    }, mine ? /*#__PURE__*/React.createElement("b", {
+      className: "au-me"
+    }, a) : a, i < list.length - 1 ? ", " : "");
+  });
+}
 function FinderContent({
   fkey,
   onItem
@@ -539,7 +559,13 @@ function FinderContent({
     className: "nm-title"
   }, it.title || it.name, it.wip && /*#__PURE__*/React.createElement("span", {
     className: "wip-badge"
-  }, "WIP")), (it.blurb || it.abstract) && /*#__PURE__*/React.createElement("span", {
+  }, "WIP"), it.status && /*#__PURE__*/React.createElement("span", {
+    className: "status-badge s-" + statusSlug(it.status)
+  }, it.status)), it.authors && it.authors.length > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "nm-authors"
+  }, /*#__PURE__*/React.createElement(Authors, {
+    list: it.authors
+  })), (it.blurb || it.abstract) && /*#__PURE__*/React.createElement("span", {
     className: "nm-sub"
   }, it.blurb || it.abstract), it.keywords && it.keywords.length > 0 && /*#__PURE__*/React.createElement("span", {
     className: "kwchips"
@@ -557,7 +583,14 @@ function FinderContent({
     className: "mt"
   }, it.year || it.date))), !items.length && /*#__PURE__*/React.createElement("div", {
     className: "fempty"
-  }, "No matches"))));
+  }, "No matches")), f.footer && /*#__PURE__*/React.createElement("div", {
+    className: "ffooter"
+  }, /*#__PURE__*/React.createElement("a", {
+    className: "ffooter-btn",
+    href: f.footer.href,
+    target: "_blank",
+    rel: "noopener"
+  }, f.footer.label))));
 }
 function TextContent({
   f
@@ -586,6 +619,7 @@ function DetailContent({
   const title = d.title || d.name;
   const sub = [d.venue || d.meta, d.year].filter(Boolean).join(" · ");
   const text = d.abstract || d.blurb;
+  const authors = d.authors || [];
   const links = d.links || [];
   return /*#__PURE__*/React.createElement("div", {
     className: "win-body detailwin"
@@ -598,11 +632,17 @@ function DetailContent({
     className: "dmedia-el"
   })), /*#__PURE__*/React.createElement("div", {
     className: "dbody"
-  }, sub && /*#__PURE__*/React.createElement("div", {
+  }, (sub || d.status) && /*#__PURE__*/React.createElement("div", {
     className: "dkicker"
-  }, sub), /*#__PURE__*/React.createElement("h1", {
+  }, sub, d.status && /*#__PURE__*/React.createElement("span", {
+    className: "status-badge s-" + statusSlug(d.status)
+  }, d.status)), /*#__PURE__*/React.createElement("h1", {
     className: "dtitle"
-  }, title), text && /*#__PURE__*/React.createElement("p", {
+  }, title), authors.length > 0 && /*#__PURE__*/React.createElement("div", {
+    className: "dauthors"
+  }, /*#__PURE__*/React.createElement(Authors, {
+    list: authors
+  })), text && /*#__PURE__*/React.createElement("p", {
     className: "dtext"
   }, text), d.keywords && d.keywords.length > 0 && /*#__PURE__*/React.createElement("div", {
     className: "dtags"
