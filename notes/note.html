@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notes</title>
+  <meta name="description" content="A small encyclopedia-style note.">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const entry = params.get("entry");
+    if (/^[a-z0-9-]+$/.test(entry || "")) {
+      window.location.replace(`${entry}.html`);
+    }
+  </script>
+</head>
+<body>
+  <div class="sheet">
+    <header class="site-header">
+      <a class="wordmark" href="index.html" aria-label="Notes home">
+        <span>Notes</span>
+      </a>
+    </header>
+
+    <main>
+      <p class="site-link"><a href="index.html">Notes</a></p>
+      <p class="metadata">Entry not found. Return to the <a href="index.html">index</a>.</p>
+    </main>
+  </div>
+</body>
+</html>
