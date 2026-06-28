@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Not found — Essays</title>
+  <meta name="description" content="Redirector for ?entry= note links.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const entry = params.get("entry");
+    if (/^[a-z0-9-]+$/.test(entry || "")) {
+      window.location.replace(`${entry}.html`);
+    }
+  </script>
+</head>
+<body>
+  <div class="sheet">
+    <header class="note-topbar">
+      <a class="wordmark-sm" href="index.html">Essays</a>
+      <nav aria-label="Essays navigation">
+        <a href="../index.html">Ufuk Çakır</a>
+      </nav>
+    </header>
+
+    <main class="essay-main">
+      <article class="essay">
+        <header class="essay-head">
+          <h1 class="essay-title">Not found</h1>
+          <p class="essay-dek">That note doesn’t exist. Head back to the <a href="index.html">index</a>.</p>
+        </header>
+      </article>
+    </main>
+  </div>
+</body>
+</html>

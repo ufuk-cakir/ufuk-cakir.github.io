@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Essays — Ufuk Çakır</title>
+    <meta
+      name="description"
+      content="Essays on whatever interests me currently."
+    />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="alternate icon" href="../assets/favicon.ico" />
+    <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png" />
+    <link
+      rel="alternate"
+      type="application/atom+xml"
+      title="Essays: Ufuk Çakır"
+      href="feed.xml"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400;1,500&display=swap"
+      rel="stylesheet"
+    />
+
+    <script>
+      /* Apply the saved/preferred theme before first paint (no flash). */
+      (function () {
+        try {
+          var t = localStorage.getItem("notes-theme");
+          if (!t)
+            t = matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light";
+          document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
+
+    <link rel="stylesheet" href="styles.css" />
+    <script src="search-index.js" defer></script>
+    <script src="search.js" defer></script>
+    <script src="theme.js" defer></script>
+  </head>
+  <body>
+    <div class="sheet">
+      <header class="site-header">
+        <a class="masthead-kicker" href="../index.html">Ufuk Çakır</a>
+
+        <a class="wordmark" href="index.html" aria-label="Essays home"
+          ><span class="wm-cap">E</span>ssays</a
+        >
+
+        <p class="masthead-orn" aria-hidden="true">❧</p>
+
+        <p class="header-note">Everything that I am interested in currently.</p>
+
+        <nav class="quick-nav" aria-label="Site links">
+          <a href="feed.xml">Feed</a>
+          <a href="https://github.com/ufuk-cakir/ufuk-cakir.github.io/issues"
+            >Corrections</a
+          >
+          <button
+            type="button"
+            class="theme-toggle"
+            data-theme-toggle
+            aria-label="Switch to dark theme"
+            title="Switch to dark theme"
+            aria-pressed="false"
+          >
+            <svg
+              class="theme-icon theme-icon--moon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                d="M21 12.8A8.5 8.5 0 1 1 11.2 3a6.5 6.5 0 0 0 9.8 9.8Z"
+              ></path>
+            </svg>
+            <svg
+              class="theme-icon theme-icon--sun"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <circle cx="12" cy="12" r="4.2"></circle>
+              <path
+                d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"
+              ></path>
+            </svg>
+          </button>
+        </nav>
+
+        <form class="search-box" role="search" data-search-root>
+          <label class="visually-hidden" for="notes-search">Search notes</label>
+          <div class="search-control">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="6"></circle>
+              <path d="M16 16 L21 21"></path>
+            </svg>
+            <input
+              id="notes-search"
+              name="q"
+              type="search"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="Search notes"
+              data-search-input
+            />
+          </div>
+          <ol class="search-results" data-search-results hidden></ol>
+        </form>
+      </header>
+
+      <main class="index-main">
+        <p class="index-intro">
+          A place for essays on topics that I find interesting, and I hope you
+          do too. Feel free to leave some feedback!
+        </p>
+
+        <p class="contents-label">
+          <span aria-hidden="true">❦</span> Writings
+          <span aria-hidden="true">❦</span>
+        </p>
+
+        <ul class="essay-index">
+          {{ROWS}}
+        </ul>
+
+        <p class="index-orn" aria-hidden="true">❧</p>
+
+        <p class="index-colophon">
+          <a href="https://github.com/ufuk-cakir/ufuk-cakir.github.io/issues"
+            >Open an issue</a
+          >, or <a href="../index.html">return to Ufuk Çakır</a>.
+        </p>
+      </main>
+    </div>
+  </body>
+</html>

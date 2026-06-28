@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Essays — Ufuk Çakır</title>
+  <subtitle>Longer writing on learning, minds, and whatever currently has my attention.</subtitle>
+  <link href="https://cakir-ufuk.de/essays/"/>
+  <link rel="self" href="https://cakir-ufuk.de/essays/feed.xml"/>
+  <id>https://cakir-ufuk.de/essays/</id>
+  <updated>2026-06-28T12:00:00+00:00</updated>
+  <author><name>Ufuk Çakır</name></author>
+  <entry>
+    <title>The Cat in the Box</title>
+    <link href="https://cakir-ufuk.de/essays/thorndike-and-the-law-of-effect.html"/>
+    <id>https://cakir-ufuk.de/essays/thorndike-and-the-law-of-effect.html</id>
+    <updated>2026-06-28T12:00:00+00:00</updated>
+    <published>2026-06-28T12:00:00+00:00</published>
+    <summary>Edward Thorndike and the puzzle box</summary>
+  </entry>
+</feed>

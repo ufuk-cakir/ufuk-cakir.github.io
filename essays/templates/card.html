@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #f6f5f1; --ink: #11110f; --ink-soft: #2c2b27;
+      --muted: #6a6960; --accent: #c2521b; --rule: #d8d4ca;
+      --serif: "EB Garamond", Georgia, serif;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html, body { width: 1200px; height: 630px; }
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--serif);
+      padding: 76px 84px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-feature-settings: "onum" 1, "liga" 1;
+    }
+    .card-top { display: flex; align-items: center; gap: 14px; }
+    .dot { width: 16px; height: 16px; border-radius: 50%; background: var(--accent); }
+    .kicker {
+      font-size: 24px; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .card-title {
+      font-size: 84px; font-weight: 500; line-height: 1.02;
+      letter-spacing: -0.015em; max-width: 16ch;
+    }
+    .card-dek {
+      margin-top: 22px; font-size: 34px; font-style: italic;
+      line-height: 1.28; color: var(--ink-soft); max-width: 26ch;
+    }
+    .card-foot {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding-top: 26px; border-top: 1px solid var(--rule);
+      font-size: 26px; color: var(--muted);
+    }
+    .card-foot .who { color: var(--ink-soft); }
+  </style>
+</head>
+<body>
+  <div class="card-top">
+    <span class="dot"></span>
+    <span class="kicker">Essays</span>
+  </div>
+
+  <div>
+    <h1 class="card-title">{{TITLE}}</h1>
+    <p class="card-dek">{{DEK}}</p>
+  </div>
+
+  <div class="card-foot">
+    <span class="who">Ufuk Çakır · cakir-ufuk.de</span>
+    <span class="meta">{{META}}</span>
+  </div>
+</body>
+</html>
