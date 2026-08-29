@@ -2,3 +2,16 @@
   # Static HTML site — no build step. Files are served straight from the repo root.
   publish = "."
   command = ""
+
+# The /questions app lives in a separate repo (github.com/ufuk-cakir/questions)
+# that GitHub Pages builds and serves at ufuk-cakir.github.io/questions/. This
+# domain is served by Netlify, which has no such path, so proxy it through
+# instead of 404ing. status = 200 makes it a proxy rather than a redirect, so
+# the URL stays cakir-ufuk.de/questions/. The Next.js export sets basePath
+# "/questions", so its own /questions/_next/... requests match this same rule.
+# One rule covers both /questions and /questions/ — Netlify normalises the
+# trailing slash, so a separate exact rule would 301 to itself.
+[[redirects]]
+  from = "/questions/*"
+  to = "https://ufuk-cakir.github.io/questions/:splat"
+  status = 200
