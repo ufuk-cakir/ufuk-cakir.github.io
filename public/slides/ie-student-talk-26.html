@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>How do learning agents use forecasts?</title>
+<link href="ie-student-talk-26_assets/reveal.css" rel="stylesheet"/>
+<link href="ie-student-talk-26_assets/serif.css" rel="stylesheet"/>
+<!-- Theme used for syntax highlighting of code -->
+<!-- <link rel="stylesheet" href="lib/css/zenburn.css"> -->
+<link href="ie-student-talk-26_assets/zenburn.css" rel="stylesheet"/>
+<!-- <link rel="stylesheet" href="index.css"> -->
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/367dc918be8b2a4b370a76f87a9e45734585767eb1acf7c35c8db019e4ea03b2-cfr.mp4" data-background-video-loop="" data-background-video-muted="">
+</section>
+<section data-autoslide="4633.011111111111" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0591e0a7ba6c33009f787713006e59fe5164489d0e2f2cd1b2b94763aed38d4e.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/b982e8181a684d038794597e50a74c73b0bd2fae4e424b594d4b2a4c303f3e4d.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="4900.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/8f46f92c88c8d585e983aee5098fca6a2bd033f6d846dceb9b64badc0e14cb95.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/8454a5d0b4438d82c981c18812fb2275e6795dfbcd5cb15729aa0e70218bb0b5.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/85cc9f6e38496ef1e37982d85b102b17ed25377559b6035cf291c2096c856c1a.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/6fbfc95064cf44c32fab21c8f128fbcf43e9f788841b3256d6b9d20b906b6850.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/011254d87f30821dfa7cd8fa90d6c6e13eb00fd538466bb643b7b8d65fbdccf4.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/32ca4ae02f66c9480afbfa74ea24cde7c215e71344682ae3c1dd3bf6fdbf0933.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/ec11bbbe895afadd680fe44c2fe8884b841455e7f19dc5e33b0263078358ef32.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0bc1a938e2a94392655a32c2af70457966d8e0eaaf69ec531552d522b4fa4e73.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/d615b55919b959b0eedbfc6646ae452cc3608398bf7dee815a09c7586d8273b5.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/5f204162ac60297e851a7e38b8de1da13bfbd013fe901befb375389eabe3d676.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/abb14263faa941cf0468d656ee8553f7aee15e041e8ab08ee2fbacc7bb09b342.mp4">
+</section>
+<section data-autoslide="2166.6666666666665" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/135b43f08b11ca657c664475f548ad91657e45d8ec01b98d94eda9b95adb6e11.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/46c4bf742ceafa76156a94a215ab92aee340a7096b81c6eedeb8a5d36f939515.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/2f6ea3efcdd180a7b507cd8399d8e2bb90d41f56de73c43359834db0ae4e84e9.mp4">
+</section>
+<section data-autoslide="3216.6666666666665" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/65a8d09948960c28e5722b2c3096ae7cdd722e08f0b90a23ff2fa4f69ec6ca45.mp4">
+</section>
+<section data-autoslide="4066.6666666666665" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/1290bd494942ba2827cb6445a1b34ddbcd2fa6c827313deb5297ec668339815f.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/eaaecd567b63a51f887ad8b6fc3c3309d9435c28e341f23378b390d4e1c152c9.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/fc1bd7c4554e8217e6064b38c8d1a73a2b0cb34e16cbd1f5f6ec508dcda9e4be-cfr.mp4">
+</section>
+<section data-autoslide="7583.333333333333" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/aa9fb7e9a74e9fb94abbe0397d1554bd11f6a47b8852d81a80ad7608f06a5de4.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/a85e5deb781bc25d625c82f5e2cb21930216e27a7874abb0cda6cd4369e5bedf.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="9383.333333333334" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/d1bd7ae4dbc7a9cd85dc9f714f8823db5277f1a8cafb9aece6e9428ed22dd58b.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/e05563adc457d4ba43f2755ebbf1e4969aee29d1b65a7160999bc12221ef5c6a.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/71acf540c8de1ba4cb8e6eef053ebbab691347d69760f19eed49663d6485b8b2-cfr.mp4">
+</section>
+<section data-autoslide="1066.6666666666667" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/a93d05a1ff00d451d6748b941bf45bb6da273ad7aababe2cbfca1d47d65c31d4-cfr.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/c19c525b4ebf8f05d5e86fcd5e789c756608c544bd81750cc2e94e9a387f35e5-cfr.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="6600.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/e4e16d8009d0da9ae800bc80b41022247d4dcd8357c0fbbe22e9ac85e8f2a41b-cfr.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/1c8b085a6546b8016e469b1902d50edb3b0b73e83ed2b4d39b0a8965956760bd-cfr.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="6200.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/9440a3d50a22464e54cf1cba031f4ca7d5c13b9cec08f4749cac19f2f9d7cb3e-cfr.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/70a9da3f851a92cc88b2aa6ed5c2e3e294f5d95a560e81658b94c4076b76a9d6-cfr.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="6133.333333333333" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/eb3bdf12bc12af95cbea9aaf79a99b495daee9d0abde13c87cfbcff72ff20eb5-cfr.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/3977572d6afdb01051fb1231afc3756f24d26d76f8497f9f8cbd86de2ad48bed-cfr.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="8166.666666666667" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/cf1ee461e9b4712e55934981f2a3d2cac04a8b500f8b22c131dc063fa5e3645b-cfr.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/397457617d0463a58e3da0d0966fc2e5145ca0fbb790fd1bd486486f49fc2e71-cfr.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/dd7bfd97c89d8dac1749b9eb6e383a59b6f3cf0ae5fdf1e6855d4e6f3376105c-cfr.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0812213fad5dbbe15b58948191d2389a6a631ca3eab99d333f905704b9d7abfe-cfr.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/f72fdf32c878e70eb12a5a1673edce4f83abe3aaab0d886fe2e035fc9719621b.mp4">
+</section>
+<section data-autoslide="1666.6666666666667" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/c726f5e6974052a6eda03098c1553dd659cb1f6eae746eb9f4cb55ed067a9e4a.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0aa46b9727d5661396d6f340a0ca5a8c1ded2906fbcaf1bb25b8595e2eb029f4.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="3116.6666666666665" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/8430af4a99b12d03c149f94610b6ae5302792e48de37eabe14ab8c0703ecfa2a.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/8a39d558e03ae7269b48438bf3375554e48056ddd92f32c01ed7f14f7953f50f.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="2016.0111111111112" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/7b4d8cab6b4a6431121d38f08de1899e0416c8dafdceddc945b5af03a9520c2f.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/df1566c67b5c92dc66c191563b34ebd2cc42156dd88279b39826550ef9e02d71.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="683.3333333333334" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/7545664c719cad4e67c088e5679cba8ae2cff2dfb08943b01e8625a2a66862c7.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/6439ebd2af81aaf5291f4ecf1b8be917b08058a34fc67d1cd660c282a087e06d.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="1816.6666666666667" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/f41a09755a80cde8c4725994b086947dadcc9b9ccd8044c397e8ba2282633c6a.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/1b47e138ac96ed8be11135784913968fcdd30f68fa64eeba9a660b689a2981e8.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="2499.677777777778" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/866480d92260387390c1983eec47df479be23435d1e5a88ebfa2e18e223a2dfc.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0671d714a5c6bf449e23048a4d6bac05e1ece69ed0d83c2e326bab6977ebe77a.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="933.3333333333334" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/404794cf821fe07b9a626718993d0d2f30631167a13d98c7d4d889c82f4b1ed3.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/167f930e851655816a21318ce8b895126bbb8310b9b9f715a797c24170b096c4.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="1533.3333333333333" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/b6200ef62d05d2965d9e9d756ca1ec7546190f785f14ce973707aee02b77bde3.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/56e66b6d7b58430eeab9525325716604dbd6b02688e6ffb0b4016b0ab7a7fb70.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="1716.6666666666667" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/d90493124bc029892d127c1d26ae763951df7fb6e7cb9f0991975080caaa3826.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/222b29e43afd400d1cb607fa0d1c698d8eacc09590a389103b2d0255da3e6ded.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="1483.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/715539f9eb4fe88bc6368e5daa2ff9b87ab036b4525231e3296d2146e7010b0b.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/6bb49c4260383ebc54c3e01b49e475442e462902f010beb2868fd766ba068674.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="4066.6666666666665" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/886e2997717cc0eb256cdf0cbae8bccf04f62172c7b50abdef7882b1c5d06024.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/f4af103b1f47af245657cc0b4778515544f866b3650faa18673f10e308a26acc.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="2500.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/8fa9fb55931d27ffa46dd839c71fbe8daa9b9b589328ac0becbf6980ade1c20a.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/c50094469d63cff2a53b45dafcbe72285123520b300a82b37f614e385bf6ecab.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0e5a2712ab456fa233d0f97a052f9016888de1403cb1e4d1bb6d6faf3c8d717d.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/4925dd90208f7c4ccfe8f8ff2648a4f5e2c3c610fcba82bef05238722aa8cd36.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/ac93551c742b2d873ffeb27934ca5be0170cf1ba9410e9120967c1945f790a8c.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/93f6675a8eed5f855bdaedd11aa03e3ba3120520122405611b15cf37cc34c87a.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/b94a304fd35679be5a415bc9c403c4907e87ba5d2594b07ceda2dd1e80fdf127.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/5153d243f871c4f04508b886736873fde4fd9349f6111f20253cd20b9df6cff6.mp4">
+</section>
+<section data-autoslide="4066.6666666666665" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/411385809e438fce7b0ae9bfa87568f24be76e74ccc63ce9ad846e8337877e79.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/7dacb2eb9ac912f333ef15b20ada30f5d21369645a2afc01f22d2ec7bd1b3a26.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="2500.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/7ae6035eb28bf2afa3495587a753662110f07bc52649bbee9d349388465e9257.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/9a5f6673fa71280bb0ceb72f01a429503e4704135b5846e2cf890c01cd2af9d9.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="5350.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/07c74d192223a286bd575c9b7cd70806e1a4eaa40431c5c0f651965d9df79a62.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/511be341de847a57c5bb651c66f240ab95946730e74682705dd047ebf03a8ad5.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/95383e431f7206b5057a63facfb5f0a8459ee3bdbace16da89a5f6c1eff32fe3.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/11d8e9f234d1271567df321b3031ababdd41d5a4c7ecd4efc116652b0d70bd09.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/bbb9a2cd7cd6af309f5ebc5963f0943336604c193070dfb4953bebbfbef206e7.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0f27de2e7dfbd233923c565485cfc63f091e7fe7d3ee317a3c1bbc0212c17a30.mp4">
+</section>
+<section data-autoslide="4066.6666666666665" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/65eec5c2958ebb39d7d32d25ab8d4866a6464b67b50223c344181eefffc3e31b.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/9c01f6fe2c2be53a5695e714e363048d75c1ca8697ebad8670ad6fb1e4c8b482.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="2500.0" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/8c2af5569498adf6c904c9017611d25fc80eaed7cd26846aeebbe07bd4dfc97c.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/ef2db268ffafa20aed04e9ab524b7c07cbdd954b70682910715b3273493ff5d4.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/a05c0f79753e051a0909551e5d1a8208b1520d6d52da2c8e2f6eec9600a73636.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/9bad24c9f01c082ecc694603a4e8761887941fa6e911134e89885d306d41fb69.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/124c5cea2ae876e2a68d609397e8a5392cae2cf984bc214e7cddb07da4c766d3.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/f34d1ea7749182b75eef6338af18c7e9d76fcf0934c38fe65b1a61b81bf58905.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/adfa113d870f68deabac1d0ec0c12a9dcc027bb86604ea4465a8367622432735.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/d18e1f88636b796c90bbdc75bda14cf1c390f6b0596c59d893585e7c1f61ec5c.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/d0ee4a2fbc642ec22590368a2ce196a31d677cd4fa6690d3785aef829af5db66.mp4">
+</section>
+<section data-autoslide="4883.011111111111" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/da41a4784fdeb26952fc9bfb32c38162f34bdf2cae9e83186ec8dd6592a1e123.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/9bb5bbb789878f28ad6cc7b0955f79f01c191b6cbb870a2c16cb13ff6c1da302.mp4" data-background-video-loop="">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/195945341fb0e9a5f75375285bc0bbe651c9e0be4b23b06fd66aebc54bb3a990.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/21ce1c02f251148ef5d983193d09afa4e9d8ed1b1488de4529e4dbaecaf6924a.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/f8a8bd49502f0118b0b29acfd0989c496a859e0f89ac032ed053dfee7ef33075.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/d7d2c6f278b74f8ea657920404c5da18e90311f5f094b953f334d9ed2f07376d.mp4">
+</section>
+<section data-autoslide="7683.333333333333" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/3626e0a6973ca1a9f5e3f585c0fdd83a69415ba7ef0df5c52f3ee37fec933e19.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/0f60a1291f60949e17c96579e29005cb2d7bc2151538876954b034a1be151efc.mp4" data-background-video-loop="">
+</section>
+<section data-autoslide="9383.333333333334" data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/d4b8bc9f508e4110b85f2256fff0a0edd24b04969f701f633d0413bd21d3c99d.mp4">
+</section>
+<section data-background-color="#f2f1ed" data-background-size="contain" data-background-video="ie-student-talk-26_assets/f3f61777e12108d075a7913bbd4fc088e388602955f1489c61794445c8feeb61.mp4" data-background-video-loop="">
+</section>
+</div>
+</div>
+<script src="ie-student-talk-26_assets/reveal.js"></script>
+<script src="ie-student-talk-26_assets/notes.js"></script>
+<!-- To include plugins, see: https://revealjs.com/plugins/ -->
+<!-- <script src="index.js"></script> -->
+<script>
+      Reveal.initialize({
+        // The "normal" size of the presentation, aspect ratio will
+        // be preserved when the presentation is scaled to fit different
+        // resolutions. Can be specified using percentage units.
+        width: '100%',
+        height: '100%',
+        // Factor of the display size that should remain empty around
+        // the content
+        margin: 0.0,
+        // Bounds for smallest/largest possible scale to apply to content
+        minScale: 0.2,
+        maxScale: 2.0,
+        // Display presentation control arrows
+        controls: false,
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: true,
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'bottom-right',
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+        // Display a presentation progress bar
+        progress: false,
+        // Display the page number of the current slide
+        // - true:    Show slide number
+        // - false:   Hide slide number
+        //
+        // Can optionally be set as a string that specifies the number formatting:
+        // - "h.v":   Horizontal . vertical slide number (default)
+        // - "h/v":   Horizontal / vertical slide number
+        // - "c":   Flattened slide number
+        // - "c/t":   Flattened slide number / total slides
+        //
+        // Alternatively, you can provide a function that returns the slide
+        // number for the current slide. The function should take in a slide
+        // object and return an array with one string [slideNumber] or
+        // three strings [n1,delimiter,n2]. See #formatSlideNumber().
+        slideNumber: false,
+        // Can be used to limit the contexts in which the slide number appears
+        // - "all":      Always show the slide number
+        // - "print":    Only when printing to PDF
+        // - "speaker":  Only in the speaker view
+        showSlideNumber: 'all',
+        // Use 1 based indexing for # links to match slide number (default is zero
+        // based)
+        hashOneBasedIndex: false,
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: false,
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: false,
+        // Enable support for jump-to-slide navigation shortcuts
+        jumpToSlide: true,
+        // Push each slide change to the browser history.  Implies `hash: true`
+        history: false,
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+        // Optional function that blocks keyboard events when retuning false
+        //
+        // If you set this to 'focused', we will only capture keyboard events
+        // for embedded decks when they are in focus
+        keyboardCondition: null,
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+        // Enable the slide overview mode
+        overview: true,
+        // Vertical centering of slides
+        center: true,
+        // Enables touch navigation on devices with touch input
+        touch: true,
+        // Loop the presentation
+        loop: false,
+        // Change the presentation direction to be RTL
+        rtl: false,
+        // Changes the behavior of our navigation directions.
+        //
+        // "default"
+        // Left/right arrow keys step between horizontal slides, up/down
+        // arrow keys step between vertical slides. Space key steps through
+        // all slides (both horizontal and vertical).
+        //
+        // "linear"
+        // Removes the up/down arrows. Left/right arrows step through all
+        // slides (both horizontal and vertical).
+        //
+        // "grid"
+        // When this is enabled, stepping left/right from a vertical stack
+        // to an adjacent vertical stack will land you at the same vertical
+        // index.
+        //
+        // Consider a deck with six slides ordered in two vertical stacks:
+        // 1.1    2.1
+        // 1.2    2.2
+        // 1.3    2.3
+        //
+        // If you're on slide 1.3 and navigate right, you will normally move
+        // from 1.3 -> 2.1. If "grid" is used, the same navigation takes you
+        // from 1.3 -> 2.3.
+        navigationMode: 'default',
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+        // Turns fragments on and off globally
+        fragments: true,
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: true,
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+        // Flags if we should show a help overlay when the question-mark
+        // key is pressed
+        help: true,
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+        // Global override for autolaying embedded media (video/audio/iframe)
+        // - null:   Media will only autoplay if data-autoplay is present
+        // - true:   All media will autoplay, regardless of individual setting
+        // - false:  No media will autoplay, regardless of individual setting
+        autoPlayMedia: null,
+        // Global override for preloading lazy-loaded iframes
+        // - null:   Iframes with data-src AND data-preload will be loaded when within
+        //           the viewDistance, iframes with only data-src will be loaded when visible
+        // - true:   All iframes with data-src will be loaded when within the viewDistance
+        // - false:  All iframes with data-src will be loaded only when visible
+        preloadIframes: null,
+        // Can be used to globally disable auto-animation
+        autoAnimate: true,
+        // Optionally provide a custom element matcher that will be
+        // used to dictate which elements we can animate between.
+        autoAnimateMatcher: null,
+        // Default settings for our auto-animate transitions, can be
+        // overridden per-slide or per-element via data arguments
+        autoAnimateEasing: 'ease',
+        autoAnimateDuration: 1.0,
+        autoAnimateUnmatched: true,
+        // CSS properties that can be auto-animated. Position & scale
+        // is matched separately so there's no need to include styles
+        // like top/right/bottom/left, width/height or margin.
+        autoAnimateStyles: ['opacity', 'color', 'background-color', 'padding', 'font-size', 'line-height', 'letter-spacing', 'border-width', 'border-color', 'border-radius', 'outline', 'outline-offset'],
+        // Controls automatic progression to the next slide
+        // - 0:      Auto-sliding only happens if the data-autoslide HTML attribute
+        //           is present on the current slide or fragment
+        // - 1+:     All slides will progress automatically at the given interval
+        // - false:  No auto-sliding, even if data-autoslide is present
+        autoSlide: 0,
+        // Stop auto-sliding after user input
+        autoSlideStoppable: false,
+        // Use this method for navigation when auto-sliding (defaults to navigateNext)
+        autoSlideMethod: null,
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+        // Opens links in an iframe preview overlay
+        // Add `data-preview-link` and `data-preview-link="false"` to customize each link
+        // individually
+        previewLinks: false,
+        // Exposes the reveal.js API through window.postMessage
+        postMessage: true,
+        // Dispatches all reveal.js events to the parent window through postMessage
+        postMessageEvents: false,
+        // Focuses body when page changes visibility to ensure keyboard shortcuts work
+        focusBodyOnPageVisibilityChange: true,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+        // Transition speed
+        transitionSpeed: 'default', // default/fast/slow
+        // Transition style for full page slide backgrounds
+        backgroundTransition: 'none', // none/fade/slide/convex/concave/zoom
+        // The maximum number of pages a single slide can expand onto when printing
+        // to PDF, unlimited by default
+        pdfMaxPagesPerSlide: Number.POSITIVE_INFINITY,
+        // Prints each fragment on a separate slide
+        pdfSeparateFragments: true,
+        // Offset used to reduce the height of content within exported PDF pages.
+        // This exists to account for environment differences based on how you
+        // print to PDF. CLI printing options, like phantomjs and wkpdf, can end
+        // on precisely the total height of the document whereas in-browser
+        // printing has to end one pixel before.
+        pdfPageHeightOffset: -1,
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+        // The display mode that will be used to show slides
+        display: 'block',
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000
+      });
+      // Override SPACE to play / pause the video
+      Reveal.addKeyBinding(
+        {
+          keyCode: 32,
+          key: 'SPACE',
+          description: 'Play / pause video'
+        },
+        () => {
+          var currentVideos = Reveal.getCurrentSlide().slideBackgroundContentElement.getElementsByTagName("video");
+          if (currentVideos.length > 0) {
+            if (currentVideos[0].paused == true) currentVideos[0].play();
+            else currentVideos[0].pause();
+          } else {
+            Reveal.next();
+          }
+        }
+      );
+    </script>
+</body>
+</html>
